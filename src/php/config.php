@@ -11,7 +11,7 @@ setValue("cfg_func_list", array("login","registration"));
 setValue("cfg_menu_list", array("login"=>"Login","registration"=>"Registration"));
 
 // Datenbankverbindung herstellen
-$db = mysqli_connect("127.0.0.1", "root", "gibbiX12345", "bilderdb");
+$db = mysqli_connect("127.0.0.1", "root", "gibbiX12345", "imagedb");
 if (!$db) die("Verbindungsfehler: ".mysqli_connect_error());
 setValue("cfg_db", $db);
 ?>
