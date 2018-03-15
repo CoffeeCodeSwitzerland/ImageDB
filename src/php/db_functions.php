@@ -7,4 +7,13 @@
  *  sqlQuery() und sqlSelect() aus dem Modul basic_functions.php auf.
  */
 
+
+function userWithEmailaddressNotExists($email)
+{
+    $sql = "SELECT COUNT(UserId) FROM `User` WHERE Emailaddress = '" .$email. "';";
+    if(sqlSelect($sql)[0] >= 1) {
+        return false;
+    }
+    return true;
+}
 ?>

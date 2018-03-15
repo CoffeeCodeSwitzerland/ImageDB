@@ -8,15 +8,28 @@
 /*
  * Beinhaltet die Anwendungslogik zum Login
  */
-function login() {
-  // Template abfüllen und Resultat zurückgeben
-  setValue("phpmodule", $_SERVER['PHP_SELF']."?id=".getValue("func"));
-  return runTemplate( "../templates/".getValue("func").".htm.php" );
+function login()
+{
+    // Template abfüllen und Resultat zurückgeben
+    setValue("phpmodule", $_SERVER['PHP_SELF'] . "?id=" . getValue("func"));
+    return runTemplate("../templates/" . getValue("func") . ".htm.php");
 }
 
 /*
  * Beinhaltet die Anwendungslogik zur Registration
  */
-function registration() {
+function registration()
+{
+    if (isset($_POST['emailaddress']) &&
+        isset($_POST['password'])) {
+        if(userWithEmailaddressNotExists($_POST['emailaddress'])){
+
+        }
+    }
+
+
+    setValue("phpmodule", $_SERVER['PHP_SELF'] . "?id=" . getValue("func"));
+    return runTemplate("../templates/" . getValue("func") . ".htm.php");
 }
+
 ?>
