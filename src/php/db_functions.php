@@ -8,12 +8,20 @@
  */
 
 
-function userWithEmailaddressNotExists($email)
+function userWithEmailaddressExists($email)
 {
-    $sql = "SELECT COUNT(UserId) FROM `User` WHERE Emailaddress = '" .strtolower($email). "';";
-    if(sqlSelect($sql)[0] >= 1) {
-        return false;
+    $sql = "SELECT COUNT(UserId) FROM `User` WHERE Emailaddress = '" . strtolower($email) . "';";
+    $answer = sqlSelect($sql);
+    if ($answer[0]["COUNT(UserId)"] >= 1) {
+        return true;
     }
-    return true;
+    return false;
+}
+
+function createUser($email, $nickname, $password) {
+    $options = ['cost' => 12];
+    $password = password_hash($password, PASSWORD_BCRYPT, $options);
+    $sql = "INSERT INTO `User` (Emailaddress, `Password`, Nickname, IsAdmin) VALUES ('" . $email . "','" . $password . "','" . $nickname . "',0)";
+    sqlQuery($sql);
 }
 ?>

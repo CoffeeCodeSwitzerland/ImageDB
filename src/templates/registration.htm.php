@@ -43,15 +43,19 @@
             The passwords are not equal
         </div>
         <?php
-        if (isset($_GET['status'])) {
-            if ($_GET['status'] == 'exists') {
-                echo "<div class='alert alert-danger' role = 'alert'> The user already exists</div >";
-            } elseif ($_GET['status'] == 'created') {
-                echo "<div class='alert alert-success' role = 'alert'>The user has been registered</div >";
-            } elseif ($_GET['status'] == 'error') {
-                echo "<div class=\"alert alert-warning\" role=\"alert\">Server error occured</div>";
-            }
+        if(strlen(getValue('message')) > 0){
+            echo getValue('message');
         }
+//        if (isset($_GET['status'])) {
+////            echo $_GET['status'];
+//            if ($_GET['status'] == 'exists') {
+//                echo "<div class='alert alert-danger' role = 'alert'> The user already exists</div >";
+//            } elseif ($_GET['status'] == 'created') {
+//                echo "<div class='alert alert-success' role = 'alert'>The user has been registered</div >";
+//            } elseif ($_GET['status'] == 'error') {
+//                echo "<div class=\"alert alert-warning\" role=\"alert\">Server error occured</div>";
+//            }
+//        }
         ?>
     </div>
 </div>

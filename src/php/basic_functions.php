@@ -141,7 +141,8 @@ function sqlQuery($sql)
 }
 
 /**
- * Aktives php-Modul noch einmal aufrufen.
+ * Aktive
+ * s php-Modul noch einmal aufrufen.
  * @param   $id     ID der Funktion, welche aufgerufen werden soll
  */
 function redirect($id = "")
