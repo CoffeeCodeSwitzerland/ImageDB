@@ -15,20 +15,27 @@ function login()
     return runTemplate("../templates/" . getValue("func") . ".htm.php");
 }
 
-/*
- * Beinhaltet die Anwendungslogik zur Registration
+/**
+ * Contains the logic for the registstration
+ * @return string
  */
 function registration()
 {
-    if (isset($_POST['emailaddress']) &&
-        isset($_POST['password'])) {
-        if(userWithEmailaddressNotExists($_POST['emailaddress'])){
-
-        }
+    $status = 'error';
+    if (isset($_POST['registration_email']) &&
+        isset($_POST['registration_password'])) {
+        $password = trim($_POST['registration_password']);
+        $emailaddress = strtolower(trim($_POST['registration_email']));
+        $nickname = trim($_POST['registration_nickname']);
+//        if(userWithEmailaddressNotExists($_POST['emailaddress'])){
+//            $status = 'created';
+//        } else {
+//            $status = 'exists';
+//        }
+        $status = 'exists';
     }
-
-
-    setValue("phpmodule", $_SERVER['PHP_SELF'] . "?id=" . getValue("func"));
+    $status = 'exists';
+    setValue("phpmodule", $_SERVER['PHP_SELF'] . "?id=" . getValue("func") . "&status=" . $status);
     return runTemplate("../templates/" . getValue("func") . ".htm.php");
 }
 

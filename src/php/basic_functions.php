@@ -9,20 +9,22 @@
 /*
  * Liefert die über den Parameter "id" definierte Funktion zurück
  */
-function getId() {
-  if (isset($_GET['id'])) return $_GET['id'];
-  else return "";
+function getId()
+{
+    if (isset($_GET['id'])) return $_GET['id'];
+    else return "";
 }
 
 /*
  * Gibt den Inhalt eines POST-Attributes zurück
  */
-function getPost($attr, $defvalue="") {
-	$value = $defvalue;
-	if (isset($_POST[$attr])) {
-		if (!empty($_POST[$attr])) $value = $_POST[$attr];
-	}
-	return $value;
+function getPost($attr, $defvalue = "")
+{
+    $value = $defvalue;
+    if (isset($_POST[$attr])) {
+        if (!empty($_POST[$attr])) $value = $_POST[$attr];
+    }
+    return $value;
 }
 
 /* Führt ein HTML-Template aus und gibt das Produkt zurück
@@ -30,12 +32,13 @@ function getPost($attr, $defvalue="") {
  * @param     $params       Assoziativer Array mit Werten, welche im Template eingefügt werden.
  *                          key: Name der Variable, value: Wert
  */
-function runTemplate($template) {
-  ob_start();
-  require($template);
-  $inhalt=ob_get_contents();
-  ob_end_clean();
-  return $inhalt;
+function runTemplate($template)
+{
+    ob_start();
+    require($template);
+    $inhalt = ob_get_contents();
+    ob_end_clean();
+    return $inhalt;
 }
 
 /*
@@ -44,9 +47,10 @@ function runTemplate($template) {
  * @param       $value      Wert des Wertes
  *
  */
-function setValue($key, $value) {
-  global $params;
-  $params[$key] = $value;
+function setValue($key, $value)
+{
+    global $params;
+    $params[$key] = $value;
 }
 
 /*
@@ -54,13 +58,14 @@ function setValue($key, $value) {
  * @param       $list      Assoziativer Array mit den zu speichernden Werten
  *
  */
-function setValues($list) {
-  global $params;
-  if (count($list)) {
-	foreach ($list as $k=>$v) {
-	  $params[$k] = $v;
-	}
-  }
+function setValues($list)
+{
+    global $params;
+    if (count($list)) {
+        foreach ($list as $k => $v) {
+            $params[$k] = $v;
+        }
+    }
 }
 
 /*
@@ -68,28 +73,34 @@ function setValues($list) {
  * @param       $field      Index des gewünschten Wetes
  *
  */
-function getValue($key) {
-  global $params;
-  if (isset($params[$key])) return $params[$key];
-  else return "";
+function getValue($key)
+{
+    global $params;
+    if (isset($params[$key])) return $params[$key];
+    else return "";
 }
 
 /*
  * Erstellt das Menu und gibt dieses aus. Wird im Haupttemplate aufgerufen.
  * @param   $mlist      Array mit den Menueinträgen. key: ID (Funktion), value: Menuoption
  */
-function getMenu($mlist) {
-  $menu = "";
-  if (count($mlist)) {
-	$active_link = getValue("func");
-	if (empty($active_link)) $active_link=key($mlist);
-	foreach ($mlist as $element=>$option) {
-	  $active = "";
-	  if ($element == $active_link) $active = " class='active'";
-	  $menu .= "<li$active><a href='".$_SERVER['PHP_SELF']."?id=".$element."'>$option</a></li>";
-	}
-	return $menu;
-  }
+function getMenu($mlist)
+{
+    $menu = "";
+    if (count($mlist)) {
+        $active_link = getValue("func");
+        if (empty($active_link)) $active_link = key($mlist);
+        foreach ($mlist as $element => $option) {
+            $active = "";
+            if ($element == $active_link) {
+                $active = " class='nav-item active'";
+            } else {
+                $active = " class='nav-item'";
+            }
+            $menu .= "<li $active><a class='nav-link' href='" . $_SERVER['PHP_SELF'] . "?id=" . $element . "'>$option</a></li>";
+        }
+        return $menu;
+    }
 }
 
 /*
@@ -97,42 +108,46 @@ function getMenu($mlist) {
  * @param       $field      Index des gewünschten Wetes
  *
  */
-function getHtmlValue($key) {
+function getHtmlValue($key)
+{
     global $params;
-	if (isset($params[$key])) return htmlentities($params[$key]);
-	else return "";
+    if (isset($params[$key])) return htmlentities($params[$key]);
+    else return "";
 }
 
 /**
  * Übergebene SQL-Anweisung auf der DB ausführen und Resultat zurückgeben.
- * @param   $sql       Select-Befehl, welcher ausgeführt werden soll
+ * @param   $sql Select-Befehl, welcher ausgeführt werden soll
  */
-function sqlSelect($sql) {
- 	$result = mysqli_query(getValue("cfg_db"), $sql);
- 	if (!$result) die("Fehler: ".mysqli_error());
-	if (mysqli_num_rows($result) > 0) {
-		while ($row=mysqli_fetch_assoc($result)) $data[]=$row;
-	} else $data = "";
-	mysqli_free_result($result);
-	return $data;
+function sqlSelect($sql)
+{
+    $result = mysqli_query(getValue("cfg_db"), $sql);
+    if (!$result) die("Fehler: " . mysqli_error());
+    if (mysqli_num_rows($result) > 0) {
+        while ($row = mysqli_fetch_assoc($result)) $data[] = $row;
+    } else $data = "";
+    mysqli_free_result($result);
+    return $data;
 }
 
 /**
  * Führt einen SQL-Befehl aus.
- * @param   $sql    SQL-Befehl, welcher ausgeführt werden soll
+ * @param   $sql SQL-Befehl, welcher ausgeführt werden soll
  */
- function sqlQuery($sql) {
-	$result = mysqli_query(getValue("cfg_db"), $sql);
- 	if (!$result) die(mysqli_error(getValue("cfg_db"))."<pre>".$sql."</pre>");
+function sqlQuery($sql)
+{
+    $result = mysqli_query(getValue("cfg_db"), $sql);
+    if (!$result) die(mysqli_error(getValue("cfg_db")) . "<pre>" . $sql . "</pre>");
 }
 
 /**
  * Aktives php-Modul noch einmal aufrufen.
  * @param   $id     ID der Funktion, welche aufgerufen werden soll
  */
-function redirect($id="") {
-    if (!empty($id)) $id="?id=$id";
-    header("Location: ".$_SERVER['PHP_SELF'].$id);
+function redirect($id = "")
+{
+    if (!empty($id)) $id = "?id=$id";
+    header("Location: " . $_SERVER['PHP_SELF'] . $id);
     exit();
 }
 
@@ -141,7 +156,8 @@ function redirect($id="") {
  * @param   $value      Eingabewert
  * @param   $minlength  Minimale Länge der Eingabe
  */
-function checkEmpty($value, $minlength=Null) {
+function checkEmpty($value, $minlength = Null)
+{
     if (empty($value)) return false;
     if ($minlength != Null && strlen($value) < $minlength) return false;
     else return true;
@@ -152,7 +168,8 @@ function checkEmpty($value, $minlength=Null) {
  * @param   $value      Eingabewert
  * @param   $length     Geforderte Länge
  */
-function checkLength($value, $length) {
+function checkLength($value, $length)
+{
     if (strlen($value) != $length) return false;
     else return true;
 }
@@ -161,7 +178,8 @@ function checkLength($value, $length) {
  * Prüft, ob es sich beim übergebenen Wert um eine Zahl handelt.
  * @param   $value      übergebender Wert
  */
-function isNumber($value) {
-  if (is_numeric($value)) return true;
-  else return false;
+function isNumber($value)
+{
+    if (is_numeric($value)) return true;
+    else return false;
 }
