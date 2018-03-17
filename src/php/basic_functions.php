@@ -195,6 +195,14 @@ function getSessionNickname(){
     }
 }
 
+function getSessionEmailaddress(){
+    if(isset($_SESSION['userEmailaddress'])) {
+        return $_SESSION['userEmailaddress'];
+    } else {
+        return "Emailaddress";
+    }
+}
+
 function isSessionActive(){
     if(isset($_SESSION['userId'])){
         if($_SESSION['userId'] > 0){

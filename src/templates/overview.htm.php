@@ -29,7 +29,7 @@
                                                       src="../img/library.svg"
                                                       class="img-thumbnail" alt="..."></li>
                     <li class="list-inline-item" >
-                        5
+                        <?php echo getImageCountByEmailaddress(getSessionEmailaddress()) ?>
                     </li>
                 </ul>
             </li>
@@ -39,7 +39,7 @@
                                                       src="../img/library.svg"
                                                       class="img-thumbnail" alt="..."></li>
                     <li class="list-inline-item">
-                        5
+                        <?php echo getGalleryCountByEmailaddress(getSessionEmailaddress()) ?>
                     </li>
                 </ul>
             </li>

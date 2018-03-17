@@ -40,4 +40,16 @@ function getUserByEmailaddress($emailaddress){
     $answer = sqlSelect($sql);
     return $answer;
 }
+
+function getImageCountByEmailaddress($emailaddress){
+    $sql = "SELECT COUNT(ImageId) FROM image WHERE GalleryId = (SELECT GalleryId FROM gallery WHERE OwnerId = (SELECT UserId FROM `user` WHERE Emailaddress ='" . strtolower($emailaddress) . "'))";
+    $answer = sqlSelect($sql);
+    return $answer[0]["COUNT(ImageId)"];
+}
+
+function getGalleryCountByEmailaddress($emailaddress){
+    $sql = "SELECT COUNT(GalleryId) FROM gallery WHERE OwnerId = (SELECT UserId FROM `user` WHERE Emailaddress ='" . strtolower($emailaddress) . "')";
+    $answer = sqlSelect($sql);
+    return $answer[0]["COUNT(GalleryId)"];
+}
 ?>
