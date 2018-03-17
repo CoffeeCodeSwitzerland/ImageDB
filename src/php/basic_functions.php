@@ -32,6 +32,7 @@ function getPost($attr, $defvalue = "")
  * @param     $params       Assoziativer Array mit Werten, welche im Template eingefügt werden.
  *                          key: Name der Variable, value: Wert
  */
+
 function runTemplate($template)
 {
     ob_start();
@@ -183,4 +184,22 @@ function isNumber($value)
 {
     if (is_numeric($value)) return true;
     else return false;
+}
+
+
+function getSessionNickname(){
+    if(isset($_SESSION['userNickname'])) {
+        return $_SESSION['userNickname'];
+    } else {
+        return "Nickname";
+    }
+}
+
+function isSessionActive(){
+    if(isset($_SESSION['userId'])){
+        if($_SESSION['userId'] > 0){
+            return true;
+        }
+    }
+    return false;
 }

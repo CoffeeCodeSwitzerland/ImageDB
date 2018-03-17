@@ -24,4 +24,20 @@ function createUser($email, $nickname, $password) {
     $sql = "INSERT INTO `User` (Emailaddress, `Password`, Nickname, IsAdmin) VALUES ('" . $email . "','" . $password . "','" . $nickname . "',0)";
     sqlQuery($sql);
 }
+
+function areUserCredentialsValid($email, $password) {
+    $sql = "SELECT Password FROM `User` WHERE Emailaddress = '" . strtolower($email) . "';";
+    $answer = sqlSelect($sql);
+    //echo "<script>window.alert('" . $answer[0]["Password"] . "');</script>";
+    if (password_verify($password, $answer[0]['Password'])) {
+        return true;
+    }
+    return false;
+}
+
+function getUserByEmailaddress($emailaddress){
+    $sql = "SELECT * FROM `User` WHERE Emailaddress ='". $emailaddress . "';";
+    $answer = sqlSelect($sql);
+    return $answer;
+}
 ?>

@@ -13,20 +13,20 @@
                             </div>
                         </div>
                         <div class="row justify-content-center">
-                            <form>
+                            <form name="login" action="<?php echo getValue("phpmodule"); ?>" method="post">
                                 <div class="form-group">
-                                    <label for="exampleInputEmail1">Email address</label>
-                                    <input type="email" class="form-control" id="exampleInputEmail1"
+                                    <label for="login_emailaddress">Email address</label>
+                                    <input type="email" class="form-control" name="login_emailaddress" id="login_emailaddress"
                                            aria-describedby="emailHelp"
                                            placeholder="Enter email">
                                 </div>
                                 <div class="form-group">
-                                    <label for="exampleInputPassword1">Password</label>
-                                    <input type="password" class="form-control" id="exampleInputPassword1"
+                                    <label for="login_password">Password</label>
+                                    <input type="password" class="form-control" name="login_password" id="login_password"
                                            placeholder="Password">
                                 </div>
 
-                                <button type="submit" class="btn btn-primary">Submit</button>
+                                <button type="submit" id="login_login" class="btn btn-primary">Login</button>
                             </form>
                         </div>
                     </div>
