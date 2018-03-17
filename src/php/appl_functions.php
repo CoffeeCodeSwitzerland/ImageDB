@@ -21,6 +21,8 @@ function login()
             $canLogin = true;
             $user = getUserByEmailaddress($email);
             setSessionValues($user);
+        }else{
+            setValue("message", "<div class='alert alert-danger' id='login_invalidCredentials' role = 'alert'>Invalid credentials</div >");
         }
     }
 
@@ -88,7 +90,10 @@ function registration()
 function logout()
 {
     unsetSessionValues();
+    setValue('isLoggedOut', true);
+    setValue("message", "<div class='alert alert-success' role = 'alert'>Successfully logged out</div >");
     echo "<script>window.location.href='index.php?id=login'</script>";
+
 }
 
 function overview()

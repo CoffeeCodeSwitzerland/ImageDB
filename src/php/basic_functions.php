@@ -191,7 +191,7 @@ function getSessionNickname(){
     if(isset($_SESSION['userNickname'])) {
         return $_SESSION['userNickname'];
     } else {
-        return "Nickname";
+        return "{Nickname}";
     }
 }
 
@@ -199,7 +199,7 @@ function getSessionEmailaddress(){
     if(isset($_SESSION['userEmailaddress'])) {
         return $_SESSION['userEmailaddress'];
     } else {
-        return "Emailaddress";
+        return "{Emailaddress}";
     }
 }
 

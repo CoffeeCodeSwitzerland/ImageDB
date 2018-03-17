@@ -16,18 +16,30 @@
                             <form name="login" action="<?php echo getValue("phpmodule"); ?>" method="post">
                                 <div class="form-group">
                                     <label for="login_emailaddress">Email address</label>
-                                    <input type="email" class="form-control" name="login_emailaddress" id="login_emailaddress"
+                                    <input type="email" class="form-control contentCheck" name="login_emailaddress"
+                                           id="login_emailaddress"
                                            aria-describedby="emailHelp"
                                            placeholder="Enter email">
                                 </div>
                                 <div class="form-group">
                                     <label for="login_password">Password</label>
-                                    <input type="password" class="form-control" name="login_password" id="login_password"
+                                    <input type="password" class="form-control contentCheck" name="login_password"
+                                           id="login_password"
                                            placeholder="Password">
                                 </div>
 
                                 <button type="submit" id="login_login" class="btn btn-primary">Login</button>
                             </form>
+                        </div>
+                        <div class="row justify-content-center" style="margin-top: 1em;">
+                            <?php
+                            if (strlen(getValue('message')) > 0) {
+                                echo getValue('message');
+                            }
+                            ?>
+                            <div class="alert alert-primary" id="login_fieldsEmpty" role="alert">
+                                Fields are empty
+                            </div>
                         </div>
                     </div>
                 </div>
@@ -35,3 +47,4 @@
         </div>
     </div>
 </div>
+<script src="../js/login.js"></script>

@@ -25,12 +25,15 @@ function createUser($email, $nickname, $password) {
     sqlQuery($sql);
 }
 
-function areUserCredentialsValid($email, $password) {
+function areUserCredentialsValid($email, $password)
+{
     $sql = "SELECT Password FROM `User` WHERE Emailaddress = '" . strtolower($email) . "';";
     $answer = sqlSelect($sql);
-    //echo "<script>window.alert('" . $answer[0]["Password"] . "');</script>";
-    if (password_verify($password, $answer[0]['Password'])) {
-        return true;
+//    echo "<script>window.alert('" . $answer[0]["Password"] . "');</script>";
+    if (!empty($answer[0]['Password'])) {
+        if (password_verify($password, $answer[0]['Password'])) {
+            return true;
+        }
     }
     return false;
 }
@@ -45,6 +48,7 @@ function getImageCountByEmailaddress($emailaddress){
     $sql = "SELECT COUNT(ImageId) FROM image WHERE GalleryId = (SELECT GalleryId FROM gallery WHERE OwnerId = (SELECT UserId FROM `user` WHERE Emailaddress ='" . strtolower($emailaddress) . "'))";
     $answer = sqlSelect($sql);
     return $answer[0]["COUNT(ImageId)"];
+
 }
 
 function getGalleryCountByEmailaddress($emailaddress){
