@@ -21,7 +21,7 @@ function login()
             $canLogin = true;
             $user = getUserByEmailaddress($email);
             setSessionValues($user);
-        }else{
+        } else {
             setValue("message", "<div class='alert alert-danger' id='login_invalidCredentials' role = 'alert'>Invalid credentials</div >");
         }
     }
@@ -101,5 +101,30 @@ function overview()
     return runTemplate("../templates/" . getValue("func") . ".htm.php");
 }
 
+function galleries()
+{
+    return runTemplate("../templates/" . getValue("func") . ".htm.php");
+}
+
+function getGalleriesBySessionUser()
+{
+    $galleries = getGalleriesByUser(getSessionUserId());
+    $html = "";
+    if (!empty($galleries)) {
+
+        foreach ($galleries as $gallery) {
+            $html .= "<div class='card border-secondary mb-3' style='max-width: 18rem;'>
+                           <div class='card-header'></div>
+                                <div class='card-body text-secondary'>
+                                   <h5 class='card-title'>" .$gallery['Title'] . "</h5>
+                                   <p class='card-text'>" .$gallery['Description'] . "</p>
+                            </div>
+                       </div>";
+        }
+        windowAlert('in');
+        return $html;
+    }
+    return "<div class='row justify-content-center'><div class='col-md-4'>There aren't any galleries yet</div></div>";
+}
 
 ?>

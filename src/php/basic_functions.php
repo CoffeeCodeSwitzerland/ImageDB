@@ -203,6 +203,14 @@ function getSessionEmailaddress(){
     }
 }
 
+function getSessionUserId(){
+    if(isset($_SESSION['userId'])) {
+        return $_SESSION['userId'];
+    } else {
+        return "{UserID}";
+    }
+}
+
 function isSessionActive(){
     if(isset($_SESSION['userId'])){
         if($_SESSION['userId'] > 0){
@@ -210,4 +218,8 @@ function isSessionActive(){
         }
     }
     return false;
+}
+
+function windowAlert($content){
+    echo "<script>window.alert('" . $content . "')</script>";
 }
