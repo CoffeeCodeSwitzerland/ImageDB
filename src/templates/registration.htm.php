@@ -2,7 +2,7 @@
 <div class="jumbotron jumbotron-fluid text-center">
     <div class="container">
         <h1 class="display-4">Registration</h1>
-        <p class="lead">Type in your credentials ans let's go</p>
+        <p class="lead">Type in your credentials and let's go</p>
     </div>
 </div>
 <div class="row justify-content-md-center">
