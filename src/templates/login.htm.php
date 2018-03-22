@@ -1,21 +1,50 @@
-<div class="col-md-12">
-<form name="kontakt" class="form-horizontal form-condensed" action="" method="post">
-  <div class="form-group control-group">
-	<label class="control-label col-md-offset-2 col-md-2" for="email">E-Mail</label>
-	<div class="col-md-4">
-	  <input type="email" class="form-control" id="email" name="email" value="" />
-	</div>
-  </div>
-  <div class="form-group control-group">
-	<label class="control-label col-md-offset-2 col-md-2" for="password">Passwort</label>
-	<div class="col-md-4">
-	  <input type="password" class="form-control" id="password" name="password" value="" />
-	</div>
-  </div>
-  <div class="form-group control-group">
-	<div class="col-md-offset-4 col-md-4">
-	  <button type="submit" class="btn btn-success" name="login" id="login">login</button>
-	</div>
-  </div>
-</form>
+<div class="jumbotron vertical-center" style="height: 100%">
+    <div class="container">
+        <div class="row justify-content-center">
+            <div class="col-md-5">
+                <div class="card">
+                    <div class="card-body">
+                        <div class="row justify-content-center">
+                            <div class="card text-white" style="border:none">
+                                <img class="card-img" src="../img/locked.svg" alt="Card image">
+                                <div class="card-img-overlay">
+
+                                </div>
+                            </div>
+                        </div>
+                        <div class="row justify-content-center">
+                            <form name="login" action="<?php echo getValue("phpmodule"); ?>" method="post">
+                                <div class="form-group">
+                                    <label for="login_emailaddress">Email address</label>
+                                    <input type="email" class="form-control contentCheck" name="login_emailaddress"
+                                           id="login_emailaddress"
+                                           aria-describedby="emailHelp"
+                                           placeholder="Enter email">
+                                </div>
+                                <div class="form-group">
+                                    <label for="login_password">Password</label>
+                                    <input type="password" class="form-control contentCheck" name="login_password"
+                                           id="login_password"
+                                           placeholder="Password">
+                                </div>
+
+                                <button type="submit" id="login_login" class="btn btn-primary">Login</button>
+                            </form>
+                        </div>
+                        <div class="row justify-content-center" style="margin-top: 1em;">
+                            <?php
+                            if (strlen(getValue('message')) > 0) {
+                                echo getValue('message');
+                            }
+                            ?>
+                            <div class="alert alert-primary" id="login_fieldsEmpty" role="alert">
+                                Fields are empty
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
 </div>
+<script src="../js/login.js"></script>
