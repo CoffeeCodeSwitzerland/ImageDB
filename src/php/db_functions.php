@@ -18,10 +18,9 @@ function userWithEmailaddressExists($email)
     return false;
 }
 
-function createUser($email, $nickname, $password) {
-    $options = ['cost' => 12];
-    $password = password_hash($password, PASSWORD_BCRYPT, $options);
-    $sql = "INSERT INTO `User` (Emailaddress, `Password`, Nickname, IsAdmin) VALUES ('" . $email . "','" . $password . "','" . $nickname . "',0)";
+function createUser($email, $nickname, $password)
+{
+    $sql = "INSERT INTO `User` (Emailaddress, `Password`, Nickname, IsAdmin) VALUES ('" . $email . "','" . hashPassword($password) . "','" . $nickname . "',0)";
     sqlQuery($sql);
 }
 
@@ -38,29 +37,61 @@ function areUserCredentialsValid($email, $password)
     return false;
 }
 
-function getUserByEmailaddress($emailaddress){
-    $sql = "SELECT * FROM `User` WHERE Emailaddress ='". $emailaddress . "';";
+function isUserPasswordMatching($userId, $raw)
+{
+    $sql = "SELECT Password FROM `User` WHERE UserId = " . $userId . ";";
+    $answer = sqlSelect($sql);
+    windowAlert(json_encode($answer));
+    if(!empty($answer[0]['Password'])){
+         return password_verify($raw,$answer[0]['Password']);
+    }
+    return false;
+}
+
+function getUserByEmailaddress($emailaddress)
+{
+    $sql = "SELECT * FROM `User` WHERE Emailaddress ='" . $emailaddress . "';";
     $answer = sqlSelect($sql);
     return $answer;
 }
 
-function getImageCountByEmailaddress($emailaddress){
+function getImageCountByEmailaddress($emailaddress)
+{
     $sql = "SELECT COUNT(ImageId) FROM image WHERE GalleryId = (SELECT GalleryId FROM gallery WHERE OwnerId = (SELECT UserId FROM `user` WHERE Emailaddress ='" . strtolower($emailaddress) . "'))";
     $answer = sqlSelect($sql);
     return $answer[0]["COUNT(ImageId)"];
 
 }
 
-function getGalleryCountByEmailaddress($emailaddress){
+function getGalleryCountByEmailaddress($emailaddress)
+{
     $sql = "SELECT COUNT(GalleryId) FROM gallery WHERE OwnerId = (SELECT UserId FROM `user` WHERE Emailaddress ='" . strtolower($emailaddress) . "')";
     $answer = sqlSelect($sql);
     return $answer[0]["COUNT(GalleryId)"];
 }
 
-function getGalleriesByUser($userId) {
-    $sql = "SELECT * FROM gallery WHERE OwnerId=".$userId.";";
+function getGalleriesByUser($userId)
+{
+    $sql = "SELECT * FROM gallery WHERE OwnerId=" . $userId . ";";
     $answer = sqlSelect($sql);
-    echo "<script>console.log('".json_encode($answer)."')</script>";
+    echo "<script>console.log('" . json_encode($answer) . "')</script>";
     return $answer;
 }
+
+function updateUserNicknameByUserId($userId, $nickname)
+{
+    $sql = "UPDATE `User` SET Nickname = '" . $nickname ."' WHERE UserId=" . $userId . ";";
+    sqlQuery($sql);
+}
+
+function updateUserPasswordByUserId($userId, $password){
+    $sql = "UPDATE `User` SET Password = '" . hashPassword($password) .  "' WHERE UserId =" . $userId . ";";
+    sqlQuery($sql);
+}
+
+function hashPassword($password){
+    $options = ['cost' => 12];
+    return password_hash($password, PASSWORD_BCRYPT, $options);
+}
+
 ?>

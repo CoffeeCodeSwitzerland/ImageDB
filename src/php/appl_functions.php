@@ -31,11 +31,14 @@ function login()
     }
 
     if ($canLogin) {
+        setValue("func", "overview");
+        setValue("phpmodule", "localhost/ImageDB/src/php/user.php" . "?id=" . getValue("func"));
         echo "<script>window.location.href='user.php?id=overview'</script>";
+        return null;
     }
+
     setValue("phpmodule", $_SERVER['PHP_SELF'] . "?id=" . getValue("func"));
     return runTemplate("../templates/" . getValue("func") . ".htm.php");
-
 }
 
 function setSessionValues($user)
@@ -69,10 +72,7 @@ function registration()
         } else {
             $nickname = $emailaddress;
         }
-        $uppercase = preg_match('@[A-Z]@', $password);
-        $lowercase = preg_match('@[a-z]@', $password);
-        $number = preg_match('@[0-9]@', $password);
-        if ($uppercase && $lowercase && $number && strlen($password) >= 8) {
+        if (isPasswortMatchingRequirements($password)) {
             if (userWithEmailaddressExists($emailaddress)) {
                 setValue("message", "<div class='alert alert-danger' role = 'alert'> The user already exists</div >");
             } else {
@@ -98,6 +98,37 @@ function logout()
 
 function overview()
 {
+    if (isset($_POST['overview_deleteContent'])) {
+
+    } else {
+        if (isset($_POST['overview_nickname'])) {
+            $nickName = $_POST['overview_nickname'];
+            if ($nickName != getSessionNickname()) {
+                windowAlert($nickName);
+                updateUserNicknameByUserId(getSessionUserId(), $nickName);
+                setSessionNickname($nickName);
+            }
+        }
+
+        if (isset($_POST['overview_currentPassword']) &&
+            isset($_POST['overview_newPassword']) &&
+            isset($_POST['overview_newPasswordRepeat'])) {
+            $currentPassword = $_POST['overview_currentPassword'];
+            $newPassword = $_POST['overview_newPassword'];
+            $newPasswordRepeat = $_POST['overview_newPasswordRepeat'];
+            windowAlert('Inside');
+            if (isUserPasswordMatching(getSessionUserId(), $currentPassword)) {
+                windowAlert('PasswordMatching');
+                if (isPasswortMatchingRequirements($newPassword)) {
+                    windowAlert('MatchingRequirements');
+                    windowAlert($newPassword);
+//                    updateUserPasswordByUserId(getSessionUserId(), $newPassword);
+                }
+            }
+        }
+    }
+
+    setValue("phpmodule", $_SERVER['PHP_SELF'] . "?id=" . getValue("func"));
     return runTemplate("../templates/" . getValue("func") . ".htm.php");
 }
 
@@ -116,8 +147,8 @@ function getGalleriesBySessionUser()
             $html .= "<div class='card border-secondary mb-3' style='max-width: 18rem;'>
                            <div class='card-header'></div>
                                 <div class='card-body text-secondary'>
-                                   <h5 class='card-title'>" .$gallery['Title'] . "</h5>
-                                   <p class='card-text'>" .$gallery['Description'] . "</p>
+                                   <h5 class='card-title'>" . $gallery['Title'] . "</h5>
+                                   <p class='card-text'>" . $gallery['Description'] . "</p>
                             </div>
                        </div>";
         }
@@ -125,6 +156,14 @@ function getGalleriesBySessionUser()
         return $html;
     }
     return "<div class='row justify-content-center'><div class='col-md-4'>There aren't any galleries yet</div></div>";
+}
+
+function isPasswortMatchingRequirements($password)
+{
+    $uppercase = preg_match('@[A-Z]@', $password);
+    $lowercase = preg_match('@[a-z]@', $password);
+    $number = preg_match('@[0-9]@', $password);
+    return $uppercase && $lowercase && $number && strlen(trim($password)) >= 8;
 }
 
 ?>

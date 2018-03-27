@@ -187,39 +187,50 @@ function isNumber($value)
 }
 
 
-function getSessionNickname(){
-    if(isset($_SESSION['userNickname'])) {
+function getSessionNickname()
+{
+    if (isset($_SESSION['userNickname'])) {
         return $_SESSION['userNickname'];
     } else {
         return "{Nickname}";
     }
 }
 
-function getSessionEmailaddress(){
-    if(isset($_SESSION['userEmailaddress'])) {
+function setSessionNickname($nickName)
+{
+    $_SESSION['userNickname'] = $nickName;
+}
+
+
+function getSessionEmailaddress()
+{
+    if (isset($_SESSION['userEmailaddress'])) {
         return $_SESSION['userEmailaddress'];
     } else {
         return "{Emailaddress}";
     }
 }
 
-function getSessionUserId(){
-    if(isset($_SESSION['userId'])) {
+function getSessionUserId()
+{
+    if (isset($_SESSION['userId'])) {
         return $_SESSION['userId'];
     } else {
         return "{UserID}";
     }
 }
 
-function isSessionActive(){
-    if(isset($_SESSION['userId'])){
-        if($_SESSION['userId'] > 0){
+function isSessionActive()
+{
+    if (isset($_SESSION['userId'])) {
+        if ($_SESSION['userId'] > 0) {
             return true;
         }
     }
     return false;
 }
 
-function windowAlert($content){
-    echo "<script>window.alert('" . $content . "')</script>";
+function windowAlert($content)
+{
+    echo "<script>window.alert('" . json_encode($content) . "')</script>";
 }
