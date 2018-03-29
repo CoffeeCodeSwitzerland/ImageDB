@@ -42,8 +42,8 @@ function isUserPasswordMatching($userId, $raw)
     $sql = "SELECT Password FROM `User` WHERE UserId = " . $userId . ";";
     $answer = sqlSelect($sql);
     windowAlert(json_encode($answer));
-    if(!empty($answer[0]['Password'])){
-         return password_verify($raw,$answer[0]['Password']);
+    if (!empty($answer[0]['Password'])) {
+        return password_verify($raw, $answer[0]['Password']);
     }
     return false;
 }
@@ -78,18 +78,35 @@ function getGalleriesByUser($userId)
     return $answer;
 }
 
+function createGallery($userId, $galleryTitle, $galleryDescription, $galleryPath)
+{
+    $sql = "INSERT INTO `gallery` (Title, Description, OwnerId,  DirectoryPath) VALUES('" . $galleryTitle . "', '" . $galleryDescription . "', '" . $userId . "' , '" . $galleryPath . "')";
+}
+
+function isGalleryExisting($userId, $galleryTitle)
+{
+    $sql = "SELECT Count(GalleryId) FROM `gallery` WHERE GalleryTitle='" . $galleryTitle . "' AND OwnerId = '" . $userId . "'  ;";
+    $answer = sqlSelect($sql);
+    if ($answer[0]['Count(GalleryId)'] == 0) {
+        return false;
+    }
+    return true;
+}
+
 function updateUserNicknameByUserId($userId, $nickname)
 {
-    $sql = "UPDATE `User` SET Nickname = '" . $nickname ."' WHERE UserId=" . $userId . ";";
+    $sql = "UPDATE `User` SET Nickname = '" . $nickname . "' WHERE UserId=" . $userId . ";";
     sqlQuery($sql);
 }
 
-function updateUserPasswordByUserId($userId, $password){
-    $sql = "UPDATE `User` SET Password = '" . hashPassword($password) .  "' WHERE UserId =" . $userId . ";";
+function updateUserPasswordByUserId($userId, $password)
+{
+    $sql = "UPDATE `User` SET Password = '" . hashPassword($password) . "' WHERE UserId =" . $userId . ";";
     sqlQuery($sql);
 }
 
-function hashPassword($password){
+function hashPassword($password)
+{
     $options = ['cost' => 12];
     return password_hash($password, PASSWORD_BCRYPT, $options);
 }

@@ -104,7 +104,6 @@ function overview()
         if (isset($_POST['overview_nickname'])) {
             $nickName = $_POST['overview_nickname'];
             if ($nickName != getSessionNickname()) {
-                windowAlert($nickName);
                 updateUserNicknameByUserId(getSessionUserId(), $nickName);
                 setSessionNickname($nickName);
             }
@@ -116,13 +115,9 @@ function overview()
             $currentPassword = $_POST['overview_currentPassword'];
             $newPassword = $_POST['overview_newPassword'];
             $newPasswordRepeat = $_POST['overview_newPasswordRepeat'];
-            windowAlert('Inside');
             if (isUserPasswordMatching(getSessionUserId(), $currentPassword)) {
-                windowAlert('PasswordMatching');
                 if (isPasswortMatchingRequirements($newPassword)) {
-                    windowAlert('MatchingRequirements');
-                    windowAlert($newPassword);
-//                    updateUserPasswordByUserId(getSessionUserId(), $newPassword);
+                    updateUserPasswordByUserId(getSessionUserId(), $newPassword);
                 }
             }
         }
@@ -134,6 +129,20 @@ function overview()
 
 function galleries()
 {
+    if (isset($_POST['galleries_newGalleryName'])) {
+        $galleryTitle = trim($_POST['galleries_newGalleryName']);
+        $galleryDescription = $_POST['galleries_newGalleryDescription'];
+        if (isGalleryExisting(getSessionUserId(), $galleryTitle)) {
+            $galleryPath = getGalleryPath($galleryTitle);
+            if ($galleryPath != "") {
+                createGallery(getSessionUserId(), $galleryTitle, $galleryDescription, $galleryPath);
+                setValue('message',"<div class='alert alert-danger' role = 'alert'>The gallery '" . $galleryTitle . "' is already taken</div >" );
+            }else{
+                setValue('message',"<div class='alert alert-success' role = 'alert'>The gallery '" . $galleryTitle . "' has been created</div >" );
+            }
+        }
+    }
+    setValue("phpmodule", $_SERVER['PHP_SELF'] . "?id=" . getValue("func"));
     return runTemplate("../templates/" . getValue("func") . ".htm.php");
 }
 
@@ -164,6 +173,17 @@ function isPasswortMatchingRequirements($password)
     $lowercase = preg_match('@[a-z]@', $password);
     $number = preg_match('@[0-9]@', $password);
     return $uppercase && $lowercase && $number && strlen(trim($password)) >= 8;
+}
+
+
+function getGalleryPath($galleryTitle)
+{
+    $path = getValue('galleryRoot') . "\\" . getSessionEmailaddress() . "\\" . strtolower($galleryTitle);
+    if (!file_exists($path)) {
+        mkdir($path);
+        return $path;
+    }
+    return "";
 }
 
 ?>
