@@ -106,6 +106,7 @@ function overview()
             if ($nickName != getSessionNickname()) {
                 updateUserNicknameByUserId(getSessionUserId(), $nickName);
                 setSessionNickname($nickName);
+                setValue('message', "<div class='alert alert-success' role = 'alert'>The nickname has been updated</div >");
             }
         }
 
@@ -115,9 +116,16 @@ function overview()
             $currentPassword = $_POST['overview_currentPassword'];
             $newPassword = $_POST['overview_newPassword'];
             $newPasswordRepeat = $_POST['overview_newPasswordRepeat'];
-            if (isUserPasswordMatching(getSessionUserId(), $currentPassword)) {
-                if (isPasswortMatchingRequirements($newPassword)) {
-                    updateUserPasswordByUserId(getSessionUserId(), $newPassword);
+            if (strlen(trim($currentPassword)) > 0) {
+                if (isUserPasswordMatching(getSessionUserId(), $currentPassword)) {
+                    if (isPasswortMatchingRequirements($newPassword)) {
+                        updateUserPasswordByUserId(getSessionUserId(), $newPassword);
+                        setValue('message', getValue('message') . "<div class='alert alert-success' role = 'alert'>The password has been updated</div >");
+                    } else {
+                        setValue('message', "<div class='alert alert-danger' role = 'alert'>The password doesn't match the rules</div >");
+                    }
+                } else {
+                    setValue('message', getValue('message') . "<div class='alert alert-danger' role = 'alert'>The credentials are invalid</div >");
                 }
             }
         }
@@ -136,9 +144,9 @@ function galleries()
             $galleryPath = getGalleryPath($galleryTitle);
             if ($galleryPath != "") {
                 createGallery(getSessionUserId(), $galleryTitle, $galleryDescription, $galleryPath);
-                setValue('message',"<div class='alert alert-danger' role = 'alert'>The gallery '" . $galleryTitle . "' is already taken</div >" );
-            }else{
-                setValue('message',"<div class='alert alert-success' role = 'alert'>The gallery '" . $galleryTitle . "' has been created</div >" );
+                setValue('message', "<div class='alert alert-danger' role = 'alert'>The gallery '" . $galleryTitle . "' is already taken</div >");
+            } else {
+                setValue('message', "<div class='alert alert-success' role = 'alert'>The gallery '" . $galleryTitle . "' has been created</div >");
             }
         }
     }

@@ -41,7 +41,6 @@ function isUserPasswordMatching($userId, $raw)
 {
     $sql = "SELECT Password FROM `User` WHERE UserId = " . $userId . ";";
     $answer = sqlSelect($sql);
-    windowAlert(json_encode($answer));
     if (!empty($answer[0]['Password'])) {
         return password_verify($raw, $answer[0]['Password']);
     }

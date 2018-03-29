@@ -33,6 +33,12 @@
                  id="overview_deleteAccount">Delete account
             </div>
         </form>
+        <?php
+            $message = getValue('message');
+            if(!empty($message)){
+                echo "<div style='margin-top: 2em;'>" . $message ."</div>";
+            }
+        ?>
         <div class="modal fade" id="overview_modelDeleteAccount" tabindex="-1" role="dialog"
              aria-labelledby="overview_deleteAccount" aria-hidden="true">
             <div class="modal-dialog modal-dialog-centered" role="document">
