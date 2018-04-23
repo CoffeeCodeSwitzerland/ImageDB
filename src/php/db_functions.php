@@ -92,6 +92,12 @@ function isGalleryExisting($userId, $galleryTitle)
     return true;
 }
 
+function deleteUserByUserId($userId)
+{
+    $sql = "DELETE FROM `user` WHERE UserId =". $userId .";";
+    sqlQuery($sql);
+}
+
 function updateUserNicknameByUserId($userId, $nickname)
 {
     $sql = "UPDATE `User` SET Nickname = '" . $nickname . "' WHERE UserId=" . $userId . ";";

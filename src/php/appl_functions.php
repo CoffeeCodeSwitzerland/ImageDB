@@ -99,7 +99,11 @@ function logout()
 function overview()
 {
     if (isset($_POST['overview_deleteContent'])) {
-
+        deleteUserByUserId(getSessionUserId());
+        setValue('message', "<div class='alert alert-danger' role = 'alert'>The user has been removed</div >");
+        unsetSessionValues();
+        setValue('func','login');
+        setValue("phpmodule", "localhost/ImageDB/src/php/index.php" . "?id=" . getValue("func"));
     } else {
         if (isset($_POST['overview_nickname'])) {
             $nickName = $_POST['overview_nickname'];
