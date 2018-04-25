@@ -11,3 +11,8 @@
     display: flex;
     align-items: center;
 }
+
+.galleryActive {
+    background-color: darkgray;
+    color: white;
+}

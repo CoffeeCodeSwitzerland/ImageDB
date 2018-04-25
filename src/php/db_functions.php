@@ -56,7 +56,7 @@ function getUserByEmailaddress($emailaddress)
 
 function getImageCountByEmailaddress($emailaddress)
 {
-    $sql = "SELECT COUNT(ImageId) FROM image WHERE GalleryId = (SELECT GalleryId FROM gallery WHERE OwnerId = (SELECT UserId FROM `user` WHERE Emailaddress ='" . strtolower($emailaddress) . "'))";
+    $sql = "SELECT COUNT(ImageId) FROM image WHERE GalleryId IN (SELECT GalleryId FROM gallery WHERE OwnerId = (SELECT UserId FROM `user` WHERE Emailaddress ='" . strtolower($emailaddress) . "'))";
     $answer = sqlSelect($sql);
     return $answer[0]["COUNT(ImageId)"];
 
@@ -73,18 +73,18 @@ function getGalleriesByUser($userId)
 {
     $sql = "SELECT * FROM gallery WHERE OwnerId=" . $userId . ";";
     $answer = sqlSelect($sql);
-    echo "<script>console.log('" . json_encode($answer) . "')</script>";
     return $answer;
 }
 
 function createGallery($userId, $galleryTitle, $galleryDescription, $galleryPath)
 {
     $sql = "INSERT INTO `gallery` (Title, Description, OwnerId,  DirectoryPath) VALUES('" . $galleryTitle . "', '" . $galleryDescription . "', '" . $userId . "' , '" . $galleryPath . "')";
+    sqlQuery($sql);
 }
 
 function isGalleryExisting($userId, $galleryTitle)
 {
-    $sql = "SELECT Count(GalleryId) FROM `gallery` WHERE GalleryTitle='" . $galleryTitle . "' AND OwnerId = '" . $userId . "'  ;";
+    $sql = "SELECT Count(GalleryId) FROM `gallery` WHERE Title='" . $galleryTitle . "' AND OwnerId =" . $userId . ";";
     $answer = sqlSelect($sql);
     if ($answer[0]['Count(GalleryId)'] == 0) {
         return false;

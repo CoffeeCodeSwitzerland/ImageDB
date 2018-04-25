@@ -144,12 +144,11 @@ function galleries()
     if (isset($_POST['galleries_newGalleryName'])) {
         $galleryTitle = trim($_POST['galleries_newGalleryName']);
         $galleryDescription = $_POST['galleries_newGalleryDescription'];
-        if (isGalleryExisting(getSessionUserId(), $galleryTitle)) {
+        setValue('message', "<div class='alert alert-danger' role = 'alert'>The gallery '" . $galleryTitle . "' is already taken</div >");
+        if (!isGalleryExisting(getSessionUserId(), $galleryTitle)) {
             $galleryPath = getGalleryPath($galleryTitle);
             if ($galleryPath != "") {
-                createGallery(getSessionUserId(), $galleryTitle, $galleryDescription, $galleryPath);
-                setValue('message', "<div class='alert alert-danger' role = 'alert'>The gallery '" . $galleryTitle . "' is already taken</div >");
-            } else {
+                createGallery(getSessionUserId(), $galleryTitle, $galleryDescription, escapeString($galleryPath));
                 setValue('message', "<div class='alert alert-success' role = 'alert'>The gallery '" . $galleryTitle . "' has been created</div >");
             }
         }
@@ -163,17 +162,24 @@ function getGalleriesBySessionUser()
     $galleries = getGalleriesByUser(getSessionUserId());
     $html = "";
     if (!empty($galleries)) {
-
+        $rowItems = 0;
         foreach ($galleries as $gallery) {
-            $html .= "<div class='card border-secondary mb-3' style='max-width: 18rem;'>
+            if($rowItems == 0){
+                $html .= "<div class='row m-3'>";
+            }
+            $html .= "<div class='col-md-3'><div class='card border-secondary galleryItem'>
                            <div class='card-header'></div>
-                                <div class='card-body text-secondary'>
+                                <div class='card-body'>
                                    <h5 class='card-title'>" . $gallery['Title'] . "</h5>
                                    <p class='card-text'>" . $gallery['Description'] . "</p>
                             </div>
-                       </div>";
+                       </div></div>";
+            $rowItems++;
+            if($rowItems == 4){
+                $html .= '</div>';
+                $rowItems = 0;
+            }
         }
-        windowAlert('in');
         return $html;
     }
     return "<div class='row justify-content-center'><div class='col-md-4'>There aren't any galleries yet</div></div>";
@@ -192,10 +198,14 @@ function getGalleryPath($galleryTitle)
 {
     $path = getValue('galleryRoot') . "\\" . getSessionEmailaddress() . "\\" . strtolower($galleryTitle);
     if (!file_exists($path)) {
-        mkdir($path);
+        exec("md " . $path );
         return $path;
     }
     return "";
+}
+
+function escapeString($toEscape){
+    return str_replace('\\', '\\\\', $toEscape);
 }
 
 ?>

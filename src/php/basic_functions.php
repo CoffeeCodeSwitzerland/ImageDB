@@ -123,7 +123,7 @@ function getHtmlValue($key)
 function sqlSelect($sql)
 {
     $result = mysqli_query(getValue("cfg_db"), $sql);
-    if (!$result) die("Fehler: " . mysqli_error());
+    if (!$result) die("Fehler: " . mysqli_error(getValue("cfg_db")));
     if (mysqli_num_rows($result) > 0) {
         while ($row = mysqli_fetch_assoc($result)) $data[] = $row;
     } else $data = "";

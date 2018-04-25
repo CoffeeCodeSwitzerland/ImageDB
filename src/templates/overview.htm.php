@@ -20,7 +20,8 @@
             </div>
             <div class="form-group">
                 <label for="overview_newPassword">Password</label>
-                <input name="overview_newPassword" type="password" class="form-control contentCheck" id="overview_newPassword"
+                <input name="overview_newPassword" type="password" class="form-control contentCheck"
+                       id="overview_newPassword"
                        placeholder="New">
             </div>
             <div class="form-group">
@@ -34,10 +35,10 @@
             </div>
         </form>
         <?php
-            $message = getValue('message');
-            if(!empty($message)){
-                echo "<div style='margin-top: 2em;'>" . $message ."</div>";
-            }
+        $message = getValue('message');
+        if (!empty($message)) {
+            echo "<div style='margin-top: 2em;'>" . $message . "</div>";
+        }
         ?>
         <div class="modal fade" id="overview_modelDeleteAccount" tabindex="-1" role="dialog"
              aria-labelledby="overview_deleteAccount" aria-hidden="true">
@@ -55,8 +56,11 @@
                     <div class="modal-footer">
                         <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
                         <form action="<?php echo getValue("phpmodule") ?>" method="post">
-                            <input type="text" value="delete" id="overview_deleteContent" name="overview_deleteContent" hidden>
-                            <button type="submit" class="btn btn-danger" name="overview_delete" id="overview_delete" value="Delete account">Delete account</button>
+                            <input type="text" value="delete" id="overview_deleteContent" name="overview_deleteContent"
+                                   hidden>
+                            <button type="submit" class="btn btn-danger" name="overview_delete" id="overview_delete"
+                                    value="Delete account">Delete account
+                            </button>
                         </form>
                     </div>
                 </div>
