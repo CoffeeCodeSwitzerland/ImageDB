@@ -161,14 +161,15 @@ function galleries()
     }
 
     if (isset($_POST['galleries_newGalleryName'])) {
-        $galleryTitle = trim($_POST['galleries_newGalleryName']);
+        $galleryTitle = strtolower(str_replace(" ", "", $_POST['galleries_newGalleryName']));
         $galleryDescription = $_POST['galleries_newGalleryDescription'];
-        setValue('message', "<div class='alert alert-danger' role = 'alert'>The gallery '" . $galleryTitle . "' is already taken</div >");
+        $galleryShowTitle = $_POST['galleries_newGalleryName'];
+        setMessage("The gallery '" . $galleryTitle . "' is already taken", "alert-danger");
         if (!isGalleryExisting(getSessionUserId(), $galleryTitle)) {
             $galleryPath = getGalleryPath($galleryTitle);
             if ($galleryPath != "") {
-                createGallery(getSessionUserId(), $galleryTitle, $galleryDescription, escapeString($galleryPath));
-                setValue('message', "<div class='alert alert-success' role = 'alert'>The gallery '" . $galleryTitle . "' has been created</div >");
+                createGallery(getSessionUserId(), $galleryTitle, $galleryShowTitle , $galleryDescription, escapeString($galleryPath));
+                setMessage("The gallery has vbeen created", "alert-success");
             }
         }
     }
@@ -186,7 +187,7 @@ function getGalleriesBySessionUser()
             if($rowItems == 0){
                 $html .= "<div class='row m-3'>";
             }
-            $html .= "<div class='col-md-3'><div class='card border-secondary galleryItem'>
+            $html .= "<div class='col-md-3'><div class='card border-secondary galleryItem' name='" . $gallery['GalleryId'] ."'>
                            <div class='card-header'></div>
                                 <div class='card-body'>
                                    <h5 class='card-title'>" . $gallery['Title'] . "</h5>

@@ -83,7 +83,7 @@ function createGallery($userId, $galleryTitle, $galleryShowTitle, $galleryDescri
 }
 
 function deleteGallery($galleryId) {
-    $sql = "DELETE FROM `gallery` WHERE GalleryId=" . $galleryId;
+    $sql = "DELETE FROM `gallery` WHERE GalleryId=" . $galleryId .";";
     sqlQuery($sql);
 }
 
