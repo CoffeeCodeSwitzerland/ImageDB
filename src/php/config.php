@@ -14,6 +14,10 @@ setValue("cfg_func_user_list", array("logout","overview","galleries"));
 // Inhalt des Menus
 setValue("cfg_menu_user_list", array("logout"=>"Logout","overview"=>"Overview","galleries"=>"Galleries"));
 
+setValue("cfg_func_admin_list", array("adminUsers","adminGalleries","logout"));
+// Inhalt des Menus
+setValue("cfg_menu_admin_list", array("adminUsers"=>"Users","adminGalleries"=>"Galleries","logout"=>"Logout"));
+
 //setValue("galleryRoot", "C:\\xampp\htdocs\ImageDB\src\storage\galleries\\");
 setValue("galleryRoot", "C:\\imagedb");
 

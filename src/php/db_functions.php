@@ -135,4 +135,25 @@ function getGalleryById($galleryId){
     $answer = sqlSelect($sql);
     return $answer;
 }
+function getAdminUserIds()
+{
+    $sql = "SELECT UserId FROM `User` WHERE IsAdmin = 1  ;";
+    $answer = sqlSelect($sql);
+    $toReturn = array();
+    foreach($answer as $row){
+      array_push($toReturn, $row['UserId']);
+    }
+    return $toReturn;
+}
+
+function getAllUsers(){
+    $sql = "SELECT * FROM `User`;";
+    $answer = sqlSelect($sql);
+    $toReturn = array();
+    foreach($answer as $row){
+      array_push($toReturn, $row);
+    }
+    return $toReturn;
+}
+
 ?>

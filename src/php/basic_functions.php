@@ -230,6 +230,16 @@ function isSessionActive()
     return false;
 }
 
+function isSessionUserAdmin()
+{
+    if (isset($_SESSION['userId'])) {
+        if (in_array($_SESSION['userId'], getAdminUserIds())) {
+            return true;
+        }
+    }
+    return false;
+}
+
 function windowAlert($content)
 {
     echo "<script>window.alert('" . json_encode($content) . "')</script>";

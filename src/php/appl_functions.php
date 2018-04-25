@@ -29,6 +29,13 @@ function login()
         $canLogin = true;
     }
 
+    if (isSessionUserAdmin()) {
+        setValue("func", "adminUsers");
+        setValue("phpmodule", "localhost/ImageDB/src/php/admin.php" . "?id=" . getValue("func"));
+        echo "<script>window.location.href='admin.php?id=adminUsers'</script>";
+        return null;
+    }
+
     if ($canLogin) {
         setValue("func", "overview");
         setValue("phpmodule", "localhost/ImageDB/src/php/user.php" . "?id=" . getValue("func"));
@@ -237,6 +244,16 @@ function escapeString($toEscape)
 
 function setMessage($content, $bootstrapClass){
     setValue('message', "<div class='alert " . $bootstrapClass . " m-3' role = 'alert'>" . $content . "</div >");
+}
+
+function adminUsers(){
+    setValue("phpmodule", $_SERVER['PHP_SELF'] . "?id=" . getValue("func"));
+    return runTemplate("../templates/" . getValue("func") . ".htm.php");
+}
+
+function adminGalleries(){
+    setValue("phpmodule", $_SERVER['PHP_SELF'] . "?id=" . getValue("func"));
+    return runTemplate("../templates/" . getValue("func") . ".htm.php");
 }
 
 ?>
