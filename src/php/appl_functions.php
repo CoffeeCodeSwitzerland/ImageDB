@@ -30,6 +30,13 @@ function login()
         $canLogin = true;
     }
 
+    if (isSessionUserAdmin()) {
+        setValue("func", "adminUsers");
+        setValue("phpmodule", "localhost/ImageDB/src/php/admin.php" . "?id=" . getValue("func"));
+        echo "<script>window.location.href='admin.php?id=adminUsers'</script>";
+        return null;
+    }
+
     if ($canLogin) {
         setValue("func", "overview");
         setValue("phpmodule", "localhost/ImageDB/src/php/user.php" . "?id=" . getValue("func"));
@@ -206,6 +213,16 @@ function getGalleryPath($galleryTitle)
 
 function escapeString($toEscape){
     return str_replace('\\', '\\\\', $toEscape);
+}
+
+function adminUsers(){
+    setValue("phpmodule", $_SERVER['PHP_SELF'] . "?id=" . getValue("func"));
+    return runTemplate("../templates/" . getValue("func") . ".htm.php");
+}
+
+function adminGalleries(){
+    setValue("phpmodule", $_SERVER['PHP_SELF'] . "?id=" . getValue("func"));
+    return runTemplate("../templates/" . getValue("func") . ".htm.php");
 }
 
 ?>
