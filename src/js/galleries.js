@@ -25,7 +25,13 @@ $(document).ready(function () {
             currentGallery.addClass('bg-light');
         }
         currentGallery = $(this);
+        console.log(currentGallery.attr('name'));
         currentGallery.removeClass('bg-light');
         currentGallery.addClass('bg-secondary text-white');
+    });
+
+    $('#gallery_deleteForm_deleteButton').on('click', function () {
+       $('#gallery_deleteForm_galleryId').val(currentGallery.attr('name'));
+       $('#gallery_deleteForm').submit();
     });
 });

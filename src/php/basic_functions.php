@@ -234,3 +234,8 @@ function windowAlert($content)
 {
     echo "<script>window.alert('" . json_encode($content) . "')</script>";
 }
+
+function consoleLog($content)
+{
+    echo "<script>console.log('" . $content . "');</script>";
+}

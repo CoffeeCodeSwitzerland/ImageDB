@@ -7,18 +7,18 @@
     <div class="collapse navbar-collapse" id="galleryNavBar">
         <ul class="navbar-nav">
             <li class="nav-item active">
-                    <button type="button" id="galleries_createGallery" class="btn btn-success" data-toggle="modal"
-                            data-target="#gallery_createGallerydialog">
-                        <span class="glyphicon glyphicon-alert"></span>New
-                    </button>
-                    <button type="button" id="galleries_editGallery" class="btn btn-secondary" data-toggle="modal"
-                            data-target="#gallery_createGallerydialog">
-                        <span class="glyphicon glyphicon-alert"></span>Edit
-                    </button>
-                    <button type="button" id="galleries_deleteGallery" class="btn btn-danger" data-toggle="modal"
-                            data-target="#gallery_createGallerydialog">
-                        <span class="glyphicon glyphicon-alert"></span>Delete
-                    </button>
+                <button type="button" id="galleries_createGallery" class="btn btn-success" data-toggle="modal"
+                        data-target="#gallery_createGallerydialog">
+                    <span class="glyphicon glyphicon-alert"></span>New
+                </button>
+                <button type="button" id="galleries_editGallery" class="btn btn-secondary" data-toggle="modal"
+                        data-target="#gallery_createGallerydialog">
+                    <span class="glyphicon glyphicon-alert"></span>Edit
+                </button>
+                <button type="button" id="galleries_deleteGallery" class="btn btn-danger" data-toggle="modal"
+                        data-target="#gallery_deleteGallerydialog">
+                    <span class="glyphicon glyphicon-alert"></span>Delete
+                </button>
             </li>
         </ul>
     </div>
@@ -30,7 +30,6 @@ if (!empty($message)) {
     echo $message;
 }
 ?>
-
 
 <div class="modal fade" id="gallery_createGallerydialog" tabindex="-1" role="dialog"
      aria-labelledby="galleries_createGallery" aria-hidden="true">
@@ -61,6 +60,30 @@ if (!empty($message)) {
     </div>
 </div>
 
+<div class="modal fade" id="gallery_deleteGallerydialog" tabindex="-1" role="dialog"
+     aria-labelledby="galleries_deleteGallery" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="exampleModalLongTitle">Delete gallery</h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="modal-body">
+                    After proceeding it's not possible to recover your data.
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+                <form method="post" id="gallery_deleteForm" action="<?php echo getValue("phpmodule") ?>">
+                    <input type="hidden" name="gallery_deleteForm_action" value="gallery_delete">
+                    <input type="hidden" name="gallery_deleteForm_galleryId" id="gallery_deleteForm_galleryId">
+                    <button type="button" id="gallery_deleteForm_deleteButton" class="btn btn-danger">Delete</button>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
 
 <?php echo getGalleriesBySessionUser() ?>
 

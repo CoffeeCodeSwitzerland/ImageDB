@@ -76,10 +76,24 @@ function getGalleriesByUser($userId)
     return $answer;
 }
 
-function createGallery($userId, $galleryTitle, $galleryDescription, $galleryPath)
+function createGallery($userId, $galleryTitle, $galleryShowTitle, $galleryDescription, $galleryPath)
 {
-    $sql = "INSERT INTO `gallery` (Title, Description, OwnerId,  DirectoryPath) VALUES('" . $galleryTitle . "', '" . $galleryDescription . "', '" . $userId . "' , '" . $galleryPath . "')";
+    $sql = "INSERT INTO `gallery` (Title, ShowTitle ,Description, OwnerId,  DirectoryPath) VALUES('" . $galleryTitle . "', '" . $galleryShowTitle . "', '" . $galleryDescription ."', '" . $userId . "' , '" . strtolower($galleryPath). "')";
     sqlQuery($sql);
+}
+
+function deleteGallery($galleryId) {
+    $sql = "DELETE FROM `gallery` WHERE GalleryId=" . $galleryId;
+    sqlQuery($sql);
+}
+
+function getImagePathsByGallery($galleryId){
+    $sql = "SELECT RelativePath FROM `image` WHERE GalleryId=" . $galleryId;
+    $answer = sqlSelect($sql);
+    $back = [];
+    foreach ($answer['RelativePath'] as $image){
+        $back.array_push($image);
+    }
 }
 
 function isGalleryExisting($userId, $galleryTitle)
@@ -116,4 +130,9 @@ function hashPassword($password)
     return password_hash($password, PASSWORD_BCRYPT, $options);
 }
 
+function getGalleryById($galleryId){
+    $sql = "SELECT * FROM `gallery` WHERE GalleryId=" . $galleryId . ";";
+    $answer = sqlSelect($sql);
+    return $answer;
+}
 ?>
