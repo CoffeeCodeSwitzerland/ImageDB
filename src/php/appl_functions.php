@@ -11,6 +11,7 @@
 function login()
 {
     $canLogin = false;
+    $userId = 0;
     if (isset($_POST['login_emailaddress']) && isset($_POST['login_password'])) {
         $email = $_POST['login_emailaddress'];
         $password = $_POST['login_password'];
@@ -109,7 +110,7 @@ function overview()
         deleteUserByUserId(getSessionUserId());
         setValue('message', "<div class='alert alert-danger' role = 'alert'>The user has been removed</div >");
         unsetSessionValues();
-        setValue('func', 'login');
+        setValue('func','login');
         setValue("phpmodule", "localhost/ImageDB/src/php/index.php" . "?id=" . getValue("func"));
         echo "<script>window.location.href='user.php?id=overview'</script>";
     } else {
@@ -127,6 +128,7 @@ function overview()
             isset($_POST['overview_newPasswordRepeat'])) {
             $currentPassword = $_POST['overview_currentPassword'];
             $newPassword = $_POST['overview_newPassword'];
+            $newPasswordRepeat = $_POST['overview_newPasswordRepeat'];
             if (strlen(trim($currentPassword)) > 0) {
                 if (isUserPasswordMatching(getSessionUserId(), $currentPassword)) {
                     if (isPasswortMatchingRequirements($newPassword)) {
@@ -140,8 +142,9 @@ function overview()
                 }
             }
         }
-        setValue("phpmodule", $_SERVER['PHP_SELF'] . "?id=" . getValue("func"));
     }
+
+    setValue("phpmodule", $_SERVER['PHP_SELF'] . "?id=" . getValue("func"));
     return runTemplate("../templates/" . getValue("func") . ".htm.php");
 }
 
@@ -158,16 +161,14 @@ function galleries()
     }
 
     if (isset($_POST['galleries_newGalleryName'])) {
-        $galleryTitle = strtolower(str_replace(" ", "", $_POST['galleries_newGalleryName']));
-        $galleryShowTitle = $_POST['galleries_newGalleryName'];
+        $galleryTitle = trim($_POST['galleries_newGalleryName']);
         $galleryDescription = $_POST['galleries_newGalleryDescription'];
-        setMessage("The gallery '" . $galleryShowTitle . "' is already taken", "alert-danger");
+        setValue('message', "<div class='alert alert-danger' role = 'alert'>The gallery '" . $galleryTitle . "' is already taken</div >");
         if (!isGalleryExisting(getSessionUserId(), $galleryTitle)) {
             $galleryPath = getGalleryPath($galleryTitle);
             if ($galleryPath != "") {
-                createGallery(getSessionUserId() ,$galleryTitle, $galleryShowTitle, $galleryDescription, escapeString($galleryPath));
-                setValue('message', "<div class='alert alert-success' role = 'alert'></div >");
-                setMessage("The gallery has been created", "alert-success");
+                createGallery(getSessionUserId(), $galleryTitle, $galleryDescription, escapeString($galleryPath));
+                setValue('message', "<div class='alert alert-success' role = 'alert'>The gallery '" . $galleryTitle . "' has been created</div >");
             }
         }
     }
@@ -182,25 +183,25 @@ function getGalleriesBySessionUser()
     if (!empty($galleries)) {
         $rowItems = 0;
         foreach ($galleries as $gallery) {
-            if ($rowItems == 0) {
+            if($rowItems == 0){
                 $html .= "<div class='row m-3'>";
             }
-            $html .= "<div name='" . $gallery['GalleryId'] . "' class='col-md-3'><div class='card border-secondary galleryItem' >
+            $html .= "<div class='col-md-3'><div class='card border-secondary galleryItem'>
                            <div class='card-header'></div>
                                 <div class='card-body'>
-                                   <h5 class='card-title'>" . $gallery['ShowTitle'] . "</h5>
+                                   <h5 class='card-title'>" . $gallery['Title'] . "</h5>
                                    <p class='card-text'>" . $gallery['Description'] . "</p>
                             </div>
                        </div></div>";
             $rowItems++;
-            if ($rowItems == 4) {
+            if($rowItems == 4){
                 $html .= '</div>';
                 $rowItems = 0;
             }
         }
         return $html;
     }
-    return "<div class='alert alert-info m-3' role='alert'>There aren't any galleries</div>";
+    return "<div class='alert alert-info m-3' role = 'alert'> There aren't any galleries yet </div >";
 }
 
 function isPasswortMatchingRequirements($password)
@@ -216,7 +217,7 @@ function getGalleryPath($galleryTitle)
 {
     $path = getValue('galleryRoot') . "\\" . getSessionEmailaddress() . "\\" . strtolower($galleryTitle);
     if (!file_exists($path)) {
-        exec("md " . $path);
+        exec("md " . $path );
         return $path;
     }
     return "";
@@ -241,6 +242,7 @@ function escapeString($toEscape)
 {
     return str_replace('\\', '\\\\', $toEscape);
 }
+
 
 function setMessage($content, $bootstrapClass){
     setValue('message', "<div class='alert " . $bootstrapClass . " m-3' role = 'alert'>" . $content . "</div >");
