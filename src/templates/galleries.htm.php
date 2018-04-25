@@ -7,10 +7,18 @@
     <div class="collapse navbar-collapse" id="galleryNavBar">
         <ul class="navbar-nav">
             <li class="nav-item active">
-                <button type="button" id="galleries_createGallery" class="btn btn-success" data-toggle="modal"
-                        data-target="#gallery_createGallerydialog">
-                    <span class="glyphicon glyphicon-alert"></span>New
-                </button>
+                    <button type="button" id="galleries_createGallery" class="btn btn-success" data-toggle="modal"
+                            data-target="#gallery_createGallerydialog">
+                        <span class="glyphicon glyphicon-alert"></span>New
+                    </button>
+                    <button type="button" id="galleries_editGallery" class="btn btn-secondary" data-toggle="modal"
+                            data-target="#gallery_createGallerydialog">
+                        <span class="glyphicon glyphicon-alert"></span>Edit
+                    </button>
+                    <button type="button" id="galleries_deleteGallery" class="btn btn-danger" data-toggle="modal"
+                            data-target="#gallery_createGallerydialog">
+                        <span class="glyphicon glyphicon-alert"></span>Delete
+                    </button>
             </li>
         </ul>
     </div>
@@ -39,8 +47,8 @@ if (!empty($message)) {
                     <div class="form-group">
                         <label for="galleries_newGalleryName">Create briefly a new gallery for your images</label>
                         <input type="text" class="form-control" id="galleries_newGalleryName"
-                                                                               name="galleries_newGalleryName" aria-describedby="emailHelp"
-                                                                               placeholder="Enter name of the gallery">
+                               name="galleries_newGalleryName" aria-describedby="emailHelp"
+                               placeholder="Enter name of the gallery">
                         <label for="galleries_newGalleryDescription">Add a description to the gallery (optional)</label>
                         <input type="text" class="form-control" id="galleries_newGalleryDescription"
                                name="galleries_newGalleryDescription" aria-describedby="emailHelp"

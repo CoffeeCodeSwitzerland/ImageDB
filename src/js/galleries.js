@@ -1,6 +1,11 @@
 $(document).ready(function () {
 
     var currentGallery = null;
+    var deleteButton = $('#galleries_deleteGallery');
+    var editButton = $('#galleries_editGallery');
+
+    deleteButton.hide();
+    editButton.hide();
 
     $('#galleries_newGalleryButton').prop('disabled', true);
     $('#galleries_newGalleryName').on('keyup', function () {
@@ -13,6 +18,8 @@ $(document).ready(function () {
     });
 
     $('.galleryItem').on('click', function() {
+        deleteButton.show();
+        editButton.show();
         if(currentGallery != null){
             currentGallery.removeClass('bg-secondary text-white');
             currentGallery.addClass('bg-light');
