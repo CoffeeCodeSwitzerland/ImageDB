@@ -30,6 +30,10 @@ $(document).ready(function () {
         currentGallery.addClass('bg-secondary text-white');
     });
 
+    $('.galleryItem').on('dblclick', function() {
+        window.location.href = "user.php?id=images&gid=" + currentGallery.attr('name');
+    });
+
     $('#gallery_deleteForm_deleteButton').on('click', function () {
        $('#gallery_deleteForm_galleryId').val(currentGallery.attr('name'));
        $('#gallery_deleteForm').submit();

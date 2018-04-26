@@ -10,7 +10,7 @@ setValue("cfg_func_list", array("login","registration"));
 // Inhalt des Menus
 setValue("cfg_menu_list", array("login"=>"Login","registration"=>"Registration"));
 
-setValue("cfg_func_user_list", array("logout","overview","galleries"));
+setValue("cfg_func_user_list", array("logout","overview","galleries", "images"));
 // Inhalt des Menus
 setValue("cfg_menu_user_list", array("logout"=>"Logout","overview"=>"Overview","galleries"=>"Galleries"));
 

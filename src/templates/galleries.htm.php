@@ -98,17 +98,17 @@ if (!empty($message)) {
             <div class="modal-body">
                 <form method="post" action="<?php echo getValue("phpmodule") ?>">
                     <div class="form-group">
-                        <label for="galleries_editGalleryName">Create briefly a new gallery for your images</label>
+                        <label for="galleries_editGalleryName">Gallery name</label>
                         <input type="text" class="form-control" id="galleries_editGalleryName"
                                name="galleries_newGalleryName" aria-describedby="emailHelp"
                                placeholder="Enter name of the gallery">
-                        <label for="galleries_editGalleryDescription">Add a description to the gallery (optional)</label>
+                        <label for="galleries_editGalleryDescription">Description</label>
                         <input type="text" class="form-control" id="galleries_editGalleryDescription"
                                name="galleries_newGalleryDescription" aria-describedby="emailHelp"
                                placeholder="Enter description of the gallery">
                         <input type="hidden" name="gallery_editForm_action" value="edit"/>
                     </div>
-                    <button type="submit" id="galleries_editGalleryButton" class="btn btn-success">Create</button>
+                    <button type="submit" id="galleries_editGalleryButton" class="btn btn-success">Edit</button>
                 </form>
             </div>
         </div>

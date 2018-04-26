@@ -156,4 +156,16 @@ function getAllUsers(){
     return $toReturn;
 }
 
+function isGalleryIdBelongingToUser($galleryId, $userId){
+    $sql = "SELECT COUNT(GalleryId) FROM `gallery` WHERE OwnerId =" . $userId ." AND GalleryId=" . $galleryId .";";
+    $answer = sqlSelect($sql);
+    return $answer[0]['COUNT(GalleryId)'] != 0;
+}
+
+function getImagesByGalleryId($galleryId) {
+    $sql = "SELECT * FROM `image` WHERE GalleryId=" . $galleryId .";";
+    $answer = sqlSelect($sql);
+    return $answer;
+}
+
 ?>

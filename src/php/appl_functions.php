@@ -110,7 +110,7 @@ function overview()
         deleteUserByUserId(getSessionUserId());
         setValue('message', "<div class='alert alert-danger' role = 'alert'>The user has been removed</div >");
         unsetSessionValues();
-        setValue('func','login');
+        setValue('func', 'login');
         setValue("phpmodule", "localhost/ImageDB/src/php/index.php" . "?id=" . getValue("func"));
         echo "<script>window.location.href='user.php?id=overview'</script>";
     } else {
@@ -156,7 +156,7 @@ function galleries()
         $gallery = getGalleryById($id);
 //        echo $gallery[0]['Title'];
 //        echo $gallery[0]['ShowTitle'];
-        deleteGalleryAndImagesFromPath($gallery[0]['Title']);
+        deleteGallery($gallery[0]['Title']);
         deleteGallery($id);
     }
 
@@ -166,9 +166,9 @@ function galleries()
         $galleryShowTitle = $_POST['galleries_newGalleryName'];
         setMessage("The gallery '" . $galleryTitle . "' is already taken", "alert-danger");
         if (!isGalleryExisting(getSessionUserId(), $galleryTitle)) {
-            $galleryPath = getGalleryPath($galleryTitle);
+            $galleryPath = createGalleryPath($galleryTitle);
             if ($galleryPath != "") {
-                createGallery(getSessionUserId(), $galleryTitle, $galleryShowTitle , $galleryDescription, escapeString($galleryPath));
+                createGallery(getSessionUserId(), $galleryTitle, $galleryShowTitle, $galleryDescription, escapeString($galleryPath));
                 setMessage("The gallery has vbeen created", "alert-success");
             }
         }
@@ -184,10 +184,10 @@ function getGalleriesBySessionUser()
     if (!empty($galleries)) {
         $rowItems = 0;
         foreach ($galleries as $gallery) {
-            if($rowItems == 0){
+            if ($rowItems == 0) {
                 $html .= "<div class='row m-3'>";
             }
-            $html .= "<div class='col-md-3'><div class='card border-secondary galleryItem' name='" . $gallery['GalleryId'] ."'>
+            $html .= "<div class='col-md-3'><div class='card border-secondary galleryItem' name='" . $gallery['GalleryId'] . "'>
                            <div class='card-header'></div>
                                 <div class='card-body'>
                                    <h5 class='card-title' id='title_" . $gallery['GalleryId'] . "' >" . $gallery['ShowTitle'] . "</h5>
@@ -195,7 +195,7 @@ function getGalleriesBySessionUser()
                             </div>
                        </div></div>";
             $rowItems++;
-            if($rowItems == 4){
+            if ($rowItems == 4) {
                 $html .= '</div>';
                 $rowItems = 0;
             }
@@ -203,6 +203,37 @@ function getGalleriesBySessionUser()
         return $html;
     }
     return "<div class='alert alert-info m-3' role = 'alert'> There aren't any galleries yet </div >";
+}
+
+function getImagesByGallery()
+{
+    $gid = getValue('currentGalleryId');
+    $images = getImagesByGalleryId($gid);
+
+    $html = "";
+    if (!empty($images)) {
+        $rowItems = 0;
+        foreach ($images as $image) {
+            if ($rowItems == 0) {
+                $html .= "<div class='row m-3'>";
+            }
+            $html .= "<div class='col-md-3'><div class='card border-secondary galleryItem' name='" . $image['ImageId'] . "'>
+                           <div class='card-header'></div> 
+                                <img class='card-img-top' src='" . getGalleryPath($gid) . $image['ThumbnailPath'] . "' alt='Card image cap'>
+                                <div class='card-body'>
+                                   <h5 class='card-title' id='title_" . $image['ImageId'] . "' >" . $image['Name'] . "</h5>
+                                   <p class='card-text' id='description_" . $image['ImageId'] . "'  >" . $image['Description'] . "</p>
+                            </div>
+                       </div></div>";
+            $rowItems++;
+            if ($rowItems == 4) {
+                $html .= '</div>';
+                $rowItems = 0;
+            }
+        }
+        return $html;
+    }
+    return "<div class='alert alert-info m-3' role = 'alert'> There aren't any images yet </div >";
 }
 
 function isPasswortMatchingRequirements($password)
@@ -214,17 +245,18 @@ function isPasswortMatchingRequirements($password)
 }
 
 
-function getGalleryPath($galleryTitle)
+function createGalleryPath($galleryTitle)
 {
     $path = getValue('galleryRoot') . "\\" . getSessionEmailaddress() . "\\" . strtolower($galleryTitle);
     if (!file_exists($path)) {
-        exec("md " . $path );
+        exec("md " . $path);
+        exec("md " . $path . "\\thumbnails");
         return $path;
     }
     return "";
 }
 
-function deleteGalleryAndImagesFromPath($galleryTitle)
+function deleteGalleryPath($galleryTitle)
 {
     $path = getValue('galleryRoot') . "\\" . getSessionEmailaddress() . "\\" . $galleryTitle;
     if (file_exists($path)) {
@@ -232,9 +264,10 @@ function deleteGalleryAndImagesFromPath($galleryTitle)
     }
 }
 
-function deleteUserFromPath() {
+function deleteUserFromPath()
+{
     $path = getValue('galleryRoot') . "\\" . getSessionEmailaddress();
-    if(file_exists($path)){
+    if (file_exists($path)) {
         exec("rd /s /q " . $path);
     }
 }
@@ -245,18 +278,42 @@ function escapeString($toEscape)
 }
 
 
-function setMessage($content, $bootstrapClass){
+function setMessage($content, $bootstrapClass)
+{
     setValue('message', "<div class='alert " . $bootstrapClass . " m-3' role = 'alert'>" . $content . "</div >");
 }
 
-function adminUsers(){
+function adminUsers()
+{
     setValue("phpmodule", $_SERVER['PHP_SELF'] . "?id=" . getValue("func"));
     return runTemplate("../templates/" . getValue("func") . ".htm.php");
 }
 
-function adminGalleries(){
+function adminGalleries()
+{
     setValue("phpmodule", $_SERVER['PHP_SELF'] . "?id=" . getValue("func"));
     return runTemplate("../templates/" . getValue("func") . ".htm.php");
+}
+
+function images()
+{
+    if (isset($_GET['gid'])) {
+        $gid = $_GET['gid'];
+        if (isGalleryIdBelongingToUser($gid, getSessionUserId())) {
+            setValue('currentGalleryId', $gid);
+        } else {
+            setValue('func', 'galleries');
+            setMessage('You do not have the righ to access this gallery', 'alert-danger');
+        }
+    }
+
+    setValue("phpmodule", $_SERVER['PHP_SELF'] . "?id=" . getValue("func"));
+    return runTemplate("../templates/" . getValue("func") . ".htm.php");
+}
+
+function getGalleryPath($galleryId){
+    $gallery = getGalleryById($galleryId);
+    return getValue('galleryRoot') . "\\" . getSessionEmailaddress() . "\\" . $gallery['Title'] . "\\";
 }
 
 ?>
