@@ -47,6 +47,7 @@ CREATE TABLE `gallery` (
   `GalleryId` int(11) NOT NULL,
   `OwnerId` int(11) NOT NULL,
   `Title` text NOT NULL,
+  `ShowTitle` text NOT NULL,
   `Description` text,
   `DirectoryPath` text NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1;
