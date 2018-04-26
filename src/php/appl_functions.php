@@ -190,8 +190,8 @@ function getGalleriesBySessionUser()
             $html .= "<div class='col-md-3'><div class='card border-secondary galleryItem' name='" . $gallery['GalleryId'] ."'>
                            <div class='card-header'></div>
                                 <div class='card-body'>
-                                   <h5 class='card-title'>" . $gallery['Title'] . "</h5>
-                                   <p class='card-text'>" . $gallery['Description'] . "</p>
+                                   <h5 class='card-title' id='title_" . $gallery['GalleryId'] . "' >" . $gallery['ShowTitle'] . "</h5>
+                                   <p class='card-text' id='description_" . $gallery['GalleryId'] . "'  >" . $gallery['Description'] . "</p>
                             </div>
                        </div></div>";
             $rowItems++;
