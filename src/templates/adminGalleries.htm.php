@@ -13,13 +13,18 @@
           if(!empty(getGalleriesByUser($userId))){
             echo "
             <div class='card' style='width: 18rem; margin-bottom: 20px;'>
-              <div class='card-header'>".
+              <div class='card-header' style='border-left: 1px solid black;border-right: 1px solid black;border-top: 1px solid black;'>".
                 $user['Emailaddress']."
               </div>
               <ul class='list-group list-group-flush'>";
               foreach(getGalleriesByUser($userId) as $gallery){
-                echo "<li class='list-group-item'>Title: ".$gallery['Title']."</li>
-                <li class='list-group-item' style='color:gray'>Description: ".$gallery['Description']."</li>";
+                echo "<li class='list-group-item' style='border-left: 1px solid black;border-right: 1px solid black;border-top: 1px solid black;'>Title: ".$gallery['Title']."</li>
+                <li class='list-group-item' style='color:gray;border-left: 1px solid black;border-right: 1px solid black;'>Description: ".$gallery['Description']."</li>
+                <li class='list-group-item' style='border-left: 1px solid black;border-right: 1px solid black;border-bottom: 1px solid black;'><div class='btn btn-secondary' data-toggle='modal' data-target='#adminGalleries_editGallery'
+                   id='adminGalleries_editGallery' style='margin-right: 10px;'>Edit
+              </div><div class='btn btn-danger' data-toggle='modal' data-target='#adminGalleries_modalDeleteGallery'
+                   id='adminGalleries_modalDeleteGallery'>Delete
+              </div></li>";
               }
               echo "</ul>
             </div>";
