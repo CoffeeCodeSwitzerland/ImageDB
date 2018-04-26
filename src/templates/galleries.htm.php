@@ -12,7 +12,7 @@
                     <span class="glyphicon glyphicon-alert"></span>New
                 </button>
                 <button type="button" id="galleries_editGallery" class="btn btn-secondary" data-toggle="modal"
-                        data-target="#gallery_createGallerydialog">
+                        data-target="#gallery_editGallerydialog">
                     <span class="glyphicon glyphicon-alert"></span>Edit
                 </button>
                 <button type="button" id="galleries_deleteGallery" class="btn btn-danger" data-toggle="modal"
@@ -79,6 +79,36 @@ if (!empty($message)) {
                     <input type="hidden" name="gallery_deleteForm_action" value="gallery_delete">
                     <input type="hidden" name="gallery_deleteForm_galleryId" id="gallery_deleteForm_galleryId">
                     <button type="button" id="gallery_deleteForm_deleteButton" class="btn btn-danger">Delete</button>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="modal fade" id="gallery_editGallerydialog" tabindex="-1" role="dialog"
+     aria-labelledby="galleries_editGallery" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title">Edit gallery</h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="modal-body">
+                <form method="post" action="<?php echo getValue("phpmodule") ?>">
+                    <div class="form-group">
+                        <label for="galleries_editGalleryName">Create briefly a new gallery for your images</label>
+                        <input type="text" class="form-control" id="galleries_editGalleryName"
+                               name="galleries_newGalleryName" aria-describedby="emailHelp"
+                               placeholder="Enter name of the gallery">
+                        <label for="galleries_editGalleryDescription">Add a description to the gallery (optional)</label>
+                        <input type="text" class="form-control" id="galleries_editGalleryDescription"
+                               name="galleries_newGalleryDescription" aria-describedby="emailHelp"
+                               placeholder="Enter description of the gallery">
+                        <input type="hidden" name="gallery_editForm_action" value="edit"/>
+                    </div>
+                    <button type="submit" id="galleries_editGalleryButton" class="btn btn-success">Create</button>
                 </form>
             </div>
         </div>

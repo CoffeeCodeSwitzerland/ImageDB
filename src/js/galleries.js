@@ -34,4 +34,11 @@ $(document).ready(function () {
        $('#gallery_deleteForm_galleryId').val(currentGallery.attr('name'));
        $('#gallery_deleteForm').submit();
     });
+
+    $('#galleries_editGallery').on('click', function() {
+        if(currentGallery != null){
+            $('#galleries_editGalleryName').val($('#title_' + currentGallery.attr('name')).text());
+            $('#galleries_editGalleryDescription').val($('#description_' + currentGallery.attr('name')).text())
+        }
+    });
 });
