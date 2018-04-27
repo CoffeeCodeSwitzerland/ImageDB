@@ -42,18 +42,19 @@ if (!empty($message)) {
                 </button>
             </div>
             <div class="modal-body">
-                <form method="post" action="<?php echo getValue("phpmodule") ?>">
+                <form id="gallery_createForm" method="post" action="<?php echo getValue("phpmodule") ?>">
                     <div class="form-group">
                         <label for="galleries_newGalleryName">Create briefly a new gallery for your images</label>
-                        <input type="text" class="form-control" id="galleries_newGalleryName"
+                        <input type="text" class="form-control galleryCreateItem" id="galleries_newGalleryName"
                                name="galleries_newGalleryName" aria-describedby="emailHelp"
                                placeholder="Enter name of the gallery">
                         <label for="galleries_newGalleryDescription">Add a description to the gallery (optional)</label>
-                        <input type="text" class="form-control" id="galleries_newGalleryDescription"
+                        <input type="text" class="form-control galleryCreateItem" id="galleries_newGalleryDescription"
                                name="galleries_newGalleryDescription" aria-describedby="emailHelp"
                                placeholder="Enter description of the gallery">
+                        <input type="hidden" name="gallery_formAction" value="gallery_create">
                     </div>
-                    <button type="submit" id="galleries_newGalleryButton" class="btn btn-success">Create</button>
+                    <button type="button" id="galleries_newGalleryButton" class="btn btn-success">Create</button>
                 </form>
             </div>
         </div>
@@ -76,8 +77,8 @@ if (!empty($message)) {
             <div class="modal-footer">
                 <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
                 <form method="post" id="gallery_deleteForm" action="<?php echo getValue("phpmodule") ?>">
-                    <input type="hidden" name="gallery_deleteForm_action" value="gallery_delete">
-                    <input type="hidden" name="gallery_deleteForm_galleryId" id="gallery_deleteForm_galleryId">
+                    <input type="hidden" name="gallery_formAction" value="gallery_delete">
+                    <input type="hidden" name="gallery_galleryId" id="gallery_deleteForm_galleryId">
                     <button type="button" id="gallery_deleteForm_deleteButton" class="btn btn-danger">Delete</button>
                 </form>
             </div>
@@ -96,19 +97,20 @@ if (!empty($message)) {
                 </button>
             </div>
             <div class="modal-body">
-                <form method="post" action="<?php echo getValue("phpmodule") ?>">
+                <form id="gallery_editForm" method="post" action="<?php echo getValue("phpmodule") ?>">
                     <div class="form-group">
                         <label for="galleries_editGalleryName">Gallery name</label>
-                        <input type="text" class="form-control" id="galleries_editGalleryName"
-                               name="galleries_newGalleryName" aria-describedby="emailHelp"
+                        <input type="text" class="form-control galleryEditItem" id="galleries_editGalleryName"
+                               name="galleries_editGalleryName" aria-describedby="emailHelp"
                                placeholder="Enter name of the gallery">
                         <label for="galleries_editGalleryDescription">Description</label>
-                        <input type="text" class="form-control" id="galleries_editGalleryDescription"
-                               name="galleries_newGalleryDescription" aria-describedby="emailHelp"
+                        <input type="text" class="form-control galleryEditItem" id="galleries_editGalleryDescription"
+                               name="galleries_editGalleryDescription" aria-describedby="emailHelp"
                                placeholder="Enter description of the gallery">
-                        <input type="hidden" name="gallery_editForm_action" value="edit"/>
+                        <input type="hidden" name="gallery_galleryId" id="gallery_editForm_galleryId"/>
+                        <input type="hidden" name="gallery_formAction" value="gallery_edit">
                     </div>
-                    <button type="submit" id="galleries_editGalleryButton" class="btn btn-success">Edit</button>
+                    <button type="button" id="galleries_editGalleryButton" class="btn btn-success">Edit</button>
                 </form>
             </div>
         </div>

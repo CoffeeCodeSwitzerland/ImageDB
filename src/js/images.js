@@ -88,11 +88,22 @@ $(document).ready(function () {
         evaluate();
     });
 
+    $('#image_newGaleryName').on('keypress', function(e){
+       if(e.which == 13){
+           e.preventDefault();
+           if(evaluate()){
+               $('#image_addForm').submit();
+           }
+       }
+    });
+
     function evaluate() {
         if (image_fileSelected && image_nameCorrect) {
             $('#images_newImageButton').prop('disabled', false);
+            return true;
         } else {
             $('#images_newImageButton').prop('disabled', true);
         }
+        return false;
     }
 });

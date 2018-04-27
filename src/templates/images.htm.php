@@ -42,7 +42,7 @@ if (!empty($message)) {
                 </button>
             </div>
             <div class="modal-body">
-                <form method="post" action="<?php echo getValue("phpmodule") ?>" enctype="multipart/form-data">
+                <form id="image_addForm" method="post" action="<?php echo getValue("phpmodule") ?>" enctype="multipart/form-data">
                     <div class="form-group">
                         <label for="images_newImageName">Set the title for your image</label>
                         <input type="hidden" name="image_formAction" value="image_add">

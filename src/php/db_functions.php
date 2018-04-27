@@ -188,4 +188,9 @@ function db_updateImage($imageId, $imageName) {
     $sql = "UPDATE `image` SET Name='" . $imageName . "' WHERE ImageId=" . $imageId . " ;";
     sqlQuery($sql);
 }
+
+function db_updateGallery($galleryId, $galleryShowTitle, $galleryDescription){
+    $sql = "UPDATE `gallery` SET ShowTitle='" . $galleryShowTitle ."', Description = '" . $galleryDescription ."' WHERE GalleryId=" . $galleryId . ";";
+    sqlQuery($sql);
+}
 ?>

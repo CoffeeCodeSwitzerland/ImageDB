@@ -150,24 +150,28 @@ function overview()
 
 function galleries()
 {
-    if (isset($_POST['gallery_deleteForm_action'])) {
-        $id = $_POST['gallery_deleteForm_galleryId'];
-        $gallery = db_getGalleryById($id);
-        appl_deleteGalleryPath($gallery['Title']);
-        db_deleteGallery($id);
-    }
-
-    if (isset($_POST['galleries_newGalleryName'])) {
-        $galleryTitle = strtolower(str_replace(" ", "", $_POST['galleries_newGalleryName']));
-        $galleryDescription = $_POST['galleries_newGalleryDescription'];
-        $galleryShowTitle = $_POST['galleries_newGalleryName'];
-        appl_setMessage("The gallery '" . $galleryTitle . "' is already taken", "alert-danger");
-        if (!db_isGalleryExisting(getSessionUserId(), $galleryTitle)) {
-            $galleryPath = appl_createGalleryPath($galleryTitle);
-            if ($galleryPath != "") {
-                db_createGallery(getSessionUserId(), $galleryTitle, $galleryShowTitle, $galleryDescription, appl_escapeString($galleryPath));
-                appl_setMessage("The gallery has vbeen created", "alert-success");
+    if (isset($_POST['gallery_formAction'])) {
+        $action = $_POST['gallery_formAction'];
+        if ($action == 'gallery_create') {
+            $galleryTitle = strtolower(str_replace(" ", "", $_POST['galleries_newGalleryName']));
+            $galleryDescription = $_POST['galleries_newGalleryDescription'];
+            $galleryShowTitle = $_POST['galleries_newGalleryName'];
+            appl_setMessage("The gallery '" . $galleryTitle . "' is already taken", "alert-danger");
+            if (!db_isGalleryExisting(getSessionUserId(), $galleryTitle)) {
+                $galleryPath = appl_createGalleryPath($galleryTitle);
+                if ($galleryPath != "") {
+                    db_createGallery(getSessionUserId(), $galleryTitle, $galleryShowTitle, $galleryDescription, appl_escapeString($galleryPath));
+                    appl_setMessage("The gallery has been created", "alert-success");
+                }
             }
+        } elseif ($action === 'gallery_edit') {
+            $id = $_POST['gallery_galleryId'];
+            db_updateGallery($id, $_POST['galleries_editGalleryName'], $_POST['galleries_editGalleryDescription']);
+        } elseif ($action === 'gallery_delete') {
+            $id = $_POST['gallery_galleryId'];
+            $gallery = db_getGalleryById($id);
+            appl_deleteGalleryPath($gallery['Title']);
+            db_deleteGallery($id);
         }
     }
     setValue("phpmodule", $_SERVER['PHP_SELF'] . "?id=" . getValue("func"));
@@ -184,11 +188,19 @@ function appl_getGalleriesBySessionUser()
             if ($rowItems == 0) {
                 $html .= "<div class='row m-3'>";
             }
+            $galleryTitle = "";
+
+            if (strlen($gallery['Description']) > 0) {
+                $galleryTitle = $gallery['Description'];
+            } else {
+                $galleryTitle = "<label class='label font-italic'>No description available</label>";
+            }
+
             $html .= "<div class='col-md-3'><div class='card border-secondary galleryItem' name='" . $gallery['GalleryId'] . "'>
                            <div class='card-header'></div>
                                 <div class='card-body'>
                                    <h5 class='card-title' id='title_" . $gallery['GalleryId'] . "' >" . $gallery['ShowTitle'] . "</h5>
-                                   <p class='card-text' id='description_" . $gallery['GalleryId'] . "'  >" . $gallery['Description'] . "</p>
+                                   <p class='card-text' id='description_" . $gallery['GalleryId'] . "'  >" . $galleryTitle . "</p>
                             </div>
                        </div></div>";
             $rowItems++;
@@ -300,9 +312,9 @@ function images()
         $gid = $_GET['gid'];
         if (db_isGalleryIdBelongingToUser($gid, getSessionUserId())) {
             setValue('currentGalleryId', $gid);
-            if(isset($_POST['image_formAction'])){
+            if (isset($_POST['image_formAction'])) {
                 $action = $_POST['image_formAction'];
-                if($action == 'image_add'){
+                if ($action == 'image_add') {
                     $gallery = db_getGalleryById($gid);
                     $info = pathinfo($_FILES['image_newImageFile']['name']);
                     $extentsion = $info['extension'];
@@ -311,15 +323,15 @@ function images()
                     $thumbnailPath = getValue('galleryRoot') . "\\" . getSessionEmailaddress() . "\\" . $gallery['Title'] . "\\thumbnails\\" . $fileName . "." . $extentsion;
 
                     move_uploaded_file($_FILES['image_newImageFile']['tmp_name'], $imagePath);
-                    appl_createThumbnail($imagePath,$thumbnailPath,400, $extentsion);
+                    appl_createThumbnail($imagePath, $thumbnailPath, 400, $extentsion);
 
                     db_createImage($gid, $_POST['images_newImageName'], $fileName . "." . $extentsion, $fileName . "." . $extentsion);
-                }elseif ($action == 'image_delete'){
+                } elseif ($action == 'image_delete') {
                     $imageId = $_POST['images_imageId'];
                     $image = db_getImageById($imageId);
                     db_deleteImage($imageId);
                     app_deleteImagePath($image['RelativePath'], $gid);
-                }elseif ($action == 'image_edit'){
+                } elseif ($action == 'image_edit') {
                     $imageId = $_POST['images_imageId'];
                     db_updateImage($imageId, $_POST['image_editImageName']);
                 }
@@ -334,45 +346,52 @@ function images()
     return runTemplate("../templates/" . getValue("func") . ".htm.php");
 }
 
-function appl_getGalleryPath($galleryId){
+function appl_getGalleryPath($galleryId)
+{
     $gallery = db_getGalleryById($galleryId);
     return getValue('galleryRoot') . "\\" . getSessionEmailaddress() . "\\" . $gallery['Title'] . "\\";
 }
 
-function appl_createImageName($galleryId, $imageName, $imageExtension){
+function appl_createImageName($galleryId, $imageName, $imageExtension)
+{
     $gallery = db_getGalleryById($galleryId);
     $galleryNotTaken = false;
     $counter = 0;
     $path = getValue('galleryRoot') . "\\" . getSessionEmailaddress() . "\\" . $gallery['Title'] . "\\";
     $ar = explode(".", $imageName);
     $tempName = $ar[0];
-    while(!$galleryNotTaken){
+    while (!$galleryNotTaken) {
         $counter++;
-        if(file_exists($path . $tempName . "." . $imageExtension)){
+        if (file_exists($path . $tempName . "." . $imageExtension)) {
             $tempName = $ar[0] . "_" . $counter;
-        }
-        else{
+        } else {
             $galleryNotTaken = true;
         }
     }
     return $tempName;
 }
 
-function app_deleteImagePath($imageTitle, $galleryId) {
+function app_deleteImagePath($imageTitle, $galleryId)
+{
     $gallery = db_getGalleryById($galleryId);
     $path = getValue('galleryRoot') . "\\" . getSessionEmailaddress() . "\\" . $gallery['Title'] . "\\";
 
-    if(file_exists($path . $imageTitle)) exec('del ' . $path . $imageTitle);
-    if(file_exists($path . "thumbnails\\" . $imageTitle)) exec('del ' . $path . "thumbnails\\" . $imageTitle);
+    if (file_exists($path . $imageTitle)) exec('del ' . $path . $imageTitle);
+    if (file_exists($path . "thumbnails\\" . $imageTitle)) exec('del ' . $path . "thumbnails\\" . $imageTitle);
 }
 
-function appl_createThumbnail($inputPath, $outputPath, $desired_width, $extension){
+function appl_createThumbnail($inputPath, $outputPath, $desired_width, $extension)
+{
     /* read the source image */
     $source_image = null;
 
-    switch($extension){
-        case "jpg": $source_image = imagecreatefromjpeg($inputPath);break;
-        case "png": $source_image = imagecreatefrompng($inputPath);break;
+    switch ($extension) {
+        case "jpg":
+            $source_image = imagecreatefromjpeg($inputPath);
+            break;
+        case "png":
+            $source_image = imagecreatefrompng($inputPath);
+            break;
     }
 
     $width = imagesx($source_image);
@@ -389,9 +408,13 @@ function appl_createThumbnail($inputPath, $outputPath, $desired_width, $extensio
 
     /* create the physical thumbnail image to its destination */
 
-    switch($extension){
-        case "jpg": imagejpeg($virtual_image, $outputPath);;break;
-        case "png": imagepng($virtual_image, $outputPath);;break;
+    switch ($extension) {
+        case "jpg":
+            imagejpeg($virtual_image, $outputPath);;
+            break;
+        case "png":
+            imagepng($virtual_image, $outputPath);;
+            break;
     }
 }
 
