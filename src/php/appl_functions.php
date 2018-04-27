@@ -5,8 +5,13 @@
  *  Dieses Modul beinhaltet Funktionen, welche die Anwendungslogik implementieren.
  */
 
-/*
- * Beinhaltet die Anwendungslogik zum Login
+/**
+ * Logic of the pages
+ */
+
+/**
+ * Login page logic
+ * @return null|string
  */
 function login()
 {
@@ -48,24 +53,9 @@ function login()
     return runTemplate("../templates/" . getValue("func") . ".htm.php");
 }
 
-function setSessionValues($user)
-{
-    $_SESSION['userId'] = $user[0]['UserId'];
-    $_SESSION['userNickname'] = $user[0]['Nickname'];
-    $_SESSION['userEmailaddress'] = $user[0]['Emailaddress'];
-    $_SESSION['userIsAdmin'] = $user[0]['IsAdmin'];
-}
-
-function unsetSessionValues()
-{
-    unset($_SESSION['userId']);
-    unset($_SESSION['userNickname']);
-    unset($_SESSION['userEmailaddress']);
-    unset($_SESSION['userIsAdmin']);
-}
-
 /**
- * Contains the logic for the registstration
+ * Contains the following functionality:
+ * -Register a new user considering the password rules
  * @return string
  */
 function registration()
@@ -94,15 +84,63 @@ function registration()
     return runTemplate("../templates/" . getValue("func") . ".htm.php");
 }
 
+/**
+ * Contains the following funciontality:
+ * -Create gallery
+ * -Remove gallery
+ * -Edit gallery
+ * -Refers to the associated images
+ * @return string
+ */
+function galleries()
+{
+    if (isset($_POST['gallery_formAction'])) {
+        $action = $_POST['gallery_formAction'];
+        if ($action == 'gallery_create') {
+            $galleryTitle = strtolower(str_replace(" ", "", $_POST['galleries_newGalleryName']));
+            $galleryDescription = $_POST['galleries_newGalleryDescription'];
+            $galleryShowTitle = $_POST['galleries_newGalleryName'];
+            appl_setMessage("The gallery '" . $galleryTitle . "' is already taken", "alert-danger");
+            if (!db_isGalleryExisting(getSessionUserId(), $galleryTitle)) {
+                $galleryPath = appl_createGalleryPath($galleryTitle);
+                if ($galleryPath != "") {
+                    db_createGallery(getSessionUserId(), $galleryTitle, $galleryShowTitle, $galleryDescription, appl_escapeString($galleryPath));
+                    appl_setMessage("The gallery has been created", "alert-success");
+                }
+            }
+        } elseif ($action === 'gallery_edit') {
+            $id = $_POST['gallery_galleryId'];
+            db_updateGallery($id, $_POST['galleries_editGalleryName'], $_POST['galleries_editGalleryDescription']);
+        } elseif ($action === 'gallery_delete') {
+            $id = $_POST['gallery_galleryId'];
+            $gallery = db_getGalleryById($id);
+            appl_deleteGalleryPath($gallery['Title']);
+            db_deleteGallery($id);
+        }
+    }
+    setValue("phpmodule", $_SERVER['PHP_SELF'] . "?id=" . getValue("func"));
+    return runTemplate("../templates/" . getValue("func") . ".htm.php");
+}
+
+/**
+ * Contains the following functionality:
+ * -Log the user out
+ */
 function logout()
 {
     unsetSessionValues();
     setValue('isLoggedOut', true);
     setValue("message", "<div class='alert alert-success' role = 'alert'>Successfully logged out</div >");
     echo "<script>window.location.href='index.php?id=login'</script>";
-
 }
 
+/**
+ * Contains the following functionality:
+ * -Delete user
+ * -Change user informations (.eg password, nickname)
+ * -Shows a short overview about the count of images and galleries
+ * @return string
+ */
 function overview()
 {
     if (isset($_POST['overview_deleteContent'])) {
@@ -148,163 +186,13 @@ function overview()
     return runTemplate("../templates/" . getValue("func") . ".htm.php");
 }
 
-function galleries()
-{
-    if (isset($_POST['gallery_formAction'])) {
-        $action = $_POST['gallery_formAction'];
-        if ($action == 'gallery_create') {
-            $galleryTitle = strtolower(str_replace(" ", "", $_POST['galleries_newGalleryName']));
-            $galleryDescription = $_POST['galleries_newGalleryDescription'];
-            $galleryShowTitle = $_POST['galleries_newGalleryName'];
-            appl_setMessage("The gallery '" . $galleryTitle . "' is already taken", "alert-danger");
-            if (!db_isGalleryExisting(getSessionUserId(), $galleryTitle)) {
-                $galleryPath = appl_createGalleryPath($galleryTitle);
-                if ($galleryPath != "") {
-                    db_createGallery(getSessionUserId(), $galleryTitle, $galleryShowTitle, $galleryDescription, appl_escapeString($galleryPath));
-                    appl_setMessage("The gallery has been created", "alert-success");
-                }
-            }
-        } elseif ($action === 'gallery_edit') {
-            $id = $_POST['gallery_galleryId'];
-            db_updateGallery($id, $_POST['galleries_editGalleryName'], $_POST['galleries_editGalleryDescription']);
-        } elseif ($action === 'gallery_delete') {
-            $id = $_POST['gallery_galleryId'];
-            $gallery = db_getGalleryById($id);
-            appl_deleteGalleryPath($gallery['Title']);
-            db_deleteGallery($id);
-        }
-    }
-    setValue("phpmodule", $_SERVER['PHP_SELF'] . "?id=" . getValue("func"));
-    return runTemplate("../templates/" . getValue("func") . ".htm.php");
-}
-
-function appl_getGalleriesBySessionUser()
-{
-    $galleries = db_getGalleriesByUser(getSessionUserId());
-    $html = "";
-    if (!empty($galleries)) {
-        $rowItems = 0;
-        foreach ($galleries as $gallery) {
-            if ($rowItems == 0) {
-                $html .= "<div class='row m-3'>";
-            }
-            $galleryTitle = "";
-
-            if (strlen($gallery['Description']) > 0) {
-                $galleryTitle = $gallery['Description'];
-            } else {
-                $galleryTitle = "<label class='label font-italic'>No description available</label>";
-            }
-
-            $html .= "<div class='col-md-3'><div class='card border-secondary galleryItem' name='" . $gallery['GalleryId'] . "'>
-                           <div class='card-header'></div>
-                                <div class='card-body'>
-                                   <h5 class='card-title' id='title_" . $gallery['GalleryId'] . "' >" . $gallery['ShowTitle'] . "</h5>
-                                   <p class='card-text' id='description_" . $gallery['GalleryId'] . "'  >" . $galleryTitle . "</p>
-                            </div>
-                       </div></div>";
-            $rowItems++;
-            if ($rowItems == 4) {
-                $html .= '</div>';
-                $rowItems = 0;
-            }
-        }
-        return $html;
-    }
-    return "<div class='alert alert-info m-3' role = 'alert'> There aren't any galleries yet </div >";
-}
-
-function appl_getImagesByGallery()
-{
-    $gid = getValue('currentGalleryId');
-    $gallery = db_getGalleryById($gid);
-    $images = db_getImagesByGalleryId($gid);
-
-    $html = "";
-    if (!empty($images)) {
-        $rowItems = 0;
-        foreach ($images as $image) {
-            if ($rowItems == 0) {
-                $html .= "<div class='row m-3'>";
-            }
-            $html .= "<div class='col-md-3'>
-                        <div class='card border-secondary imageItem' name='" . $image['ImageId'] . "'>
-                           <div class='card-header'></div> 
-                                <img class='img-thumbnail rounded mx-auto d-block w-100' src='../storage/galleries/" . getSessionEmailaddress() . "/" . $gallery['Title'] . "/thumbnails/" . $image['ThumbnailPath'] . "' alt='Card image cap'>
-                                <div class='card-body'>
-                                    <h5 class='card-title' id='title_" . $image['ImageId'] . "' >" . $image['Name'] . "</h5>
-                                 </div>
-                           </div>
-                        </div>";
-            $rowItems++;
-            if ($rowItems == 4) {
-                $html .= '</div>';
-                $rowItems = 0;
-            }
-        }
-        return $html;
-    }
-    return "<div class='alert alert-info m-3' role = 'alert'> There aren't any images yet </div >";
-}
-
-function appl_isPasswortMatchingRequirements($password)
-{
-    $uppercase = preg_match('@[A-Z]@', $password);
-    $lowercase = preg_match('@[a-z]@', $password);
-    $number = preg_match('@[0-9]@', $password);
-    return $uppercase && $lowercase && $number && strlen(trim($password)) >= 8;
-}
-
-
-function appl_createGalleryPath($galleryTitle)
-{
-    $path = getValue('galleryRoot') . "\\" . getSessionEmailaddress() . "\\" . strtolower($galleryTitle);
-    if (!file_exists($path)) {
-        exec("md " . $path);
-        exec("md " . $path . "\\thumbnails");
-        return $path;
-    }
-    return "";
-}
-
-function appl_deleteGalleryPath($galleryTitle)
-{
-    $path = getValue('galleryRoot') . "\\" . getSessionEmailaddress() . "\\" . $galleryTitle;
-    if (file_exists($path)) {
-        exec("rd /s /q " . $path);
-    }
-}
-
-function appl_deleteUserFromPath()
-{
-    $path = getValue('galleryRoot') . "\\" . getSessionEmailaddress();
-    if (file_exists($path)) {
-        exec("rd /s /q " . $path);
-    }
-}
-
-function appl_escapeString($toEscape)
-{
-    return str_replace('\\', '\\\\', $toEscape);
-}
-
-function appl_setMessage($content, $bootstrapClass)
-{
-    setValue('message', "<div class='alert " . $bootstrapClass . " m-3' role = 'alert'>" . $content . "</div >");
-}
-
-function adminUsers()
-{
-    setValue("phpmodule", $_SERVER['PHP_SELF'] . "?id=" . getValue("func"));
-    return runTemplate("../templates/" . getValue("func") . ".htm.php");
-}
-
-function adminGalleries()
-{
-    setValue("phpmodule", $_SERVER['PHP_SELF'] . "?id=" . getValue("func"));
-    return runTemplate("../templates/" . getValue("func") . ".htm.php");
-}
-
+/**
+ * Contains the logic for the following actions:
+ * -Create image
+ * -Edit image
+ * -Delete image
+ * @return string
+ */
 function images()
 {
     $gid = 0;
@@ -346,12 +234,140 @@ function images()
     return runTemplate("../templates/" . getValue("func") . ".htm.php");
 }
 
+/**
+ * Additonal gallery logic
+ */
+
+/**
+ * Generates the gallerie views with the following db attributes:
+ * -Gallery.ShowTitle
+ * -Gallery.Description
+ * @return string
+ */
+function appl_getGalleriesBySessionUser()
+{
+    $galleries = db_getGalleriesByUser(getSessionUserId());
+    $html = "";
+    if (!empty($galleries)) {
+        $rowItems = 0;
+        foreach ($galleries as $gallery) {
+            if ($rowItems == 0) {
+                $html .= "<div class='row m-3'>";
+            }
+            $galleryTitle = "";
+
+            if (strlen($gallery['Description']) > 0) {
+                $galleryTitle = $gallery['Description'];
+            } else {
+                $galleryTitle = "<label class='label font-italic'>No description available</label>";
+            }
+
+            $html .= "<div class='col-md-3'><div class='card border-secondary galleryItem' name='" . $gallery['GalleryId'] . "'>
+                           <div class='card-header'></div>
+                                <div class='card-body'>
+                                   <h5 class='card-title' id='title_" . $gallery['GalleryId'] . "' >" . $gallery['ShowTitle'] . "</h5>
+                                   <p class='card-text' id='description_" . $gallery['GalleryId'] . "'  >" . $galleryTitle . "</p>
+                            </div>
+                       </div></div>";
+            $rowItems++;
+            if ($rowItems == 4) {
+                $html .= '</div>';
+                $rowItems = 0;
+            }
+        }
+        return $html;
+    }
+    return "<div class='alert alert-info m-3' role = 'alert'> There aren't any galleries yet </div >";
+}
+
+/**
+ * Creates a new folder for the gallery
+ * @param $galleryTitle
+ * @return string
+ */
+function appl_createGalleryPath($galleryTitle)
+{
+    $path = getValue('galleryRoot') . "\\" . getSessionEmailaddress() . "\\" . strtolower($galleryTitle);
+    if (!file_exists($path)) {
+        exec("md " . $path);
+        exec("md " . $path . "\\thumbnails");
+        return $path;
+    }
+    return "";
+}
+
+/**
+ * Delets an existing gallery folder
+ * @param $galleryTitle
+ */
+function appl_deleteGalleryPath($galleryTitle)
+{
+    $path = getValue('galleryRoot') . "\\" . getSessionEmailaddress() . "\\" . $galleryTitle;
+    if (file_exists($path)) {
+        exec("rd /s /q " . $path);
+    }
+}
+
+/**
+ * Get the whole path of a gallery
+ * @param $galleryId
+ * @return string
+ */
 function appl_getGalleryPath($galleryId)
 {
     $gallery = db_getGalleryById($galleryId);
     return getValue('galleryRoot') . "\\" . getSessionEmailaddress() . "\\" . $gallery['Title'] . "\\";
 }
 
+/**
+ * Additional image logic
+ */
+
+/**
+ * Generates the image views with the following db attributes:
+ * -Image.Name
+ * @return string
+ */
+function appl_getImagesByGallery()
+{
+    $gid = getValue('currentGalleryId');
+    $gallery = db_getGalleryById($gid);
+    $images = db_getImagesByGalleryId($gid);
+
+    $html = "";
+    if (!empty($images)) {
+        $rowItems = 0;
+        foreach ($images as $image) {
+            if ($rowItems == 0) {
+                $html .= "<div class='row m-3'>";
+            }
+            $html .= "<div class='col-md-3'>
+                        <div class='card border-secondary imageItem' name='" . $image['ImageId'] . "'>
+                           <div class='card-header'></div> 
+                                <img class='img-thumbnail rounded mx-auto d-block w-100' src='../storage/galleries/" . getSessionEmailaddress() . "/" . $gallery['Title'] . "/thumbnails/" . $image['ThumbnailPath'] . "' alt='Card image cap'>
+                                <div class='card-body'>
+                                    <h5 class='card-title' id='title_" . $image['ImageId'] . "' >" . $image['Name'] . "</h5>
+                                 </div>
+                           </div>
+                        </div>";
+            $rowItems++;
+            if ($rowItems == 4) {
+                $html .= '</div>';
+                $rowItems = 0;
+            }
+        }
+        return $html;
+    }
+    return "<div class='alert alert-info m-3' role = 'alert'> There aren't any images yet </div >";
+}
+
+/**
+ * Gets a name for a new image considering that the same image may exists
+ * @param $galleryId
+ * @param $imageName
+ * @param $imageExtension
+ * @return string
+ */
 function appl_createImageName($galleryId, $imageName, $imageExtension)
 {
     $gallery = db_getGalleryById($galleryId);
@@ -371,6 +387,11 @@ function appl_createImageName($galleryId, $imageName, $imageExtension)
     return $tempName;
 }
 
+/**
+ * Delets an image by the path
+ * @param $imageTitle
+ * @param $galleryId
+ */
 function app_deleteImagePath($imageTitle, $galleryId)
 {
     $gallery = db_getGalleryById($galleryId);
@@ -380,6 +401,13 @@ function app_deleteImagePath($imageTitle, $galleryId)
     if (file_exists($path . "thumbnails\\" . $imageTitle)) exec('del ' . $path . "thumbnails\\" . $imageTitle);
 }
 
+/**
+ * Creates a thumbnail out of the original image
+ * @param $inputPath
+ * @param $outputPath
+ * @param $desired_width
+ * @param $extension
+ */
 function appl_createThumbnail($inputPath, $outputPath, $desired_width, $extension)
 {
     /* read the source image */
@@ -418,5 +446,100 @@ function appl_createThumbnail($inputPath, $outputPath, $desired_width, $extensio
     }
 }
 
+/**
+ * Additional user logic
+ */
 
+/**
+ * @return string
+ */
+function adminUsers()
+{
+    setValue("phpmodule", $_SERVER['PHP_SELF'] . "?id=" . getValue("func"));
+    return runTemplate("../templates/" . getValue("func") . ".htm.php");
+}
+
+/**
+ * @return string
+ */
+function adminGalleries()
+{
+    setValue("phpmodule", $_SERVER['PHP_SELF'] . "?id=" . getValue("func"));
+    return runTemplate("../templates/" . getValue("func") . ".htm.php");
+}
+
+/**
+ * Delets the whole user directory
+ */
+function appl_deleteUserFromPath()
+{
+    $path = getValue('galleryRoot') . "\\" . getSessionEmailaddress();
+    if (file_exists($path)) {
+        exec("rd /s /q " . $path);
+    }
+}
+
+/**
+ * Additional general logic
+ */
+
+/**
+ * Set all necessary variables in the $_SESSION array
+ * @param $user
+ */
+function setSessionValues($user)
+{
+    $_SESSION['userId'] = $user[0]['UserId'];
+    $_SESSION['userNickname'] = $user[0]['Nickname'];
+    $_SESSION['userEmailaddress'] = $user[0]['Emailaddress'];
+    $_SESSION['userIsAdmin'] = $user[0]['IsAdmin'];
+}
+
+/**
+ * Unsets all the variables which has been set in sesSesstionValues($user)
+ */
+function unsetSessionValues()
+{
+    unset($_SESSION['userId']);
+    unset($_SESSION['userNickname']);
+    unset($_SESSION['userEmailaddress']);
+    unset($_SESSION['userIsAdmin']);
+}
+
+/**
+ * Checks if the password is matching the folowing rules
+ * -At least one uppercase letter
+ * -At least one lowercase letter
+ * -At least a number
+ * -Minimal length of 8 chars
+ * @param $password
+ * @return bool
+ */
+function appl_isPasswortMatchingRequirements($password)
+{
+    $uppercase = preg_match('@[A-Z]@', $password);
+    $lowercase = preg_match('@[a-z]@', $password);
+    $number = preg_match('@[0-9]@', $password);
+    return $uppercase && $lowercase && $number && strlen(trim($password)) >= 8;
+}
+
+/**
+ * Escape the '\' in a string
+ * @param $toEscape
+ * @return mixed
+ */
+function appl_escapeString($toEscape)
+{
+    return str_replace('\\', '\\\\', $toEscape);
+}
+
+/**
+ * Generates message which are shown to the user
+ * @param $content
+ * @param $bootstrapClass
+ */
+function appl_setMessage($content, $bootstrapClass)
+{
+    setValue('message', "<div class='alert " . $bootstrapClass . " m-3' role = 'alert'>" . $content . "</div >");
+}
 ?>
