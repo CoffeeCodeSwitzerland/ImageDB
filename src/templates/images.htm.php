@@ -9,15 +9,15 @@
             <li class="nav-item active">
                 <button type="button" id="images_addImage" class="btn btn-success" data-toggle="modal"
                         data-target="#images_addImageDialog">
-                    <span class="glyphicon glyphicon-alert"></span>New
+                    <i class="fas fa-plus-circle"></i> Add
                 </button>
                 <button type="button" id="images_editImage" class="btn btn-secondary" data-toggle="modal"
                         data-target="#images_editImageDialog">
-                    <span class="glyphicon glyphicon-alert"></span>Edit
+                   <i class="fas fa-edit"></i> Edit
                 </button>
                 <button type="button" id="images_deleteImage" class="btn btn-danger" data-toggle="modal"
                         data-target="#images_deleteImageDialog">
-                    <span class="glyphicon glyphicon-alert"></span>Delete
+                    <i class="fas fa-trash-alt"></i> Delete
                 </button>
             </li>
         </ul>
@@ -67,13 +67,14 @@ if (!empty($message)) {
                         </div>
                         <label class="btn btn-primary m-1" for="image_newImageFile">
                             <input id="image_newImageFile" name="image_newImageFile" type="file" style="display:none;">
-                            File
+                            <i class="fas fa-file-image"></i> File
                         </label>
                         <label class="label" id="image_fileName">
 
                         </label>
                     </div>
-                    <button type="submit" id="images_newImageButton" class="btn btn-success">Add</button>
+                    <button type="submit" id="images_newImageButton" class="btn btn-success">
+                        <i class="fas fa-plus-circle"></i> Add</button>
                 </form>
             </div>
         </div>
@@ -94,11 +95,13 @@ if (!empty($message)) {
                 After proceeding it's not possible to recover your data.
             </div>
             <div class="modal-footer">
-                <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+                <button type="button" class="btn btn-secondary" data-dismiss="modal">
+                    <i class="fas fa-times"></i> Close</button>
                 <form method="post" id="image_deleteForm" action="<?php echo getValue("phpmodule") ?>">
                     <input type="hidden" name="image_formAction" value="image_delete">
                     <input type="hidden" name="images_imageId" id="images_imageId">
-                    <button type="button" id="images_deleteImageButton" class="btn btn-danger">Delete</button>
+                    <button type="button" id="images_deleteImageButton" class="btn btn-danger">
+                        <i class="fas fa-trash-alt"></i> Delete</button>
                 </form>
             </div>
         </div>
@@ -125,7 +128,8 @@ if (!empty($message)) {
                         <input type="hidden" name="images_imageId" id="images_imageEditId">
                         <input type="hidden" name="image_formAction" value="image_edit">
                     </div>
-                    <button type="button" id="images_editImageButton" class="btn btn-success">Modify</button>
+                    <button type="button" id="images_editImageButton" class="btn btn-secondary">
+                        <i class="fas fa-edit"></i> Edit</button>
                 </form>
             </div>
         </div>

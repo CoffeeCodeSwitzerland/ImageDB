@@ -9,15 +9,15 @@
             <li class="nav-item active">
                 <button type="button" id="galleries_createGallery" class="btn btn-success" data-toggle="modal"
                         data-target="#gallery_createGallerydialog">
-                    <span class="glyphicon glyphicon-alert"></span>New
+                    <i class="fas fa-asterisk"></i> New
                 </button>
                 <button type="button" id="galleries_editGallery" class="btn btn-secondary" data-toggle="modal"
                         data-target="#gallery_editGallerydialog">
-                    <span class="glyphicon glyphicon-alert"></span>Edit
+                    <i class="fas fa-edit"></i> Edit
                 </button>
                 <button type="button" id="galleries_deleteGallery" class="btn btn-danger" data-toggle="modal"
                         data-target="#gallery_deleteGallerydialog">
-                    <span class="glyphicon glyphicon-alert"></span>Delete
+                    <i class="fas fa-trash-alt"></i> Delete
                 </button>
             </li>
         </ul>
@@ -54,7 +54,8 @@ if (!empty($message)) {
                                placeholder="Enter description of the gallery">
                         <input type="hidden" name="gallery_formAction" value="gallery_create">
                     </div>
-                    <button type="button" id="galleries_newGalleryButton" class="btn btn-success">Create</button>
+                    <button type="button" id="galleries_newGalleryButton" class="btn btn-success">
+                        <i class="fas fa-asterisk"></i> Create</button>
                 </form>
             </div>
         </div>
@@ -75,11 +76,13 @@ if (!empty($message)) {
                     After proceeding it's not possible to recover your data.
             </div>
             <div class="modal-footer">
-                <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+                <button type="button" class="btn btn-secondary" data-dismiss="modal">
+                    <i class="fas fa-times"></i> Close</button>
                 <form method="post" id="gallery_deleteForm" action="<?php echo getValue("phpmodule") ?>">
                     <input type="hidden" name="gallery_formAction" value="gallery_delete">
                     <input type="hidden" name="gallery_galleryId" id="gallery_deleteForm_galleryId">
-                    <button type="button" id="gallery_deleteForm_deleteButton" class="btn btn-danger">Delete</button>
+                    <button type="button" id="gallery_deleteForm_deleteButton" class="btn btn-danger">
+                        <i class="fas fa-trash-alt"></i> Delete</button>
                 </form>
             </div>
         </div>
@@ -110,7 +113,8 @@ if (!empty($message)) {
                         <input type="hidden" name="gallery_galleryId" id="gallery_editForm_galleryId"/>
                         <input type="hidden" name="gallery_formAction" value="gallery_edit">
                     </div>
-                    <button type="button" id="galleries_editGalleryButton" class="btn btn-success">Edit</button>
+                    <button type="button" id="galleries_editGalleryButton" class="btn btn-secondary">
+                        <i class="fas fa-edit"></i> Edit</button>
                 </form>
             </div>
         </div>

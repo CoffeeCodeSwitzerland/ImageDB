@@ -7,6 +7,7 @@
   <link href="../js/css/bootstrap-grid.css" rel="stylesheet" />
   <link href="../js/css/bootstrap-reboot.css" rel="stylesheet" />
     <link href="../css/own.css" rel="stylesheet" />
+    <link href="../fontawesome/css/fontawesome-all.css" rel="stylesheet"/>
   <script src="../js/jquery-3.1.1.min.js"></script>
   <script src="../js/js/bootstrap.js"></script>
   <script src="../js/jscript.js"></script>

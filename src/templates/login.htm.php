@@ -12,20 +12,19 @@
                                 </div>
                             </div>
                         </div>
-                        <div class="row justify-content-center">
+                        <div class="row justify-content-center" style="margin-top: 1em">
                             <form name="login" action="<?php echo getValue("phpmodule"); ?>" method="post">
-                                <div class="form-group">
-                                    <label for="login_emailaddress">Email address</label>
-                                    <input type="email" class="form-control contentCheck" name="login_emailaddress"
-                                           id="login_emailaddress"
-                                           aria-describedby="emailHelp"
-                                           placeholder="Enter email">
+                                <div class="input-group mb-3">
+                                    <div class="input-group-prepend">
+                                        <span class="input-group-text" id="basic-addon1"><i class="fas fa-at"></i></span>
+                                    </div>
+                                    <input type="email" name="login_emailaddress" id="login_emailaddress" class="form-control contentCheck" placeholder="Username" aria-label="Email" aria-describedby="basic-addon1">
                                 </div>
-                                <div class="form-group">
-                                    <label for="login_password">Password</label>
-                                    <input type="password" class="form-control contentCheck" name="login_password"
-                                           id="login_password"
-                                           placeholder="Password">
+                                <div class="input-group mb-3">
+                                    <div class="input-group-prepend">
+                                        <span class="input-group-text" id="basic-addon2"><i class="fas fa-user"></i></span>
+                                    </div>
+                                    <input type="password" id="login_password" name="login_password" class="form-control contentCheck" placeholder="Password" aria-label="Password" aria-describedby="basic-addon2">
                                 </div>
 
                                 <button type="submit" id="login_login" class="btn btn-primary">Login</button>

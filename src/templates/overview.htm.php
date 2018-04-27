@@ -29,9 +29,11 @@
                 <input name="overview_newPasswordRepeat" type="password" class="form-control contentCheck"
                        id="overview_newPasswordRepeat" placeholder="New repeat">
             </div>
-            <button type="submit" class="btn btn-primary" id="overview_change">Change</button>
+            <button type="submit" class="btn btn-primary" id="overview_change">
+                <i class="fas fa-exchange-alt"></i> Change</button>
             <div class="btn btn-danger" data-toggle="modal" data-target="#overview_modelDeleteAccount"
-                 id="overview_deleteAccount">Delete account
+                 id="overview_deleteAccount">
+                <i class="fas fa-trash-alt"></i> Delete account
             </div>
         </form>
         <?php
@@ -54,12 +56,14 @@
                         After proceeding it's not possible to recover your data.
                     </div>
                     <div class="modal-footer">
-                        <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+                        <button type="button" class="btn btn-secondary" data-dismiss="modal">
+                            <i class="fas fa-times"></i> Close</button>
                         <form action="<?php echo getValue("phpmodule") ?>" method="post">
                             <input type="text" value="delete" id="overview_deleteContent" name="overview_deleteContent"
                                    hidden>
                             <button type="submit" class="btn btn-danger" name="overview_delete" id="overview_delete"
-                                    value="Delete account">Delete account
+                                    value="Delete account">
+                                <i class="fas fa-trash-alt"></i> Delete account
                             </button>
                         </form>
                     </div>
