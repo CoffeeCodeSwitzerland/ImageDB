@@ -65,18 +65,36 @@ $(document).ready(function () {
         $('#image_modifyForm').submit();
     }
 
-    $('#images_newImageButton').prop('disabled', true);
-    $('#image_fileName').text('No file selected');
-
     $('#image_newImageFile').change(function () {
         if ($(this).get(0).files.length > 0) {
-            image_fileSelected = true;
-            $('#image_fileName').text($(this)[0].files[0].name);
+            if($(this)[0].files[0].size >= 4194304){
+                image_fileSelected = false;
+                $(this).val('');
+                $('#images_addImageDialog').modal('hide');
+                $('#image_fileToBigModal').modal();
+            }else {
+                image_fileSelected = true;
+                $('#image_fileInformationSize').val($(this)[0].files[0].size / 1024);
+                $('#image_fileInformationName').val($(this)[0].files[0].name);
+                $('#image_fileName').text('File selected');
+                $('#image_fileInformation').slideDown();
+            }
         } else {
+            $('#image_fileInformation').hide();
             $('#image_fileName').text('No file selected')
             image_fileSelected = false;
         }
         evaluate();
+    });
+
+    $('#images_addImage').on('click', function () {
+        $('#image_fileName').text('No file selected');
+        $('#images_newImageButton').prop('disabled', true);
+        $('#image_newImageFile').val('');
+        $('#image_fileInformation').hide();
+        $('#image_newGaleryName').val('');
+        image_nameCorrect = false;
+        image_fileSelected = false;
     });
 
     $('#image_newGaleryName').on('keyup', function () {

@@ -42,7 +42,8 @@ if (!empty($message)) {
                 </button>
             </div>
             <div class="modal-body">
-                <form id="image_addForm" method="post" action="<?php echo getValue("phpmodule") ?>" enctype="multipart/form-data">
+                <form id="image_addForm" method="post" action="<?php echo getValue("phpmodule") ?>"
+                      enctype="multipart/form-data">
                     <div class="form-group">
                         <label for="images_newImageName">Set the title for your image</label>
                         <input type="hidden" name="image_formAction" value="image_add">
@@ -50,11 +51,25 @@ if (!empty($message)) {
                                name="images_newImageName" aria-describedby="emailHelp"
                                placeholder="Enter name the image">
                         <label for="image_newImageFile">Select the image file</label><br>
+                        <div id="image_fileInformation" class="">
+                            <div class="input-group input-group-sm mb-3">
+                                <div class="input-group-prepend">
+                                    <span class="input-group-text" id="inputGroup-sizing-sm">Name</span>
+                                </div>
+                                <input type="text" id="image_fileInformationName" class="form-control" aria-label="Small" aria-describedby="inputGroup-sizing-sm">
+                            </div>
+                            <div class="input-group input-group-sm mb-3">
+                                <div class="input-group-prepend">
+                                    <span class="input-group-text" id="inputGroup-sizing-sm">Size</span>
+                                </div>
+                                <input type="text" id="image_fileInformationSize" class="form-control" aria-label="Small" aria-describedby="inputGroup-sizing-sm">
+                            </div>
+                        </div>
                         <label class="btn btn-primary m-1" for="image_newImageFile">
-                            <input id="image_newImageFile"  name="image_newImageFile" type="file" style="display:none;">
+                            <input id="image_newImageFile" name="image_newImageFile" type="file" style="display:none;">
                             File
                         </label>
-                        <label  class="label" id="image_fileName">
+                        <label class="label" id="image_fileName">
 
                         </label>
                     </div>
@@ -76,7 +91,7 @@ if (!empty($message)) {
                 </button>
             </div>
             <div class="modal-body">
-                    After proceeding it's not possible to recover your data.
+                After proceeding it's not possible to recover your data.
             </div>
             <div class="modal-footer">
                 <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
@@ -116,6 +131,25 @@ if (!empty($message)) {
         </div>
     </div>
 </div>
+
+<div id="image_fileToBigModal" class="modal" tabindex="-1" role="dialog">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title">File to big</h5>
+            </div>
+            <div class="modal-body">
+                <div class="alert alert-warning" role="alert">
+                    You have a filesize limitation of 4MiB
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-dismiss="modal">Ok</button>
+            </div>
+        </div>
+    </div>
+</div>
+
 
 <?php echo appl_getImagesByGallery() ?>
 
