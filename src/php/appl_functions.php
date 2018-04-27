@@ -15,11 +15,11 @@ function login()
     if (isset($_POST['login_emailaddress']) && isset($_POST['login_password'])) {
         $email = $_POST['login_emailaddress'];
         $password = $_POST['login_password'];
-        $userValid = areUserCredentialsValid($email, $password);
+        $userValid = db_areUserCredentialsValid($email, $password);
         //echo "<script>window.alert('" . $userValid ."');</script>";
         if ($userValid) {
             $canLogin = true;
-            $user = getUserByEmailaddress($email);
+            $user = db_getUserByEmailaddress($email);
             setSessionValues($user);
         } else {
             setValue("message", "<div class='alert alert-danger' id='login_invalidCredentials' role = 'alert'>Invalid credentials</div >");
@@ -79,12 +79,12 @@ function registration()
         } else {
             $nickname = $emailaddress;
         }
-        if (isPasswortMatchingRequirements($password)) {
-            if (userWithEmailaddressExists($emailaddress)) {
+        if (appl_isPasswortMatchingRequirements($password)) {
+            if (db_userWithEmailaddressExists($emailaddress)) {
                 setValue("message", "<div class='alert alert-danger' role = 'alert'> The user already exists</div >");
             } else {
                 setValue("message", "<div class='alert alert-success' role = 'alert'>The user has been registered</div >");
-                createUser($emailaddress, $nickname, $password);
+                db_createUser($emailaddress, $nickname, $password);
             }
         } else {
             setValue("message", "<div class='alert alert-primary' role = 'alert'> The password doesn't match the rules</div >");
@@ -106,8 +106,8 @@ function logout()
 function overview()
 {
     if (isset($_POST['overview_deleteContent'])) {
-        deleteUserFromPath();
-        deleteUserByUserId(getSessionUserId());
+        appl_deleteUserFromPath();
+        db_deleteUserByUserId(getSessionUserId());
         setValue('message', "<div class='alert alert-danger' role = 'alert'>The user has been removed</div >");
         unsetSessionValues();
         setValue('func', 'login');
@@ -117,7 +117,7 @@ function overview()
         if (isset($_POST['overview_nickname'])) {
             $nickName = $_POST['overview_nickname'];
             if ($nickName != getSessionNickname()) {
-                updateUserNicknameByUserId(getSessionUserId(), $nickName);
+                db_updateUserNicknameByUserId(getSessionUserId(), $nickName);
                 setSessionNickname($nickName);
                 setValue('message', "<div class='alert alert-success' role = 'alert'>The nickname has been updated</div >");
             }
@@ -130,9 +130,9 @@ function overview()
             $newPassword = $_POST['overview_newPassword'];
             $newPasswordRepeat = $_POST['overview_newPasswordRepeat'];
             if (strlen(trim($currentPassword)) > 0) {
-                if (isUserPasswordMatching(getSessionUserId(), $currentPassword)) {
-                    if (isPasswortMatchingRequirements($newPassword)) {
-                        updateUserPasswordByUserId(getSessionUserId(), $newPassword);
+                if (db_isUserPasswordMatching(getSessionUserId(), $currentPassword)) {
+                    if (appl_isPasswortMatchingRequirements($newPassword)) {
+                        db_updateUserPasswordByUserId(getSessionUserId(), $newPassword);
                         setValue('message', getValue('message') . "<div class='alert alert-success' role = 'alert'>The password has been updated</div >");
                     } else {
                         setValue('message', "<div class='alert alert-danger' role = 'alert'>The password doesn't match the rules</div >");
@@ -152,24 +152,21 @@ function galleries()
 {
     if (isset($_POST['gallery_deleteForm_action'])) {
         $id = $_POST['gallery_deleteForm_galleryId'];
-//        echo $id;
-        $gallery = getGalleryById($id);
-//        echo $gallery[0]['Title'];
-//        echo $gallery[0]['ShowTitle'];
-        deleteGallery($gallery[0]['Title']);
-        deleteGallery($id);
+        $gallery = db_getGalleryById($id);
+        appl_deleteGalleryPath($gallery['Title']);
+        db_deleteGallery($id);
     }
 
     if (isset($_POST['galleries_newGalleryName'])) {
         $galleryTitle = strtolower(str_replace(" ", "", $_POST['galleries_newGalleryName']));
         $galleryDescription = $_POST['galleries_newGalleryDescription'];
         $galleryShowTitle = $_POST['galleries_newGalleryName'];
-        setMessage("The gallery '" . $galleryTitle . "' is already taken", "alert-danger");
-        if (!isGalleryExisting(getSessionUserId(), $galleryTitle)) {
-            $galleryPath = createGalleryPath($galleryTitle);
+        appl_setMessage("The gallery '" . $galleryTitle . "' is already taken", "alert-danger");
+        if (!db_isGalleryExisting(getSessionUserId(), $galleryTitle)) {
+            $galleryPath = appl_createGalleryPath($galleryTitle);
             if ($galleryPath != "") {
-                createGallery(getSessionUserId(), $galleryTitle, $galleryShowTitle, $galleryDescription, escapeString($galleryPath));
-                setMessage("The gallery has vbeen created", "alert-success");
+                db_createGallery(getSessionUserId(), $galleryTitle, $galleryShowTitle, $galleryDescription, appl_escapeString($galleryPath));
+                appl_setMessage("The gallery has vbeen created", "alert-success");
             }
         }
     }
@@ -177,9 +174,9 @@ function galleries()
     return runTemplate("../templates/" . getValue("func") . ".htm.php");
 }
 
-function getGalleriesBySessionUser()
+function appl_getGalleriesBySessionUser()
 {
-    $galleries = getGalleriesByUser(getSessionUserId());
+    $galleries = db_getGalleriesByUser(getSessionUserId());
     $html = "";
     if (!empty($galleries)) {
         $rowItems = 0;
@@ -205,10 +202,11 @@ function getGalleriesBySessionUser()
     return "<div class='alert alert-info m-3' role = 'alert'> There aren't any galleries yet </div >";
 }
 
-function getImagesByGallery()
+function appl_getImagesByGallery()
 {
     $gid = getValue('currentGalleryId');
-    $images = getImagesByGalleryId($gid);
+    $gallery = db_getGalleryById($gid);
+    $images = db_getImagesByGalleryId($gid);
 
     $html = "";
     if (!empty($images)) {
@@ -217,14 +215,15 @@ function getImagesByGallery()
             if ($rowItems == 0) {
                 $html .= "<div class='row m-3'>";
             }
-            $html .= "<div class='col-md-3'><div class='card border-secondary galleryItem' name='" . $image['ImageId'] . "'>
+            $html .= "<div class='col-md-3'>
+                        <div class='card border-secondary imageItem' name='" . $image['ImageId'] . "'>
                            <div class='card-header'></div> 
-                                <img class='card-img-top' src='" . getGalleryPath($gid) . $image['ThumbnailPath'] . "' alt='Card image cap'>
+                                <img class='img-thumbnail rounded mx-auto d-block w-100' src='../storage/galleries/" . getSessionEmailaddress() . "/" . $gallery['Title'] . "/thumbnails/" . $image['ThumbnailPath'] . "' alt='Card image cap'>
                                 <div class='card-body'>
-                                   <h5 class='card-title' id='title_" . $image['ImageId'] . "' >" . $image['Name'] . "</h5>
-                                   <p class='card-text' id='description_" . $image['ImageId'] . "'  >" . $image['Description'] . "</p>
-                            </div>
-                       </div></div>";
+                                    <h5 class='card-title' id='title_" . $image['ImageId'] . "' >" . $image['Name'] . "</h5>
+                                 </div>
+                           </div>
+                        </div>";
             $rowItems++;
             if ($rowItems == 4) {
                 $html .= '</div>';
@@ -236,7 +235,7 @@ function getImagesByGallery()
     return "<div class='alert alert-info m-3' role = 'alert'> There aren't any images yet </div >";
 }
 
-function isPasswortMatchingRequirements($password)
+function appl_isPasswortMatchingRequirements($password)
 {
     $uppercase = preg_match('@[A-Z]@', $password);
     $lowercase = preg_match('@[a-z]@', $password);
@@ -245,7 +244,7 @@ function isPasswortMatchingRequirements($password)
 }
 
 
-function createGalleryPath($galleryTitle)
+function appl_createGalleryPath($galleryTitle)
 {
     $path = getValue('galleryRoot') . "\\" . getSessionEmailaddress() . "\\" . strtolower($galleryTitle);
     if (!file_exists($path)) {
@@ -256,7 +255,7 @@ function createGalleryPath($galleryTitle)
     return "";
 }
 
-function deleteGalleryPath($galleryTitle)
+function appl_deleteGalleryPath($galleryTitle)
 {
     $path = getValue('galleryRoot') . "\\" . getSessionEmailaddress() . "\\" . $galleryTitle;
     if (file_exists($path)) {
@@ -264,7 +263,7 @@ function deleteGalleryPath($galleryTitle)
     }
 }
 
-function deleteUserFromPath()
+function appl_deleteUserFromPath()
 {
     $path = getValue('galleryRoot') . "\\" . getSessionEmailaddress();
     if (file_exists($path)) {
@@ -272,13 +271,12 @@ function deleteUserFromPath()
     }
 }
 
-function escapeString($toEscape)
+function appl_escapeString($toEscape)
 {
     return str_replace('\\', '\\\\', $toEscape);
 }
 
-
-function setMessage($content, $bootstrapClass)
+function appl_setMessage($content, $bootstrapClass)
 {
     setValue('message', "<div class='alert " . $bootstrapClass . " m-3' role = 'alert'>" . $content . "</div >");
 }
@@ -297,23 +295,105 @@ function adminGalleries()
 
 function images()
 {
+    $gid = 0;
     if (isset($_GET['gid'])) {
         $gid = $_GET['gid'];
-        if (isGalleryIdBelongingToUser($gid, getSessionUserId())) {
+        if (db_isGalleryIdBelongingToUser($gid, getSessionUserId())) {
             setValue('currentGalleryId', $gid);
+            if(isset($_POST['image_formAction'])){
+                $action = $_POST['image_formAction'];
+                if($action == 'image_add'){
+                    $gallery = db_getGalleryById($gid);
+                    $info = pathinfo($_FILES['image_newImageFile']['name']);
+                    $extentsion = $info['extension'];
+                    $fileName = appl_createImageName($gid, $_FILES['image_newImageFile']['name'], $extentsion);
+                    $imagePath = getValue('galleryRoot') . "\\" . getSessionEmailaddress() . "\\" . $gallery['Title'] . "\\" . $fileName . "." . $extentsion;
+                    $thumbnailPath = getValue('galleryRoot') . "\\" . getSessionEmailaddress() . "\\" . $gallery['Title'] . "\\thumbnails\\" . $fileName . "." . $extentsion;
+
+                    move_uploaded_file($_FILES['image_newImageFile']['tmp_name'], $imagePath);
+                    appl_createThumbnail($imagePath,$thumbnailPath,400, $extentsion);
+
+                    db_createImage($gid, $_POST['images_newImageName'], $fileName . "." . $extentsion, $fileName . "." . $extentsion);
+                }elseif ($action == 'image_delete'){
+                    $imageId = $_POST['images_imageId'];
+                    $image = db_getImageById($imageId);
+                    db_deleteImage($imageId);
+                    app_deleteImagePath($image['RelativePath'], $gid);
+                }elseif ($action == 'image_edit'){
+                    $imageId = $_POST['images_imageId'];
+                    db_updateImage($imageId, $_POST['image_editImageName']);
+                }
+            }
         } else {
             setValue('func', 'galleries');
-            setMessage('You do not have the righ to access this gallery', 'alert-danger');
+            appl_setMessage('You do not have the righ to access this gallery', 'alert-danger');
         }
     }
 
-    setValue("phpmodule", $_SERVER['PHP_SELF'] . "?id=" . getValue("func"));
+    setValue("phpmodule", $_SERVER['PHP_SELF'] . "?id=" . getValue("func") . "&gid=" . $gid);
     return runTemplate("../templates/" . getValue("func") . ".htm.php");
 }
 
-function getGalleryPath($galleryId){
-    $gallery = getGalleryById($galleryId);
+function appl_getGalleryPath($galleryId){
+    $gallery = db_getGalleryById($galleryId);
     return getValue('galleryRoot') . "\\" . getSessionEmailaddress() . "\\" . $gallery['Title'] . "\\";
 }
+
+function appl_createImageName($galleryId, $imageName, $imageExtension){
+    $gallery = db_getGalleryById($galleryId);
+    $galleryNotTaken = false;
+    $counter = 0;
+    $path = getValue('galleryRoot') . "\\" . getSessionEmailaddress() . "\\" . $gallery['Title'] . "\\";
+    $ar = explode(".", $imageName);
+    $tempName = $ar[0];
+    while(!$galleryNotTaken){
+        $counter++;
+        if(file_exists($path . $tempName . "." . $imageExtension)){
+            $tempName = $ar[0] . "_" . $counter;
+        }
+        else{
+            $galleryNotTaken = true;
+        }
+    }
+    return $tempName;
+}
+
+function app_deleteImagePath($imageTitle, $galleryId) {
+    $gallery = db_getGalleryById($galleryId);
+    $path = getValue('galleryRoot') . "\\" . getSessionEmailaddress() . "\\" . $gallery['Title'] . "\\";
+
+    if(file_exists($path . $imageTitle)) exec('del ' . $path . $imageTitle);
+    if(file_exists($path . "thumbnails\\" . $imageTitle)) exec('del ' . $path . "thumbnails\\" . $imageTitle);
+}
+
+function appl_createThumbnail($inputPath, $outputPath, $desired_width, $extension){
+    /* read the source image */
+    $source_image = null;
+
+    switch($extension){
+        case "jpg": $source_image = imagecreatefromjpeg($inputPath);break;
+        case "png": $source_image = imagecreatefrompng($inputPath);break;
+    }
+
+    $width = imagesx($source_image);
+    $height = imagesy($source_image);
+
+    /* find the "desired height" of this thumbnail, relative to the desired width  */
+    $desired_height = floor($height * ($desired_width / $width));
+
+    /* create a new, "virtual" image */
+    $virtual_image = imagecreatetruecolor($desired_width, $desired_height);
+
+    /* copy source image at a resized size */
+    imagecopyresampled($virtual_image, $source_image, 0, 0, 0, 0, $desired_width, $desired_height, $width, $height);
+
+    /* create the physical thumbnail image to its destination */
+
+    switch($extension){
+        case "jpg": imagejpeg($virtual_image, $outputPath);;break;
+        case "png": imagepng($virtual_image, $outputPath);;break;
+    }
+}
+
 
 ?>

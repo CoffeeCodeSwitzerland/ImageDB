@@ -8,7 +8,7 @@
     <div class="col-md-5">
         <h4>Users</h4>
         <?php
-        foreach(getAllUsers() as $user){
+        foreach(db_getAllUsers() as $user){
           echo "
           <div class='card' style='width: 18rem; margin-bottom: 20px;'>
             <div class='card-header'>".
@@ -74,7 +74,7 @@
                           <div class="form-group">
                               <label for="adminUsers_nickname">Nickname</label>
                               <input name="adminUsers_nickname" type="text" class="form-control" id="adminUsers_nickname"
-                                     value="<?php echo getAllUsers()[0]['Nickname']; ?>">
+                                     value="<?php echo db_getAllUsers()[0]['Nickname']; ?>">
                           </div>
                           <div class="form-group">
                               <label for="adminUsers_newPassword">New Password</label>

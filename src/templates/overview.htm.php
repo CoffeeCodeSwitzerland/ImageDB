@@ -76,7 +76,7 @@
                                                       src="../img/library.svg"
                                                       class="img-thumbnail" alt="..."></li>
                     <li class="list-inline-item">
-                        <?php echo getImageCountByEmailaddress(getSessionEmailaddress()) ?>
+                        <?php echo db_getImageCountByEmailaddress(getSessionEmailaddress()) ?>
                     </li>
                 </ul>
             </li>
@@ -86,7 +86,7 @@
                                                       src="../img/library.svg"
                                                       class="img-thumbnail" alt="..."></li>
                     <li class="list-inline-item">
-                        <?php echo getGalleryCountByEmailaddress(getSessionEmailaddress()) ?>
+                        <?php echo db_getGalleryCountByEmailaddress(getSessionEmailaddress()) ?>
                     </li>
                 </ul>
             </li>

@@ -8,16 +8,16 @@
     <div class="col-md-5">
         <h4>Galleries</h4>
         <?php
-        foreach(getAllUsers() as $user){
+        foreach(db_getAllUsers() as $user){
           $userId = $user['UserId'];
-          if(!empty(getGalleriesByUser($userId))){
+          if(!empty(db_getGalleriesByUser($userId))){
             echo "
             <div class='card' style='width: 18rem; margin-bottom: 20px;'>
               <div class='card-header' style='border-left: 1px solid black;border-right: 1px solid black;border-top: 1px solid black;'>".
                 $user['Emailaddress']."
               </div>
               <ul class='list-group list-group-flush'>";
-              foreach(getGalleriesByUser($userId) as $gallery){
+              foreach(db_getGalleriesByUser($userId) as $gallery){
                 echo "<li class='list-group-item' style='border-left: 1px solid black;border-right: 1px solid black;border-top: 1px solid black;'>Title: ".$gallery['Title']."</li>
                 <li class='list-group-item' style='color:gray;border-left: 1px solid black;border-right: 1px solid black;'>Description: ".$gallery['Description']."</li>
                 <li class='list-group-item' style='border-left: 1px solid black;border-right: 1px solid black;border-bottom: 1px solid black;'><div class='btn btn-secondary' data-toggle='modal' data-target='#adminGalleries_editGallery'
@@ -79,7 +79,7 @@
                           <div class="form-group">
                               <label for="adminUsers_nickname">Nickname</label>
                               <input name="adminUsers_nickname" type="text" class="form-control" id="adminUsers_nickname"
-                                     value="<?php echo getAllUsers()[0]['Nickname']; ?>">
+                                     value="<?php echo db_getAllUsers()[0]['Nickname']; ?>">
                           </div>
                           <div class="form-group">
                               <label for="adminUsers_newPassword">New Password</label>

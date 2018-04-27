@@ -233,7 +233,7 @@ function isSessionActive()
 function isSessionUserAdmin()
 {
     if (isset($_SESSION['userId'])) {
-        if (in_array($_SESSION['userId'], getAdminUserIds())) {
+        if (in_array($_SESSION['userId'], db_getAdminUserIds())) {
             return true;
         }
     }

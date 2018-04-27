@@ -8,7 +8,7 @@
  */
 
 
-function userWithEmailaddressExists($email)
+function db_userWithEmailaddressExists($email)
 {
     $sql = "SELECT COUNT(UserId) FROM `User` WHERE Emailaddress = '" . strtolower($email) . "';";
     $answer = sqlSelect($sql);
@@ -18,13 +18,13 @@ function userWithEmailaddressExists($email)
     return false;
 }
 
-function createUser($email, $nickname, $password)
+function db_createUser($email, $nickname, $password)
 {
-    $sql = "INSERT INTO `User` (Emailaddress, `Password`, Nickname, IsAdmin) VALUES ('" . $email . "','" . hashPassword($password) . "','" . $nickname . "',0)";
+    $sql = "INSERT INTO `User` (Emailaddress, `Password`, Nickname, IsAdmin) VALUES ('" . $email . "','" . db_hashPassword($password) . "','" . $nickname . "',0)";
     sqlQuery($sql);
 }
 
-function areUserCredentialsValid($email, $password)
+function db_areUserCredentialsValid($email, $password)
 {
     $sql = "SELECT Password FROM `User` WHERE Emailaddress = '" . strtolower($email) . "';";
     $answer = sqlSelect($sql);
@@ -37,7 +37,7 @@ function areUserCredentialsValid($email, $password)
     return false;
 }
 
-function isUserPasswordMatching($userId, $raw)
+function db_isUserPasswordMatching($userId, $raw)
 {
     $sql = "SELECT Password FROM `User` WHERE UserId = " . $userId . ";";
     $answer = sqlSelect($sql);
@@ -47,14 +47,14 @@ function isUserPasswordMatching($userId, $raw)
     return false;
 }
 
-function getUserByEmailaddress($emailaddress)
+function db_getUserByEmailaddress($emailaddress)
 {
     $sql = "SELECT * FROM `User` WHERE Emailaddress ='" . $emailaddress . "';";
     $answer = sqlSelect($sql);
     return $answer;
 }
 
-function getImageCountByEmailaddress($emailaddress)
+function db_getImageCountByEmailaddress($emailaddress)
 {
     $sql = "SELECT COUNT(ImageId) FROM image WHERE GalleryId IN (SELECT GalleryId FROM gallery WHERE OwnerId = (SELECT UserId FROM `user` WHERE Emailaddress ='" . strtolower($emailaddress) . "'))";
     $answer = sqlSelect($sql);
@@ -62,32 +62,32 @@ function getImageCountByEmailaddress($emailaddress)
 
 }
 
-function getGalleryCountByEmailaddress($emailaddress)
+function db_getGalleryCountByEmailaddress($emailaddress)
 {
     $sql = "SELECT COUNT(GalleryId) FROM gallery WHERE OwnerId = (SELECT UserId FROM `user` WHERE Emailaddress ='" . strtolower($emailaddress) . "')";
     $answer = sqlSelect($sql);
     return $answer[0]["COUNT(GalleryId)"];
 }
 
-function getGalleriesByUser($userId)
+function db_getGalleriesByUser($userId)
 {
     $sql = "SELECT * FROM gallery WHERE OwnerId=" . $userId . ";";
     $answer = sqlSelect($sql);
     return $answer;
 }
 
-function createGallery($userId, $galleryTitle, $galleryShowTitle, $galleryDescription, $galleryPath)
+function db_createGallery($userId, $galleryTitle, $galleryShowTitle, $galleryDescription, $galleryPath)
 {
     $sql = "INSERT INTO `gallery` (Title, ShowTitle ,Description, OwnerId,  DirectoryPath) VALUES('" . $galleryTitle . "', '" . $galleryShowTitle . "', '" . $galleryDescription ."', '" . $userId . "' , '" . strtolower($galleryPath). "')";
     sqlQuery($sql);
 }
 
-function deleteGallery($galleryId) {
+function db_deleteGallery($galleryId) {
     $sql = "DELETE FROM `gallery` WHERE GalleryId=" . $galleryId .";";
     sqlQuery($sql);
 }
 
-function getImagePathsByGallery($galleryId){
+function db_getImagePathsByGallery($galleryId){
     $sql = "SELECT RelativePath FROM `image` WHERE GalleryId=" . $galleryId;
     $answer = sqlSelect($sql);
     $back = [];
@@ -96,7 +96,7 @@ function getImagePathsByGallery($galleryId){
     }
 }
 
-function isGalleryExisting($userId, $galleryTitle)
+function db_isGalleryExisting($userId, $galleryTitle)
 {
     $sql = "SELECT Count(GalleryId) FROM `gallery` WHERE Title='" . $galleryTitle . "' AND OwnerId =" . $userId . ";";
     $answer = sqlSelect($sql);
@@ -106,36 +106,36 @@ function isGalleryExisting($userId, $galleryTitle)
     return true;
 }
 
-function deleteUserByUserId($userId)
+function db_deleteUserByUserId($userId)
 {
     $sql = "DELETE FROM `user` WHERE UserId =". $userId .";";
     sqlQuery($sql);
 }
 
-function updateUserNicknameByUserId($userId, $nickname)
+function db_updateUserNicknameByUserId($userId, $nickname)
 {
     $sql = "UPDATE `User` SET Nickname = '" . $nickname . "' WHERE UserId=" . $userId . ";";
     sqlQuery($sql);
 }
 
-function updateUserPasswordByUserId($userId, $password)
+function db_updateUserPasswordByUserId($userId, $password)
 {
-    $sql = "UPDATE `User` SET Password = '" . hashPassword($password) . "' WHERE UserId =" . $userId . ";";
+    $sql = "UPDATE `User` SET Password = '" . db_hashPassword($password) . "' WHERE UserId =" . $userId . ";";
     sqlQuery($sql);
 }
 
-function hashPassword($password)
+function db_hashPassword($password)
 {
     $options = ['cost' => 12];
     return password_hash($password, PASSWORD_BCRYPT, $options);
 }
 
-function getGalleryById($galleryId){
+function db_getGalleryById($galleryId){
     $sql = "SELECT * FROM `gallery` WHERE GalleryId=" . $galleryId . ";";
     $answer = sqlSelect($sql);
-    return $answer;
+    return $answer[0];
 }
-function getAdminUserIds()
+function db_getAdminUserIds()
 {
     $sql = "SELECT UserId FROM `User` WHERE IsAdmin = 1  ;";
     $answer = sqlSelect($sql);
@@ -146,7 +146,7 @@ function getAdminUserIds()
     return $toReturn;
 }
 
-function getAllUsers(){
+function db_getAllUsers(){
     $sql = "SELECT * FROM `User`;";
     $answer = sqlSelect($sql);
     $toReturn = array();
@@ -156,16 +156,36 @@ function getAllUsers(){
     return $toReturn;
 }
 
-function isGalleryIdBelongingToUser($galleryId, $userId){
+function db_isGalleryIdBelongingToUser($galleryId, $userId){
     $sql = "SELECT COUNT(GalleryId) FROM `gallery` WHERE OwnerId =" . $userId ." AND GalleryId=" . $galleryId .";";
     $answer = sqlSelect($sql);
     return $answer[0]['COUNT(GalleryId)'] != 0;
 }
 
-function getImagesByGalleryId($galleryId) {
+function db_getImagesByGalleryId($galleryId) {
     $sql = "SELECT * FROM `image` WHERE GalleryId=" . $galleryId .";";
     $answer = sqlSelect($sql);
     return $answer;
 }
 
+function db_createImage($galleryId, $name, $relativepath, $thubmnailPath){
+    $sql = "INSERT INTO `image`  (GalleryId, Name, RelativePath, ThumbnailPath) VALUES (" . $galleryId . ",'" . $name . "','" . $relativepath . "','" . $thubmnailPath . "')";
+    sqlQuery($sql);
+}
+
+function db_deleteImage($imageId){
+    $sql = "DELETE FROM `image` WHERE ImageId=" . $imageId;
+    sqlQuery($sql);
+}
+
+function db_getImageById($imageId) {
+    $sql = "SELECT * FROM `image` WHERE ImageId =" . $imageId;
+    $answer = sqlSelect($sql);
+    return $answer[0];
+}
+
+function db_updateImage($imageId, $imageName) {
+    $sql = "UPDATE `image` SET Name='" . $imageName . "' WHERE ImageId=" . $imageId . " ;";
+    sqlQuery($sql);
+}
 ?>

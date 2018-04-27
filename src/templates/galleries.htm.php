@@ -115,6 +115,6 @@ if (!empty($message)) {
     </div>
 </div>
 
-<?php echo getGalleriesBySessionUser() ?>
+<?php echo appl_getGalleriesBySessionUser() ?>
 
 <script src="../js/galleries.js"></script>

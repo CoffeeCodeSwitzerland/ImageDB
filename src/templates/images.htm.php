@@ -42,13 +42,21 @@ if (!empty($message)) {
                 </button>
             </div>
             <div class="modal-body">
-                <form method="post" action="<?php echo getValue("phpmodule") ?>">
+                <form method="post" action="<?php echo getValue("phpmodule") ?>" enctype="multipart/form-data">
                     <div class="form-group">
                         <label for="images_newImageName">Set the title for your image</label>
-                        <input type="hidden" name="image_formAction value="image_add">
-                        <input type="text" class="form-control" id="galleries_newGalleryName"
+                        <input type="hidden" name="image_formAction" value="image_add">
+                        <input type="text" class="form-control" id="image_newGaleryName"
                                name="images_newImageName" aria-describedby="emailHelp"
-                               placeholder="Enter name of the gallery">
+                               placeholder="Enter name the image">
+                        <label for="image_newImageFile">Select the image file</label><br>
+                        <label class="btn btn-primary m-1" for="image_newImageFile">
+                            <input id="image_newImageFile"  name="image_newImageFile" type="file" style="display:none;">
+                            File
+                        </label>
+                        <label  class="label" id="image_fileName">
+
+                        </label>
                     </div>
                     <button type="submit" id="images_newImageButton" class="btn btn-success">Add</button>
                 </form>
@@ -72,8 +80,8 @@ if (!empty($message)) {
             </div>
             <div class="modal-footer">
                 <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
-                <form method="post" id="gallery_deleteForm" action="<?php echo getValue("phpmodule") ?>">
-                    <input type="hidden" name="image_formAction value="image_delete">
+                <form method="post" id="image_deleteForm" action="<?php echo getValue("phpmodule") ?>">
+                    <input type="hidden" name="image_formAction" value="image_delete">
                     <input type="hidden" name="images_imageId" id="images_imageId">
                     <button type="button" id="images_deleteImageButton" class="btn btn-danger">Delete</button>
                 </form>
@@ -93,20 +101,22 @@ if (!empty($message)) {
                 </button>
             </div>
             <div class="modal-body">
-                <form method="post" action="<?php echo getValue("phpmodule") ?>">
+                <form id="image_modifyForm" method="post" action="<?php echo getValue("phpmodule") ?>">
                     <div class="form-group">
                         <label for="image_editImageName">Image name</label>
                         <input type="text" class="form-control" id="image_editImageName"
                                name="image_editImageName" aria-describedby="emailHelp"
                                placeholder="Enter name of the gallery">
+                        <input type="hidden" name="images_imageId" id="images_imageEditId">
+                        <input type="hidden" name="image_formAction" value="image_edit">
                     </div>
-                    <button type="submit" id="images_editImageButton" class="btn btn-success">Edit</button>
+                    <button type="button" id="images_editImageButton" class="btn btn-success">Modify</button>
                 </form>
             </div>
         </div>
     </div>
 </div>
 
-<?php echo getImagesByGallery() ?>
+<?php echo appl_getImagesByGallery() ?>
 
-<script src="../js/galleries.js"></script>
+<script src="../js/images.js"></script>
