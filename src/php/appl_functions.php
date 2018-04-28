@@ -287,13 +287,28 @@ function appl_getGalleriesBySessionUser()
  */
 function appl_createGalleryPath($galleryTitle)
 {
-    $path = getValue('galleryRoot') . "\\" . getSessionEmailaddress() . "\\" . strtolower($galleryTitle);
-    if (!file_exists($path)) {
-        exec("md " . $path);
-        exec("md " . $path . "\\thumbnails");
-        return $path;
+    $basePath = getValue('galleryRoot') . "\\" . getSessionEmailaddress() . "\\";
+    $pathNotTaken = false;
+    $path = $galleryTitle;
+    $temp = "";
+    $counter = 0;
+
+    while(!$pathNotTaken){
+        $counter++;
+        $temp = $path . "_" . $counter;
+        if(!file_exists($basePath . $temp)){
+            $path = $basePath . $temp;
+            $pathNotTaken = true;
+        }
     }
-    return "";
+
+    return $path;
+
+//    if (!file_exists($path)) {
+//        exec("md " . $path);
+//        exec("md " . $path . "\\thumbnails");
+//        return $path;
+//    }
 }
 
 /**

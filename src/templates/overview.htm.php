@@ -77,7 +77,7 @@
             <li class="list-group-item">
                 <ul class="list-inline">
                     <li class="list-inline-item"><img style="background-color: grey; width: 7em;"
-                                                      src="../img/library.svg"
+                                                      src="../img/picture.svg"
                                                       class="img-thumbnail" alt="..."></li>
                     <li class="list-inline-item">
                         <?php echo db_getImageCountByEmailaddress(getSessionEmailaddress()) ?>
@@ -87,7 +87,7 @@
             <li class="list-group-item">
                 <ul class="list-inline">
                     <li class="list-inline-item"><img style="background-color: grey; width: 7em;"
-                                                      src="../img/library.svg"
+                                                      src="../img/photo-album.svg"
                                                       class="img-thumbnail" alt="..."></li>
                     <li class="list-inline-item">
                         <?php echo db_getGalleryCountByEmailaddress(getSessionEmailaddress()) ?>
