@@ -49,4 +49,4 @@ crashlytics-build.properties
 fabric.properties
 
 #Exclude the images
-storage/**/
+storage/galleries/**/**/
