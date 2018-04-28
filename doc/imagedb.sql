@@ -3,9 +3,9 @@
 -- https://www.phpmyadmin.net/
 --
 -- Host: 127.0.0.1
--- Erstellungszeit: 15. Mrz 2018 um 13:54
--- Server-Version: 10.1.30-MariaDB
--- PHP-Version: 7.2.1
+-- Erstellungszeit: 28. Apr 2018 um 09:47
+-- Server-Version: 10.1.26-MariaDB
+-- PHP-Version: 7.1.9
 
 SET SQL_MODE = "NO_AUTO_VALUE_ON_ZERO";
 SET AUTOCOMMIT = 0;
@@ -30,6 +30,7 @@ USE `imagedb`;
 -- Tabellenstruktur für Tabelle `authority`
 --
 
+DROP TABLE IF EXISTS `authority`;
 CREATE TABLE `authority` (
   `AuthorityId` int(11) NOT NULL,
   `UserId` int(11) NOT NULL,
@@ -43,13 +44,14 @@ CREATE TABLE `authority` (
 -- Tabellenstruktur für Tabelle `gallery`
 --
 
+DROP TABLE IF EXISTS `gallery`;
 CREATE TABLE `gallery` (
   `GalleryId` int(11) NOT NULL,
   `OwnerId` int(11) NOT NULL,
   `Title` text NOT NULL,
-  `ShowTitle` text NOT NULL,
   `Description` text,
-  `DirectoryPath` text NOT NULL
+  `DirectoryPath` text NOT NULL,
+  `ShowTitle` text NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1;
 
 -- --------------------------------------------------------
@@ -58,6 +60,7 @@ CREATE TABLE `gallery` (
 -- Tabellenstruktur für Tabelle `image`
 --
 
+DROP TABLE IF EXISTS `image`;
 CREATE TABLE `image` (
   `ImageId` int(11) NOT NULL,
   `GalleryId` int(11) NOT NULL,
@@ -72,6 +75,7 @@ CREATE TABLE `image` (
 -- Tabellenstruktur für Tabelle `imagetag`
 --
 
+DROP TABLE IF EXISTS `imagetag`;
 CREATE TABLE `imagetag` (
   `ImageTagId` int(11) NOT NULL,
   `TagId` int(11) NOT NULL,
@@ -84,6 +88,7 @@ CREATE TABLE `imagetag` (
 -- Tabellenstruktur für Tabelle `right`
 --
 
+DROP TABLE IF EXISTS `right`;
 CREATE TABLE `right` (
   `RightId` int(11) NOT NULL,
   `Role` text NOT NULL,
@@ -96,6 +101,7 @@ CREATE TABLE `right` (
 -- Tabellenstruktur für Tabelle `tag`
 --
 
+DROP TABLE IF EXISTS `tag`;
 CREATE TABLE `tag` (
   `TagId` int(11) NOT NULL,
   `Name` text NOT NULL
@@ -107,6 +113,7 @@ CREATE TABLE `tag` (
 -- Tabellenstruktur für Tabelle `user`
 --
 
+DROP TABLE IF EXISTS `user`;
 CREATE TABLE `user` (
   `UserId` int(11) NOT NULL,
   `Emailaddress` text NOT NULL,
@@ -182,13 +189,13 @@ ALTER TABLE `authority`
 -- AUTO_INCREMENT für Tabelle `gallery`
 --
 ALTER TABLE `gallery`
-  MODIFY `GalleryId` int(11) NOT NULL AUTO_INCREMENT;
+  MODIFY `GalleryId` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=41;
 
 --
 -- AUTO_INCREMENT für Tabelle `image`
 --
 ALTER TABLE `image`
-  MODIFY `ImageId` int(11) NOT NULL AUTO_INCREMENT;
+  MODIFY `ImageId` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=16;
 
 --
 -- AUTO_INCREMENT für Tabelle `imagetag`
@@ -212,7 +219,7 @@ ALTER TABLE `tag`
 -- AUTO_INCREMENT für Tabelle `user`
 --
 ALTER TABLE `user`
-  MODIFY `UserId` int(11) NOT NULL AUTO_INCREMENT;
+  MODIFY `UserId` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=23;
 
 --
 -- Constraints der exportierten Tabellen
@@ -236,7 +243,6 @@ ALTER TABLE `gallery`
 -- Constraints der Tabelle `image`
 --
 ALTER TABLE `image`
-  ADD CONSTRAINT `image_ibfk_1` FOREIGN KEY (`GalleryId`) REFERENCES `gallery` (`GalleryId`),
   ADD CONSTRAINT `image_ibfk_2` FOREIGN KEY (`GalleryId`) REFERENCES `gallery` (`GalleryId`) ON DELETE CASCADE ON UPDATE CASCADE;
 
 --
