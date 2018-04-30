@@ -104,7 +104,7 @@ function galleries()
             if (!db_isGalleryExisting(getSessionUserId(), $galleryTitle)) {
                 $galleryPath = appl_createGalleryPath($galleryTitle);
                 if ($galleryPath != "") {
-                    db_createGallery(getSessionUserId(), $galleryTitle, $galleryShowTitle, $galleryDescription, appl_escapeString($galleryPath));
+                    db_createGallery(getSessionUserId(), $galleryPath, $galleryShowTitle, $galleryDescription, appl_escapeString(getValue('galleryRoot') . "\\" . getSessionEmailaddress() . "\\" . $galleryPath));
                     appl_setMessage("The gallery has been created", "alert-success");
                 }
             }
@@ -293,16 +293,18 @@ function appl_createGalleryPath($galleryTitle)
     $temp = "";
     $counter = 0;
 
-    while(!$pathNotTaken){
+    while (!$pathNotTaken) {
         $counter++;
         $temp = $path . "_" . $counter;
-        if(!file_exists($basePath . $temp)){
+        if (!file_exists($basePath . $temp)) {
             $path = $basePath . $temp;
+            exec("md " . $basePath . $temp);
+            exec("md " . $basePath . $temp . "\\thumbnails");
             $pathNotTaken = true;
         }
     }
 
-    return $path;
+    return $temp;
 
 //    if (!file_exists($path)) {
 //        exec("md " . $path);
@@ -557,4 +559,5 @@ function appl_setMessage($content, $bootstrapClass)
 {
     setValue('message', "<div class='alert " . $bootstrapClass . " m-3' role = 'alert'>" . $content . "</div >");
 }
+
 ?>
