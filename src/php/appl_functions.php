@@ -305,12 +305,6 @@ function appl_createGalleryPath($galleryTitle)
     }
 
     return $temp;
-
-//    if (!file_exists($path)) {
-//        exec("md " . $path);
-//        exec("md " . $path . "\\thumbnails");
-//        return $path;
-//    }
 }
 
 /**
