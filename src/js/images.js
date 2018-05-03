@@ -18,13 +18,13 @@ $(document).ready(function () {
             currentImage.addClass('bg-light');
         }
         currentImage = $(this);
-        console.log(currentImage.attr('name'));
+        // console.log(currentImage.attr('name'));
         currentImage.removeClass('bg-light');
         currentImage.addClass('bg-secondary text-white');
     });
 
     $('.imageItem').on('dblclick', function () {
-        //window.location.href = "user.php?id=images&gid=" + currentImage.attr('name');
+        $('#lightbox_' + $(this).attr('name')).click();
     });
 
     $('#images_deleteImageButton').on('click', function () {

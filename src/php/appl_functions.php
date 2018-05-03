@@ -358,6 +358,8 @@ function appl_getImagesByGallery()
                                 <img class='img-thumbnail rounded mx-auto d-block w-100' src='../storage/galleries/" . getSessionEmailaddress() . "/" . $gallery['Title'] . "/thumbnails/" . $image['ThumbnailPath'] . "' alt='Card image cap'>
                                 <div class='card-body'>
                                     <h5 class='card-title' id='title_" . $image['ImageId'] . "' >" . $image['Name'] . "</h5>
+                                    <a data-lightbox='images' id='lightbox_" . $image['ImageId'] . "'  data-title='" . $image['Name'] ."' class='a' href='../storage/galleries/" . getSessionEmailaddress() . "/" . $gallery['Title'] . "/" . $image['RelativePath'] . "''>
+                                  </a>
                                  </div>
                            </div>
                         </div>";
