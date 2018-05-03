@@ -466,6 +466,20 @@ function appl_createThumbnail($inputPath, $outputPath, $desired_width, $extensio
  */
 function adminUsers()
 {
+    if (isset($_POST['adminUsers_formAction'])) {
+        $action = $_POST['adminUsers_formAction'];
+        if ($action === 'adminUsers_edit') {
+            $id = $_POST['adminUsers_userId'];
+            db_updateUserNicknameByUserId($id, $_POST['adminUsers_editUserName']);
+            db_updateUserPasswordByUserId($id, $_POST['adminUsers_editUserPassword']);
+        } elseif ($action === 'adminUsers_delete') {
+            $emailaddress = $_POST['adminUsers_emailaddress'];
+            $user = db_getUserByEmailaddress($emailaddress)[0];
+            appl_deleteUserPathByEmailaddress($emailaddress);
+            db_deleteUserByUserId($user['UserId']);
+        }
+    }
+
     setValue("phpmodule", $_SERVER['PHP_SELF'] . "?id=" . getValue("func"));
     return runTemplate("../templates/" . getValue("func") . ".htm.php");
 }
@@ -475,6 +489,20 @@ function adminUsers()
  */
 function adminGalleries()
 {
+    if (isset($_POST['adminGalleries_formAction'])) {
+        $action = $_POST['adminGalleries_formAction'];
+        if ($action === 'adminGalleries_edit') {
+            $id = $_POST['adminGalleries_userId'];
+            db_updateUserNicknameByUserId($id, $_POST['adminGalleries_editUserName']);
+            db_updateUserPasswordByUserId($id, $_POST['adminGalleries_editUserPassword']);
+        } elseif ($action === 'adminGalleries_delete') {
+            $emailaddress = $_POST['adminGalleries_emailaddress'];
+            $user = db_getUserByEmailaddress($emailaddress)[0];
+            appl_deleteUserPathByEmailaddress($emailaddress);
+            db_deleteUserByUserId($user['UserId']);
+        }
+    }
+
     setValue("phpmodule", $_SERVER['PHP_SELF'] . "?id=" . getValue("func"));
     return runTemplate("../templates/" . getValue("func") . ".htm.php");
 }
@@ -485,6 +513,17 @@ function adminGalleries()
 function appl_deleteUserFromPath()
 {
     $path = getValue('galleryRoot') . "\\" . getSessionEmailaddress();
+    if (file_exists($path)) {
+        exec("rd /s /q " . $path);
+    }
+}
+
+/**
+ * Deletes the whole user directory
+ */
+function appl_deleteUserPathByEmailaddress($emailaddress)
+{
+    $path = getValue('galleryRoot') . "\\" . $emailaddress;
     if (file_exists($path)) {
         exec("rd /s /q " . $path);
     }

@@ -53,7 +53,7 @@
                     </div>
                     <div class="modal-footer">
                         <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
-                        <form action="<?php echo getValue("phpmodule") ?>" method="post">
+                        <form method="post" id="adminGallery_deleteForm" action="<?php echo getValue("phpmodule") ?>">
                             <input type="text" value="delete" id="adminUsers_deleteContent" name="adminUsers_deleteContent"
                                    hidden>
                             <button type="submit" class="btn btn-danger" name="adminUsers_delete" id="adminUsers_delete"

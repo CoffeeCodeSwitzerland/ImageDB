@@ -17,10 +17,10 @@
             <ul class='list-group list-group-flush'>
               <li class='list-group-item'>Nickname: ".
                 $user['Nickname']."</li>
-              <li class='list-group-item'><div class='btn btn-secondary' data-toggle='modal' data-target='#adminUsers_modalEditUser'
-                   id='adminUsers_editUser' style='margin-right: 10px;'>Edit user
-              </div><div class='btn btn-danger' data-toggle='modal' data-target='#adminUsers_modalDeleteUser'
-                   id='adminUsers_deleteUser'>Delete user
+              <li class='list-group-item'><div class='btn btn-secondary adminUsers-EditButton' data-toggle='modal' data-target='#adminUsers_modalEditUser'
+                   id='adminUsers_editUser' name='".$user['Emailaddress']."' data-nickname='".$user['Nickname']."' style='margin-right: 10px;'>Edit user
+              </div><div class='btn btn-danger adminUsers-DeleteButton' data-toggle='modal' data-target='#adminUsers_modalDeleteUser'
+                   id='adminUsers_deleteUser' name='".$user['Emailaddress']."' onclick=''>Delete user
               </div></li>
             </ul>
           </div>";
@@ -48,10 +48,10 @@
                     </div>
                     <div class="modal-footer">
                         <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
-                        <form action="<?php echo getValue("phpmodule") ?>" method="post">
-                            <input type="text" value="delete" id="adminUsers_deleteContent" name="adminUsers_deleteContent"
-                                   hidden>
-                            <button type="submit" class="btn btn-danger" name="adminUsers_delete" id="adminUsers_delete"
+                        <form method="post" id="adminUsers_deleteForm" action="<?php echo getValue("phpmodule") ?>">
+                            <input type="hidden" name="adminUsers_formAction" value="adminUsers_delete">
+                            <input type="hidden" name="adminUsers_emailaddress" id="adminUsers_deleteForm_emailaddress">
+                            <button type="submit" class="btn btn-danger" name="adminUsers_delete" id="adminUsers_deleteBtn"
                                     value="Delete user">Delete user
                             </button>
                         </form>
@@ -73,8 +73,7 @@
                       <form id="adminUsers_formEditUser">
                           <div class="form-group">
                               <label for="adminUsers_nickname">Nickname</label>
-                              <input name="adminUsers_nickname" type="text" class="form-control" id="adminUsers_nickname"
-                                     value="<?php echo db_getAllUsers()[0]['Nickname']; ?>">
+                              <input name="adminUsers_nickname" type="text" class="form-control" id="adminUsers_nickname">
                           </div>
                           <div class="form-group">
                               <label for="adminUsers_newPassword">New Password</label>
@@ -94,7 +93,7 @@
                         <form action="<?php echo getValue("phpmodule") ?>" method="post">
                             <input type="text" value="delete" id="adminUsers_editContent" name="adminUsers_editContent"
                                    hidden>
-                            <button type="submit" class="btn btn-success" name="adminUsers_edit" id="adminUsers_edit"
+                            <button type="submit" class="btn btn-success" name="adminUsers_edit" id="adminUsers_editBtn"
                                     value="Edit user">Save changes
                             </button>
                         </form>
@@ -105,4 +104,4 @@
     </div>
 
 </div>
-<script src="../js/overview.js"></script>
+<script src="../js/adminUsers.js"></script>
