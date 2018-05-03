@@ -66,7 +66,7 @@ if (!empty($message)) {
                             </div>
                         </div>
                         <label class="btn btn-primary m-1" for="image_newImageFile">
-                            <input id="image_newImageFile" name="image_newImageFile" type="file" style="display:none;">
+                            <input accept=".png, .jpg" id="image_newImageFile" name="image_newImageFile" type="file" style="display:none;">
                             <i class="fas fa-file-image"></i> File
                         </label>
                         <label class="label" id="image_fileName">
@@ -145,6 +145,24 @@ if (!empty($message)) {
             <div class="modal-body">
                 <div class="alert alert-warning" role="alert">
                     You have a filesize limitation of 4MiB
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-dismiss="modal">Ok</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div id="image_exntesionNotSuppported" class="modal" tabindex="-1" role="dialog">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title">File type not supported</h5>
+            </div>
+            <div class="modal-body">
+                <div class="alert alert-warning" role="alert">
+                   Only: *.jpg, *.png, *.jpeg
                 </div>
             </div>
             <div class="modal-footer">

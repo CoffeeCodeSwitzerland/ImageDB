@@ -73,11 +73,17 @@ $(document).ready(function () {
                 $('#images_addImageDialog').modal('hide');
                 $('#image_fileToBigModal').modal();
             }else {
-                image_fileSelected = true;
-                $('#image_fileInformationSize').val($(this)[0].files[0].size / 1024);
-                $('#image_fileInformationName').val($(this)[0].files[0].name);
-                $('#image_fileName').text('File selected');
-                $('#image_fileInformation').slideDown();
+                console.log($(this)[0].files[0].name);
+                if(checkImageExtension($(this)[0].files[0].name)) {
+                    image_fileSelected = true;
+                    $('#image_fileInformationSize').val($(this)[0].files[0].size / 1024);
+                    $('#image_fileInformationName').val($(this)[0].files[0].name);
+                    $('#image_fileName').text('File selected');
+                    $('#image_fileInformation').slideDown();
+                }else{
+                    $('#images_addImageDialog').modal('hide');
+                    $('#image_exntesionNotSuppported').modal();
+                }
             }
         } else {
             $('#image_fileInformation').hide();
@@ -86,6 +92,20 @@ $(document).ready(function () {
         }
         evaluate();
     });
+
+    function checkImageExtension(fileName){
+        console.log(fileName)
+        var name = fileName.split('.');
+        var extension = name[1];
+        extension = extension.toLowerCase();
+        console.log('extension ' + extension);
+        if(extension == 'jpeg' ||
+        extension == 'png' ||
+        extension == 'jpg'){
+            return true;
+        }
+        return false;
+    }
 
     $('#images_addImage').on('click', function () {
         $('#image_fileName').text('No file selected');
