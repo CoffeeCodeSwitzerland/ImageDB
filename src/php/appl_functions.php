@@ -27,6 +27,7 @@ function login()
             $user = db_getUserByEmailaddress($email);
             setSessionValues($user);
         } else {
+            setValue('login_emailaddress', $email);
             setValue("message", "<div class='alert alert-danger' id='login_invalidCredentials' role = 'alert'>Invalid credentials</div >");
         }
     }
@@ -211,7 +212,8 @@ function images()
                     $thumbnailPath = getValue('galleryRoot') . "\\" . getSessionEmailaddress() . "\\" . $gallery['Title'] . "\\thumbnails\\" . $fileName . "." . $extentsion;
 
                     move_uploaded_file($_FILES['image_newImageFile']['tmp_name'], $imagePath);
-                    appl_createThumbnail($imagePath, $thumbnailPath, 400, $extentsion);
+//                    appl_createThumbnail($imagePath, $thumbnailPath, 400, $extentsion);
+                    appl_advancedThumbnail($imagePath, 400, 400, $thumbnailPath);
 
                     db_createImage($gid, $_POST['images_newImageName'], $fileName . "." . $extentsion, $fileName . "." . $extentsion);
                 } elseif ($action == 'image_delete') {
@@ -354,8 +356,8 @@ function appl_getImagesByGallery()
             }
             $html .= "<div class='col-md-3'>
                         <div class='card border-secondary imageItem' name='" . $image['ImageId'] . "'>
-                           <div class='card-header'></div> 
-                                <img class='img-thumbnail rounded mx-auto d-block w-100' src='../storage/galleries/" . getSessionEmailaddress() . "/" . $gallery['Title'] . "/thumbnails/" . $image['ThumbnailPath'] . "' alt='Card image cap'>
+                           <div class='card-header'></div>
+                                <img data-toggle='toolip' data-placement='top' class='img-thumbnail rounded mx-auto d-block w-100' src='../storage/galleries/" . getSessionEmailaddress() . "/" . $gallery['Title'] . "/thumbnails/" . $image['ThumbnailPath'] . "' alt='Card image cap'>
                                 <div class='card-body'>
                                     <h5 class='card-title' id='title_" . $image['ImageId'] . "' >" . $image['Name'] . "</h5>
                                     <a data-lightbox='images' id='lightbox_" . $image['ImageId'] . "'  data-title='" . $image['Name'] ."' class='a' href='../storage/galleries/" . getSessionEmailaddress() . "/" . $gallery['Title'] . "/" . $image['RelativePath'] . "''>
@@ -415,6 +417,90 @@ function app_deleteImagePath($imageTitle, $galleryId)
 }
 
 /**
+ * @author Juan Valencia <jvalenciae@jveweb.net>
+ * Copyright (C) 2010  Juan Valencia <jvalenciae@jveweb.net>
+ * All rights reserved.
+ * @param $image_path
+ * @param $thumb_width
+ * @param $thumb_height
+ * @param $outputPath
+ */
+function appl_advancedThumbnail($image_path, $thumb_width, $thumb_height, $outputPath) {
+
+    if (!(is_integer($thumb_width) && $thumb_width > 0) && !($thumb_width === "*")) {
+        echo "The width is invalid";
+        exit(1);
+    }
+
+    if (!(is_integer($thumb_height) && $thumb_height > 0) && !($thumb_height === "*")) {
+        echo "The height is invalid";
+        exit(1);
+    }
+
+    $extension = pathinfo($image_path, PATHINFO_EXTENSION);
+    switch ($extension) {
+        case "jpg":
+        case "jpeg":
+            $source_image = imagecreatefromjpeg($image_path);
+            break;
+        case "gif":
+            $source_image = imagecreatefromgif($image_path);
+            break;
+        case "png":
+            $source_image = imagecreatefrompng($image_path);
+            break;
+        default:
+            exit(1);
+            break;
+    }
+
+    $source_width = imageSX($source_image);
+    $source_height = imageSY($source_image);
+
+    if (($source_width / $source_height) == ($thumb_width / $thumb_height)) {
+        $source_x = 0;
+        $source_y = 0;
+    }
+
+    if (($source_width / $source_height) > ($thumb_width / $thumb_height)) {
+        $source_y = 0;
+        $temp_width = $source_height * $thumb_width / $thumb_height;
+        $source_x = ($source_width - $temp_width) / 2;
+        $source_width = $temp_width;
+    }
+
+    if (($source_width / $source_height) < ($thumb_width / $thumb_height)) {
+        $source_x = 0;
+        $temp_height = $source_width * $thumb_height / $thumb_width;
+        $source_y = ($source_height - $temp_height) / 2;
+        $source_height = $temp_height;
+    }
+
+    $target_image = ImageCreateTrueColor($thumb_width, $thumb_height);
+
+    imagecopyresampled($target_image, $source_image, 0, 0, $source_x, $source_y, $thumb_width, $thumb_height, $source_width, $source_height);
+
+    switch ($extension) {
+        case "jpg":
+        case "jpeg":
+            imagejpeg($target_image, $outputPath);
+            break;
+        case "gif":
+            imagegif($target_image, $outputPath);
+            break;
+        case "png":
+            imagepng($target_image, $outputPath);
+            break;
+        default:
+            exit(1);
+            break;
+    }
+
+    imagedestroy($target_image);
+    imagedestroy($source_image);
+}
+
+/**
  * Creates a thumbnail out of the original image
  * @param $inputPath
  * @param $outputPath
@@ -428,6 +514,9 @@ function appl_createThumbnail($inputPath, $outputPath, $desired_width, $extensio
 
     switch ($extension) {
         case "jpg":
+            $source_image = imagecreatefromjpeg($inputPath);
+            break;
+        case "jpeg":
             $source_image = imagecreatefromjpeg($inputPath);
             break;
         case "png":
@@ -451,6 +540,9 @@ function appl_createThumbnail($inputPath, $outputPath, $desired_width, $extensio
 
     switch ($extension) {
         case "jpg":
+            imagejpeg($virtual_image, $outputPath);;
+            break;
+        case "jpeg":
             imagejpeg($virtual_image, $outputPath);;
             break;
         case "png":

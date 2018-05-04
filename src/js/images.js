@@ -11,8 +11,10 @@ $(document).ready(function () {
     editButton.hide();
 
     $('.imageItem').on('click', function () {
-        deleteButton.show();
-        editButton.show();
+        deleteButton.fadeIn();
+        editButton.fadeIn();
+        // deleteButton.show();
+        // editButton.show();
         if (currentImage != null) {
             currentImage.removeClass('bg-secondary text-white');
             currentImage.addClass('bg-light');
@@ -80,6 +82,12 @@ $(document).ready(function () {
                     $('#image_fileInformationName').val($(this)[0].files[0].name);
                     $('#image_fileName').text('File selected');
                     $('#image_fileInformation').slideDown();
+                    if($('#image_newImageName').val().length <= 0){
+                        var arr = $(this)[0].files[0].name.split('.');
+                        $('#image_newImageName').val(arr[0]);
+                        checkImageName()
+                        evaluate();
+                    }
                 }else{
                     $('#images_addImageDialog').modal('hide');
                     $('#image_exntesionNotSuppported').modal();
@@ -112,28 +120,32 @@ $(document).ready(function () {
         $('#images_newImageButton').prop('disabled', true);
         $('#image_newImageFile').val('');
         $('#image_fileInformation').hide();
-        $('#image_newGaleryName').val('');
+        $('#image_newImageName').val('');
         image_nameCorrect = false;
         image_fileSelected = false;
     });
 
-    $('#image_newGaleryName').on('keyup', function () {
-        if ($.trim($(this).val()).length > 3) {
-            image_nameCorrect = true;
-        } else {
-            image_nameCorrect = false;
-        }
+    $('#image_newImageName').on('keyup', function () {
+        checkImageName();
         evaluate();
     });
 
-    $('#image_newGaleryName').on('keypress', function(e){
+    $('#image_newImageName').on('keypress', function(e){
        if(e.which == 13){
            e.preventDefault();
-           if(evaluate()){
+            if(evaluate()){
                $('#image_addForm').submit();
            }
        }
     });
+
+    function checkImageName(){
+        if ($.trim($('#image_newImageName').val()).length > 3) {
+            image_nameCorrect = true;
+        } else {
+            image_nameCorrect = false;
+        }
+    }
 
     function evaluate() {
         if (image_fileSelected && image_nameCorrect) {

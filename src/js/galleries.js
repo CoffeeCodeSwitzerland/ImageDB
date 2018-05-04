@@ -42,8 +42,8 @@ $(document).ready(function () {
     }
 
     $('.galleryItem').on('click', function () {
-        deleteButton.show();
-        editButton.show();
+        deleteButton.fadeIn();
+        editButton.fadeIn();
         if (currentGallery != null) {
             currentGallery.removeClass('bg-secondary text-white');
             currentGallery.addClass('bg-light');

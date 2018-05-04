@@ -19,6 +19,10 @@
                         data-target="#images_deleteImageDialog">
                     <i class="fas fa-trash-alt"></i> Delete
                 </button>
+                <button type="button" id="image_helpImage" class="btn btn-info" data-toggle="modal"
+                        data-target="#images_helpImageDialog">
+                    <i class="fas fa-question-circle"></i> Help
+                </button>
             </li>
         </ul>
     </div>
@@ -47,7 +51,7 @@ if (!empty($message)) {
                     <div class="form-group">
                         <label for="images_newImageName">Set the title for your image</label>
                         <input type="hidden" name="image_formAction" value="image_add">
-                        <input type="text" class="form-control" id="image_newGaleryName"
+                        <input type="text" class="form-control" id="image_newImageName"
                                name="images_newImageName" aria-describedby="emailHelp"
                                placeholder="Enter name the image">
                         <label for="image_newImageFile">Select the image file</label><br>
@@ -164,6 +168,41 @@ if (!empty($message)) {
                 <div class="alert alert-warning" role="alert">
                    Only: *.jpg, *.png, *.jpeg
                 </div>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-dismiss="modal">Ok</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div id="images_helpImageDialog" class="modal" tabindex="-1" role="dialog">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title">Help</h5>
+            </div>
+            <div class="modal-body">
+                <p class="h2">Actions</p>
+                <p>
+                    <button type="button" class="btn btn-success">
+                        <i class="fas fa-plus-circle"></i> Add
+                    </button><br>Upload a new .jpeg, .jpg or.png file with a maximum file size if 4 bib
+
+                </p>
+                <p>
+                    <button type="button" class="btn btn-secondary">
+                        <i class="fas fa-edit"></i> Edit
+                    </button><br>
+                    Change the name of image
+
+                </p>
+                <p>
+                    <button type="button" class="btn btn-danger" >
+                        <i class="fas fa-trash-alt"></i> Delete
+                    </button><br>
+                    Remove an image from the gallery
+                </p>
             </div>
             <div class="modal-footer">
                 <button type="button" class="btn btn-secondary" data-dismiss="modal">Ok</button>
