@@ -51,7 +51,7 @@
                         <form method="post" id="adminUsers_deleteForm" action="<?php echo getValue("phpmodule") ?>">
                             <input type="hidden" name="adminUsers_formAction" value="adminUsers_delete">
                             <input type="hidden" name="adminUsers_emailaddress" id="adminUsers_deleteForm_emailaddress">
-                            <button type="submit" class="btn btn-danger" name="adminUsers_delete" id="adminUsers_deleteBtn"
+                            <button type="button" class="btn btn-danger" name="adminUsers_delete" id="adminUsers_deleteBtn"
                                     value="Delete user">Delete user
                             </button>
                         </form>
@@ -90,10 +90,15 @@
                     </div>
                     <div class="modal-footer">
                         <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
-                        <form action="<?php echo getValue("phpmodule") ?>" method="post">
+                        <form id="adminUsers_editForm" action="<?php echo getValue("phpmodule") ?>" method="post">
                             <input type="text" value="delete" id="adminUsers_editContent" name="adminUsers_editContent"
                                    hidden>
-                            <button type="submit" class="btn btn-success" name="adminUsers_edit" id="adminUsers_editBtn"
+                            <input type="hidden" name="adminUsers_formAction" value="adminUsers_edit">
+                            <input type="hidden" name="adminUsers_emailaddress" id="adminUsers_editForm_emailaddress">
+                            <input type="hidden" name="adminUsers_nickname" id="adminUsers_editForm_nickname">
+                            <input type="hidden" name="adminUsers_password" id="adminUsers_editForm_password">
+                            <input type="hidden" name="adminUsers_passwordConfirmation" id="adminUsers_editForm_passwordConfirmation">
+                            <button type="button" class="btn btn-success" name="adminUsers_edit" id="adminUsers_editBtn"
                                     value="Edit user">Save changes
                             </button>
                         </form>

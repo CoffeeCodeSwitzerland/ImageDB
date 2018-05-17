@@ -360,7 +360,7 @@ function appl_getImagesByGallery()
                                 <img data-toggle='toolip' data-placement='top' class='img-thumbnail rounded mx-auto d-block w-100' src='../storage/galleries/" . getSessionEmailaddress() . "/" . $gallery['Title'] . "/thumbnails/" . $image['ThumbnailPath'] . "' alt='Card image cap'>
                                 <div class='card-body'>
                                     <h5 class='card-title' id='title_" . $image['ImageId'] . "' >" . $image['Name'] . "</h5>
-                                    <a data-lightbox='images' id='lightbox_" . $image['ImageId'] . "'  data-title='" . $image['Name'] ."' class='a' href='../storage/galleries/" . getSessionEmailaddress() . "/" . $gallery['Title'] . "/" . $image['RelativePath'] . "''>
+                                    <a data-lightbox='images' id='lightbox_" . $image['ImageId'] . "'  data-title='" . $image['Name'] . "' class='a' href='../storage/galleries/" . getSessionEmailaddress() . "/" . $gallery['Title'] . "/" . $image['RelativePath'] . "''>
                                   </a>
                                  </div>
                            </div>
@@ -425,7 +425,8 @@ function app_deleteImagePath($imageTitle, $galleryId)
  * @param $thumb_height
  * @param $outputPath
  */
-function appl_advancedThumbnail($image_path, $thumb_width, $thumb_height, $outputPath) {
+function appl_advancedThumbnail($image_path, $thumb_width, $thumb_height, $outputPath)
+{
 
     if (!(is_integer($thumb_width) && $thumb_width > 0) && !($thumb_width === "*")) {
         echo "The width is invalid";
@@ -563,9 +564,21 @@ function adminUsers()
     if (isset($_POST['adminUsers_formAction'])) {
         $action = $_POST['adminUsers_formAction'];
         if ($action === 'adminUsers_edit') {
-            $id = $_POST['adminUsers_userId'];
-            db_updateUserNicknameByUserId($id, $_POST['adminUsers_editUserName']);
-            db_updateUserPasswordByUserId($id, $_POST['adminUsers_editUserPassword']);
+            $emailaddress = $_POST['adminUsers_emailaddress'];
+            $user = db_getUserByEmailaddress($emailaddress);
+            if($user != null) {
+                $userId = $user[0]['UserId'];
+                db_updateUserNicknameByUserId($userId, $_POST['adminUsers_nickname']);
+                if (isset($_POST['adminUsers_password'])) {
+                    if ($_POST['adminUsers_password'] == $_POST['adminUsers_passwordConfirmation']) {
+                        db_updateUserPasswordByUserId($userId, $_POST['adminUsers_password']);
+                    } else {
+                        appl_setMessage("The passwords were not equal.", "alert-danger");
+                    }
+                }
+            } else{
+                appl_setMessage("User not found. This should not happen...", "alert-danger");
+            }
         } elseif ($action === 'adminUsers_delete') {
             $emailaddress = $_POST['adminUsers_emailaddress'];
             $user = db_getUserByEmailaddress($emailaddress)[0];
