@@ -109,7 +109,6 @@ function galleries()
                     appl_setMessage("The gallery has been created", "alert-success");
                 }
             }
-            echo "hello";
         } elseif ($action === 'gallery_edit') {
             $id = $_POST['gallery_galleryId'];
             db_updateGallery($id, $_POST['galleries_editGalleryName'], $_POST['galleries_editGalleryDescription']);
@@ -213,6 +212,7 @@ function images()
                     $thumbnailPath = getValue('galleryRoot') . "\\" . getSessionEmailaddress() . "\\" . $gallery['Title'] . "\\thumbnails\\" . $fileName . "." . $extentsion;
 
                     move_uploaded_file($_FILES['image_newImageFile']['tmp_name'], $imagePath);
+//                    appl_createThumbnail($imagePath, $thumbnailPath, 400, $extentsion);
                     appl_advancedThumbnail($imagePath, 400, 400, $thumbnailPath);
                     $imageId = db_createImage($gid, $_POST['images_newImageName'], $fileName . "." . $extentsion, $fileName . "." . $extentsion);
                     if (isset($_POST['image_tags'])) {
@@ -493,8 +493,10 @@ function app_deleteImagePath($imageTitle, $galleryId)
  * @param $thumb_height
  * @param $outputPath
  */
+
 function appl_advancedThumbnail($image_path, $thumb_width, $thumb_height, $outputPath)
 {
+
     if (!(is_integer($thumb_width) && $thumb_width > 0) && !($thumb_width === "*")) {
         echo "The width is invalid";
         exit(1);
