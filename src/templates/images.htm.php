@@ -13,7 +13,7 @@
                 </button>
                 <button type="button" id="images_editImage" class="btn btn-secondary" data-toggle="modal"
                         data-target="#images_editImageDialog">
-                   <i class="fas fa-edit"></i> Edit
+                    <i class="fas fa-edit"></i> Edit
                 </button>
                 <button type="button" id="images_deleteImage" class="btn btn-danger" data-toggle="modal"
                         data-target="#images_deleteImageDialog">
@@ -23,6 +23,29 @@
                         data-target="#images_helpImageDialog">
                     <i class="fas fa-question-circle"></i> Help
                 </button>
+                <!--                <div class="dropdown" style="display: inline;">-->
+                <!--                    <button class="btn btn-secondary dropdown-toggle" type="button" id="dropdownMenuButton" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">-->
+                <!--                        Dropdown button-->
+                <!--                    </button>-->
+                <!--                    <div class="dropdown-menu" aria-labelledby="dropdownMenuButton">-->
+                <!--                        <a class="dropdown-item" href="#">Action</a>-->
+                <!--                        <a class="dropdown-item" href="#">Another action</a>-->
+                <!--                        <a class="dropdown-item" href="#">Something else here</a>-->
+                <!--                    </div>-->
+                <!--                </div>-->
+                <div class="btn-group">
+                    <button type="button" class="btn btn-secondary dropdown-toggle" data-toggle="dropdown"
+                            aria-haspopup="true" aria-expanded="false">
+                        Tag
+                    </button>
+                    <div class="dropdown-menu dropdown-menu-right">
+                        <form id="image_tagSort" method="post" action="<?php echo getValue("phpmodule") ?>">
+                            <?php echo appl_getAllTagsAsButton(); ?>
+                            <input type="hidden" id="image_sortTag" name="image_sortTag">
+                            <input type="hidden" name="image_formAction" value="image_sort">
+                        </form>
+                    </div>
+                </div>
             </li>
         </ul>
     </div>
@@ -46,39 +69,61 @@ if (!empty($message)) {
                 </button>
             </div>
             <div class="modal-body">
+
+
                 <form id="image_addForm" method="post" action="<?php echo getValue("phpmodule") ?>"
                       enctype="multipart/form-data">
-                    <div class="form-group">
-                        <label for="images_newImageName">Set the title for your image</label>
-                        <input type="hidden" name="image_formAction" value="image_add">
-                        <input type="text" class="form-control" id="image_newImageName"
-                               name="images_newImageName" aria-describedby="emailHelp"
-                               placeholder="Enter name the image">
-                        <label for="image_newImageFile">Select the image file</label><br>
-                        <div id="image_fileInformation" class="">
-                            <div class="input-group input-group-sm mb-3">
-                                <div class="input-group-prepend">
-                                    <span class="input-group-text" id="inputGroup-sizing-sm">Name</span>
-                                </div>
-                                <input type="text" id="image_fileInformationName" class="form-control" aria-label="Small" aria-describedby="inputGroup-sizing-sm">
-                            </div>
-                            <div class="input-group input-group-sm mb-3">
-                                <div class="input-group-prepend">
-                                    <span class="input-group-text" id="inputGroup-sizing-sm">Size</span>
-                                </div>
-                                <input type="text" id="image_fileInformationSize" class="form-control" aria-label="Small" aria-describedby="inputGroup-sizing-sm">
-                            </div>
-                        </div>
-                        <label class="btn btn-primary m-1" for="image_newImageFile">
-                            <input accept=".png, .jpg" id="image_newImageFile" name="image_newImageFile" type="file" style="display:none;">
-                            <i class="fas fa-file-image"></i> File
-                        </label>
-                        <label class="label" id="image_fileName">
 
-                        </label>
+                    <div class="card" style="width: 100%; margin-bottom: 1em;">
+                        <ul class="list-group list-group-flush">
+                            <li class="list-group-item">
+                                <div class="form-group">
+                                    <h3>Foto</h3>
+                                    <label for="images_newImageName">Set the title for your image</label>
+                                    <input type="hidden" name="image_formAction" value="image_add">
+                                    <input type="text" class="form-control" id="image_newImageName"
+                                           name="images_newImageName" aria-describedby="emailHelp"
+                                           placeholder="Enter name the image">
+                                    <label for="image_newImageFile">Select the image file</label><br>
+                                    <div id="image_fileInformation" class="">
+                                        <div class="input-group input-group-sm mb-3">
+                                            <div class="input-group-prepend">
+                                                <span class="input-group-text" id="inputGroup-sizing-sm">Name</span>
+                                            </div>
+                                            <input type="text" id="image_fileInformationName" class="form-control"
+                                                   aria-label="Small" aria-describedby="inputGroup-sizing-sm">
+                                        </div>
+                                        <div class="input-group input-group-sm mb-3">
+                                            <div class="input-group-prepend">
+                                                <span class="input-group-text" id="inputGroup-sizing-sm">Size</span>
+                                            </div>
+                                            <input type="text" id="image_fileInformationSize" class="form-control"
+                                                   aria-label="Small" aria-describedby="inputGroup-sizing-sm">
+                                        </div>
+                                    </div>
+                                    <label class="btn btn-primary m-1" for="image_newImageFile">
+                                        <input accept=".png, .jpg" id="image_newImageFile" name="image_newImageFile"
+                                               type="file" style="display:none;">
+                                        <i class="fas fa-file-image"></i> File
+                                    </label>
+                                    <label class="label" id="image_fileName">
+
+                                    </label>
+                                </div>
+                            </li>
+                            <li class="list-group-item">
+                                <input type="hidden" name="image_tags" id="image_tags">
+                                <h3>Tags</h3>
+                                <div
+                                <?php echo appl_getTagOverview(); ?>
+                                </p>
+                            </li>
+                        </ul>
                     </div>
-                    <button type="submit" id="images_newImageButton" class="btn btn-success">
-                        <i class="fas fa-plus-circle"></i> Add</button>
+
+                    <button type="button" id="images_newImageButton" class="btn btn-success">
+                        <i class="fas fa-plus-circle"></i> Add
+                    </button>
                 </form>
             </div>
         </div>
@@ -100,12 +145,14 @@ if (!empty($message)) {
             </div>
             <div class="modal-footer">
                 <button type="button" class="btn btn-secondary" data-dismiss="modal">
-                    <i class="fas fa-times"></i> Close</button>
+                    <i class="fas fa-times"></i> Close
+                </button>
                 <form method="post" id="image_deleteForm" action="<?php echo getValue("phpmodule") ?>">
                     <input type="hidden" name="image_formAction" value="image_delete">
                     <input type="hidden" name="images_imageId" id="images_imageId">
                     <button type="button" id="images_deleteImageButton" class="btn btn-danger">
-                        <i class="fas fa-trash-alt"></i> Delete</button>
+                        <i class="fas fa-trash-alt"></i> Delete
+                    </button>
                 </form>
             </div>
         </div>
@@ -128,12 +175,13 @@ if (!empty($message)) {
                         <label for="image_editImageName">Image name</label>
                         <input type="text" class="form-control" id="image_editImageName"
                                name="image_editImageName" aria-describedby="emailHelp"
-                               placeholder="Enter name of the gallery">
+                               placeholder="Enter name of the image">
                         <input type="hidden" name="images_imageId" id="images_imageEditId">
                         <input type="hidden" name="image_formAction" value="image_edit">
                     </div>
                     <button type="button" id="images_editImageButton" class="btn btn-secondary">
-                        <i class="fas fa-edit"></i> Edit</button>
+                        <i class="fas fa-edit"></i> Edit
+                    </button>
                 </form>
             </div>
         </div>
@@ -166,7 +214,7 @@ if (!empty($message)) {
             </div>
             <div class="modal-body">
                 <div class="alert alert-warning" role="alert">
-                   Only: *.jpg, *.png, *.jpeg
+                    Only: *.jpg, *.png, *.jpeg
                 </div>
             </div>
             <div class="modal-footer">
@@ -183,24 +231,29 @@ if (!empty($message)) {
                 <h5 class="modal-title">Help</h5>
             </div>
             <div class="modal-body">
+
+
                 <p class="h2">Actions</p>
                 <p>
                     <button type="button" class="btn btn-success">
                         <i class="fas fa-plus-circle"></i> Add
-                    </button><br>Upload a new .jpeg, .jpg or.png file with a maximum file size if 4 bib
+                    </button>
+                    <br>Upload a new .jpeg, .jpg or.png file with a maximum file size if 4 bib
 
                 </p>
                 <p>
                     <button type="button" class="btn btn-secondary">
                         <i class="fas fa-edit"></i> Edit
-                    </button><br>
+                    </button>
+                    <br>
                     Change the name of image
 
                 </p>
                 <p>
-                    <button type="button" class="btn btn-danger" >
+                    <button type="button" class="btn btn-danger">
                         <i class="fas fa-trash-alt"></i> Delete
-                    </button><br>
+                    </button>
+                    <br>
                     Remove an image from the gallery
                 </p>
             </div>

@@ -109,6 +109,7 @@ function galleries()
                     appl_setMessage("The gallery has been created", "alert-success");
                 }
             }
+            echo "hello";
         } elseif ($action === 'gallery_edit') {
             $id = $_POST['gallery_galleryId'];
             db_updateGallery($id, $_POST['galleries_editGalleryName'], $_POST['galleries_editGalleryDescription']);
@@ -212,10 +213,17 @@ function images()
                     $thumbnailPath = getValue('galleryRoot') . "\\" . getSessionEmailaddress() . "\\" . $gallery['Title'] . "\\thumbnails\\" . $fileName . "." . $extentsion;
 
                     move_uploaded_file($_FILES['image_newImageFile']['tmp_name'], $imagePath);
-//                    appl_createThumbnail($imagePath, $thumbnailPath, 400, $extentsion);
                     appl_advancedThumbnail($imagePath, 400, 400, $thumbnailPath);
-
-                    db_createImage($gid, $_POST['images_newImageName'], $fileName . "." . $extentsion, $fileName . "." . $extentsion);
+                    $imageId = db_createImage($gid, $_POST['images_newImageName'], $fileName . "." . $extentsion, $fileName . "." . $extentsion);
+                    if (isset($_POST['image_tags'])) {
+                        $raw = $_POST['image_tags'];
+                        if (strlen($raw) > 0) {
+                            $tags = explode(",", $raw);
+                            foreach ($tags as $tag) {
+                                db_addTagsToImage($imageId, $tag);
+                            }
+                        }
+                    }
                 } elseif ($action == 'image_delete') {
                     $imageId = $_POST['images_imageId'];
                     $image = db_getImageById($imageId);
@@ -224,6 +232,13 @@ function images()
                 } elseif ($action == 'image_edit') {
                     $imageId = $_POST['images_imageId'];
                     db_updateImage($imageId, $_POST['image_editImageName']);
+                } elseif ($action == 'image_sort'){
+                    setValue('currentTag', $_POST['image_sortTag']);
+                    $gid = getValue('currentGalleryId');
+                    $result = db_getImagesByTagAndGallery(getValue('currentTag'), $gid);
+                    if(empty($result)){
+                        appl_setMessage('No image with this tag could be found in the current gallery', 'alert-warning');
+                    }
                 }
             }
         } else {
@@ -269,6 +284,7 @@ function appl_getGalleriesBySessionUser()
                                 <div class='card-body'>
                                    <h5 class='card-title' id='title_" . $gallery['GalleryId'] . "' >" . $gallery['ShowTitle'] . "</h5>
                                    <p class='card-text' id='description_" . $gallery['GalleryId'] . "'  >" . $galleryTitle . "</p>
+                                   <p class='card-text' id='tags_" . $gallery['GalleryId'] . "'></p>
                             </div>
                        </div></div>";
             $rowItems++;
@@ -345,8 +361,17 @@ function appl_getImagesByGallery()
 {
     $gid = getValue('currentGalleryId');
     $gallery = db_getGalleryById($gid);
-    $images = db_getImagesByGalleryId($gid);
 
+    if(!empty(getValue('currentTag'))){
+        $customImages = db_getImagesByTagAndGallery(getValue('currentTag'), $gid);
+        return appl_generateImages($customImages, $gallery);
+    }
+
+    $images = db_getImagesByGalleryId($gid);
+    return appl_generateImages($images, $gallery);
+}
+
+function appl_generateImages($images, $gallery){
     $html = "";
     if (!empty($images)) {
         $rowItems = 0;
@@ -360,8 +385,11 @@ function appl_getImagesByGallery()
                                 <img data-toggle='toolip' data-placement='top' class='img-thumbnail rounded mx-auto d-block w-100' src='../storage/galleries/" . getSessionEmailaddress() . "/" . $gallery['Title'] . "/thumbnails/" . $image['ThumbnailPath'] . "' alt='Card image cap'>
                                 <div class='card-body'>
                                     <h5 class='card-title' id='title_" . $image['ImageId'] . "' >" . $image['Name'] . "</h5>
-                                    <a data-lightbox='images' id='lightbox_" . $image['ImageId'] . "'  data-title='" . $image['Name'] ."' class='a' href='../storage/galleries/" . getSessionEmailaddress() . "/" . $gallery['Title'] . "/" . $image['RelativePath'] . "''>
+                                    <a data-lightbox='images' id='lightbox_" . $image['ImageId'] . "'  data-title='" . $image['Name'] . "' class='a' href='../storage/galleries/" . getSessionEmailaddress() . "/" . $gallery['Title'] . "/" . $image['RelativePath'] . "''>
                                   </a>
+                                 </div>
+                                 <div class='card-footer text-muted'>
+                                     " . appl_getTagsByImageId($image['ImageId']) . "
                                  </div>
                            </div>
                         </div>";
@@ -373,7 +401,47 @@ function appl_getImagesByGallery()
         }
         return $html;
     }
-    return "<div class='alert alert-info m-3' role = 'alert'> There aren't any images yet </div >";
+    if(empty(getValue('message'))) {
+        return "<div class='alert alert-info m-3' role = 'alert'> There aren't any images yet </div >";
+    }
+    return "";
+}
+
+function appl_getTagOverview()
+{
+    $tags = db_getAllTags();
+    $html = "<div class='row'>";
+    foreach ($tags as $tag) {
+        $html .= "<a href='#' name='" . $tag['TagId'] . "' class='badge badge-primary m-1 imageTag'>" . $tag["Name"] . "</a>";
+    }
+    $html .= "</div>";
+    return $html;
+}
+
+function appl_getAllTagsAsButton()
+{
+    $tags = db_getAllTags();
+    $html = "";
+    if (is_array($tags)) {
+        foreach ($tags as $tag){
+            $html .= "<button name='" . $tag['TagId'] ."' class='dropdown-item tagSortItem' type='button'>" . $tag['Name'] . "</button>";
+        }
+    }
+    return $html;
+}
+
+function appl_getTagsByImageId($imageId)
+{
+    $tags = db_getTagsByImageId($imageId);
+    $html = "";
+    if (is_array($tags)) {
+        foreach ($tags as $item) {
+            $html .= "<a href='#' name='" . $item['TagId'] . "' class='badge badge-primary m-1 imageTag'>" . $item['Name'] . "</a>";
+        }
+    } else {
+        $html .= "<a href='#' class='badge badge-light m-1 imageTag'>No tags selected</a>";
+    }
+    return $html;
 }
 
 /**
@@ -425,8 +493,8 @@ function app_deleteImagePath($imageTitle, $galleryId)
  * @param $thumb_height
  * @param $outputPath
  */
-function appl_advancedThumbnail($image_path, $thumb_width, $thumb_height, $outputPath) {
-
+function appl_advancedThumbnail($image_path, $thumb_width, $thumb_height, $outputPath)
+{
     if (!(is_integer($thumb_width) && $thumb_width > 0) && !($thumb_width === "*")) {
         echo "The width is invalid";
         exit(1);
@@ -438,7 +506,7 @@ function appl_advancedThumbnail($image_path, $thumb_width, $thumb_height, $outpu
     }
 
     $extension = pathinfo($image_path, PATHINFO_EXTENSION);
-    switch ($extension) {
+    switch (strtolower($extension)) {
         case "jpg":
         case "jpeg":
             $source_image = imagecreatefromjpeg($image_path);
@@ -453,6 +521,7 @@ function appl_advancedThumbnail($image_path, $thumb_width, $thumb_height, $outpu
             exit(1);
             break;
     }
+
 
     $source_width = imageSX($source_image);
     $source_height = imageSY($source_image);
@@ -480,7 +549,7 @@ function appl_advancedThumbnail($image_path, $thumb_width, $thumb_height, $outpu
 
     imagecopyresampled($target_image, $source_image, 0, 0, $source_x, $source_y, $thumb_width, $thumb_height, $source_width, $source_height);
 
-    switch ($extension) {
+    switch (strtolower($extension)) {
         case "jpg":
         case "jpeg":
             imagejpeg($target_image, $outputPath);

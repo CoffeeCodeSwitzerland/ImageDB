@@ -127,6 +127,9 @@ function db_getImagesByGalleryId($galleryId) {
 function db_createImage($galleryId, $name, $relativepath, $thubmnailPath){
     $sql = "INSERT INTO `image`  (GalleryId, Name, RelativePath, ThumbnailPath) VALUES (" . $galleryId . ",'" . $name . "','" . $relativepath . "','" . $thubmnailPath . "')";
     sqlQuery($sql);
+    $sql2 = "SELECT ImageId FROM `image` WHERE GalleryId=" . $galleryId . " AND `Name`='" . $name ."'";
+    $answer2 = sqlSelect($sql2);
+    return $answer2[0]['ImageId'];
 }
 
 function db_deleteImage($imageId){
@@ -159,6 +162,36 @@ function db_getImagePathsByGallery($galleryId){
     foreach ($answer['RelativePath'] as $image){
         $back.array_push($image);
     }
+}
+
+/**
+ * Tag entity functions
+ */
+
+function db_addTagsToImage($imageId, $tagId){
+    $sql = "INSERT INTO `imagetag` (TagId, ImageId) VALUES (" . $tagId ."," . $imageId . ")";
+    sqlQuery($sql);
+}
+
+function db_getAllTags(){
+    $sql = "SELECT * FROM `tag`";
+    $answer = sqlSelect($sql);
+    if(sizeof($answer) > 0){
+        return $answer;
+    }
+    return "";
+}
+
+function db_getTagsByImageId($imageId){
+    $sql = "SELECT t.TagId, t.Name FROM `imagetag` AS i JOIN `tag` AS t ON t.TagId = i.TagId AND i.ImageId=" . $imageId;
+    $answer = sqlSelect($sql);
+    return $answer;
+}
+
+function db_getImagesByTagAndGallery($tagId, $galleryId){
+    $sql = "select i.ImageId, i.Name, i.GalleryId, i.ThumbnailPath, i.RelativePath from `image` as i join `imagetag` as im on i.ImageId = im.ImageId where i.GalleryId=" . $galleryId ." and im.TagId=" . $tagId .";";
+    $answer = sqlSelect($sql);
+    return $answer;
 }
 
 /**

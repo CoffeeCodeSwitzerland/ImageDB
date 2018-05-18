@@ -13,14 +13,11 @@ $(document).ready(function () {
     $('.imageItem').on('click', function () {
         deleteButton.fadeIn();
         editButton.fadeIn();
-        // deleteButton.show();
-        // editButton.show();
         if (currentImage != null) {
             currentImage.removeClass('bg-secondary text-white');
             currentImage.addClass('bg-light');
         }
         currentImage = $(this);
-        // console.log(currentImage.attr('name'));
         currentImage.removeClass('bg-light');
         currentImage.addClass('bg-secondary text-white');
     });
@@ -55,8 +52,8 @@ $(document).ready(function () {
         editImage();
     });
 
-    $('#image_editImageName').on('keypress', function(e) {
-        if(e.which == 13){
+    $('#image_editImageName').on('keypress', function (e) {
+        if (e.which == 13) {
             e.preventDefault();
             editImage();
         }
@@ -69,26 +66,26 @@ $(document).ready(function () {
 
     $('#image_newImageFile').change(function () {
         if ($(this).get(0).files.length > 0) {
-            if($(this)[0].files[0].size >= 4194304){
+            if ($(this)[0].files[0].size >= 4194304) {
                 image_fileSelected = false;
                 $(this).val('');
                 $('#images_addImageDialog').modal('hide');
                 $('#image_fileToBigModal').modal();
-            }else {
+            } else {
                 console.log($(this)[0].files[0].name);
-                if(checkImageExtension($(this)[0].files[0].name)) {
+                if (checkImageExtension($(this)[0].files[0].name)) {
                     image_fileSelected = true;
-                    $('#image_fileInformationSize').val($(this)[0].files[0].size / 1024);
+                    $('#image_fileInformationSize').val($(this)[0].files[0].size / 1024 / 1024);
                     $('#image_fileInformationName').val($(this)[0].files[0].name);
                     $('#image_fileName').text('File selected');
                     $('#image_fileInformation').slideDown();
-                    if($('#image_newImageName').val().length <= 0){
+                    if ($('#image_newImageName').val().length <= 0) {
                         var arr = $(this)[0].files[0].name.split('.');
                         $('#image_newImageName').val(arr[0]);
                         checkImageName()
                         evaluate();
                     }
-                }else{
+                } else {
                     $('#images_addImageDialog').modal('hide');
                     $('#image_exntesionNotSuppported').modal();
                 }
@@ -101,15 +98,15 @@ $(document).ready(function () {
         evaluate();
     });
 
-    function checkImageExtension(fileName){
+    function checkImageExtension(fileName) {
         console.log(fileName)
         var name = fileName.split('.');
         var extension = name[1];
         extension = extension.toLowerCase();
         console.log('extension ' + extension);
-        if(extension == 'jpeg' ||
-        extension == 'png' ||
-        extension == 'jpg'){
+        if (extension == 'jpeg' ||
+            extension == 'png' ||
+            extension == 'jpg') {
             return true;
         }
         return false;
@@ -130,16 +127,57 @@ $(document).ready(function () {
         evaluate();
     });
 
-    $('#image_newImageName').on('keypress', function(e){
-       if(e.which == 13){
-           e.preventDefault();
-            if(evaluate()){
-               $('#image_addForm').submit();
-           }
-       }
+    $('#image_newImageName').on('keypress', function (e) {
+        if (e.which == 13) {
+            e.preventDefault();
+            if (evaluate()) {
+                imageSubmit();
+            }
+        }
     });
 
-    function checkImageName(){
+    $('.imageTag').on('click', function (e) {
+        if ($(this).hasClass('badge-primary')) {
+            $(this).addClass('badge-secondary');
+            $(this).removeClass('badge-primary');
+        } else {
+            $(this).removeClass('badge-secondary');
+            $(this).addClass('badge-primary');
+        }
+    });
+
+    $('#images_newImageButton').on('click', function () {
+        imageSubmit();
+    });
+
+    $('.tagSortItem').on('click', function () {
+        $('#image_sortTag').val($(this).attr('name'));
+        $('#image_tagSort').submit();
+    });
+
+    function imageSubmit() {
+        $('#image_tags').val(getTags());
+        $('#image_addForm').submit();
+    }
+
+    function getTags() {
+        var tags = "";
+        var size = $('.imageTag.badge-secondary').length;
+        var counter = 0;
+        $('.imageTag.badge-secondary').each(function () {
+            if ($(this).hasClass('badge-secondary')) {
+                if (counter < size - 1) {
+                    tags += $(this).attr('name') + ",";
+                } else {
+                    tags += $(this).attr('name');
+                }
+            }
+            counter++;
+        });
+        return tags;
+    }
+
+    function checkImageName() {
         if ($.trim($('#image_newImageName').val()).length > 3) {
             image_nameCorrect = true;
         } else {
