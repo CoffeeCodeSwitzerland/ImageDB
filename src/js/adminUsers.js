@@ -18,6 +18,9 @@ $(document).ready(function () {
 
     $('#adminUsers_editBtn').on('click', function () {
         $('#adminUsers_editForm_emailaddress').val(currentUser.attr('name'));
+        $('#adminUsers_editForm_nickname').val($('#adminUsers_nickname').val());
+        $('#adminUsers_editForm_password').val($('#adminUsers_newPassword').val());
+        $('#adminUsers_editForm_passwordConfirmation').val($('#adminUsers_newPasswordRepeat').val());
         $('#adminUsers_editForm').submit();
     });
 });

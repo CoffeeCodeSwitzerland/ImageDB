@@ -632,9 +632,21 @@ function adminUsers()
     if (isset($_POST['adminUsers_formAction'])) {
         $action = $_POST['adminUsers_formAction'];
         if ($action === 'adminUsers_edit') {
-            $id = $_POST['adminUsers_userId'];
-            db_updateUserNicknameByUserId($id, $_POST['adminUsers_editUserName']);
-            db_updateUserPasswordByUserId($id, $_POST['adminUsers_editUserPassword']);
+            $emailaddress = $_POST['adminUsers_emailaddress'];
+            $user = db_getUserByEmailaddress($emailaddress);
+            if($user != null) {
+                $userId = $user[0]['UserId'];
+                db_updateUserNicknameByUserId($userId, $_POST['adminUsers_nickname']);
+                if (isset($_POST['adminUsers_password'])) {
+                    if ($_POST['adminUsers_password'] == $_POST['adminUsers_passwordConfirmation']) {
+                        db_updateUserPasswordByUserId($userId, $_POST['adminUsers_password']);
+                    } else {
+                        appl_setMessage("The passwords were not equal.", "alert-danger");
+                    }
+                }
+            } else{
+                appl_setMessage("User not found. This should not happen...", "alert-danger");
+            }
         } elseif ($action === 'adminUsers_delete') {
             $emailaddress = $_POST['adminUsers_emailaddress'];
             $user = db_getUserByEmailaddress($emailaddress)[0];
