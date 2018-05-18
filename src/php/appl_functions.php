@@ -232,12 +232,15 @@ function images()
                 } elseif ($action == 'image_edit') {
                     $imageId = $_POST['images_imageId'];
                     db_updateImage($imageId, $_POST['image_editImageName']);
-                } elseif ($action == 'image_sort'){
+                } elseif ($action == 'image_sort') {
                     setValue('currentTag', $_POST['image_sortTag']);
                     $gid = getValue('currentGalleryId');
                     $result = db_getImagesByTagAndGallery(getValue('currentTag'), $gid);
-                    if(empty($result)){
+                    if (empty($result)) {
                         appl_setMessage('No image with this tag could be found in the current gallery', 'alert-warning');
+                        setValue('tagChoosen', 'no');
+                    } else {
+                        setValue('tagChoosen', 'yes');
                     }
                 }
             }
@@ -248,6 +251,13 @@ function images()
     }
 
     setValue("phpmodule", $_SERVER['PHP_SELF'] . "?id=" . getValue("func") . "&gid=" . $gid);
+    return runTemplate("../templates/" . getValue("func") . ".htm.php");
+}
+
+
+function tags()
+{
+    setValue("phpmodule", $_SERVER['PHP_SELF'] . "?id=" . getValue("func"));
     return runTemplate("../templates/" . getValue("func") . ".htm.php");
 }
 
@@ -362,16 +372,19 @@ function appl_getImagesByGallery()
     $gid = getValue('currentGalleryId');
     $gallery = db_getGalleryById($gid);
 
-    if(!empty(getValue('currentTag'))){
+    if (!empty(getValue('currentTag'))) {
         $customImages = db_getImagesByTagAndGallery(getValue('currentTag'), $gid);
-        return appl_generateImages($customImages, $gallery);
+        if (!empty($customImages)) {
+            return appl_generateImages($customImages, $gallery);
+        }
+    } else {
+        $images = db_getImagesByGalleryId($gid);
+        return appl_generateImages($images, $gallery);
     }
-
-    $images = db_getImagesByGalleryId($gid);
-    return appl_generateImages($images, $gallery);
 }
 
-function appl_generateImages($images, $gallery){
+function appl_generateImages($images, $gallery)
+{
     $html = "";
     if (!empty($images)) {
         $rowItems = 0;
@@ -401,7 +414,7 @@ function appl_generateImages($images, $gallery){
         }
         return $html;
     }
-    if(empty(getValue('message'))) {
+    if (empty(getValue('message'))) {
         return "<div class='alert alert-info m-3' role = 'alert'> There aren't any images yet </div >";
     }
     return "";
@@ -423,8 +436,8 @@ function appl_getAllTagsAsButton()
     $tags = db_getAllTags();
     $html = "";
     if (is_array($tags)) {
-        foreach ($tags as $tag){
-            $html .= "<button name='" . $tag['TagId'] ."' class='dropdown-item tagSortItem' type='button'>" . $tag['Name'] . "</button>";
+        foreach ($tags as $tag) {
+            $html .= "<button name='" . $tag['TagId'] . "' class='dropdown-item tagSortItem' type='button'>" . $tag['Name'] . "</button>";
         }
     }
     return $html;
@@ -636,7 +649,7 @@ function adminUsers()
         if ($action === 'adminUsers_edit') {
             $emailaddress = $_POST['adminUsers_emailaddress'];
             $user = db_getUserByEmailaddress($emailaddress);
-            if($user != null) {
+            if ($user != null) {
                 $userId = $user[0]['UserId'];
                 db_updateUserNicknameByUserId($userId, $_POST['adminUsers_nickname']);
                 if (isset($_POST['adminUsers_password'])) {
@@ -646,7 +659,7 @@ function adminUsers()
                         appl_setMessage("The passwords were not equal.", "alert-danger");
                     }
                 }
-            } else{
+            } else {
                 appl_setMessage("User not found. This should not happen...", "alert-danger");
             }
         } elseif ($action === 'adminUsers_delete') {

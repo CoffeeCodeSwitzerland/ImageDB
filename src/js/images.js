@@ -155,6 +155,11 @@ $(document).ready(function () {
         $('#image_tagSort').submit();
     });
 
+    $('#image_removeTag').on('click', function(){
+        // location.reload(true);
+        window.location.href=window.location.href;
+    });
+
     function imageSubmit() {
         $('#image_tags').val(getTags());
         $('#image_addForm').submit();

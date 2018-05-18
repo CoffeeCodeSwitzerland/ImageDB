@@ -23,20 +23,19 @@
                         data-target="#images_helpImageDialog">
                     <i class="fas fa-question-circle"></i> Help
                 </button>
-                <!--                <div class="dropdown" style="display: inline;">-->
-                <!--                    <button class="btn btn-secondary dropdown-toggle" type="button" id="dropdownMenuButton" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">-->
-                <!--                        Dropdown button-->
-                <!--                    </button>-->
-                <!--                    <div class="dropdown-menu" aria-labelledby="dropdownMenuButton">-->
-                <!--                        <a class="dropdown-item" href="#">Action</a>-->
-                <!--                        <a class="dropdown-item" href="#">Another action</a>-->
-                <!--                        <a class="dropdown-item" href="#">Something else here</a>-->
-                <!--                    </div>-->
-                <!--                </div>-->
                 <div class="btn-group">
                     <button type="button" class="btn btn-secondary dropdown-toggle" data-toggle="dropdown"
                             aria-haspopup="true" aria-expanded="false">
-                        Tag
+                        <i class="fa fa-tag"></i>
+
+                        <?php
+                        if (getValue('tagChoosen') != 'yes') {
+                            echo "No tag selected";
+                        }else{
+                            echo "Selcted";
+                        }
+                        ?>
+
                     </button>
                     <div class="dropdown-menu dropdown-menu-right">
                         <form id="image_tagSort" method="post" action="<?php echo getValue("phpmodule") ?>">
@@ -46,6 +45,13 @@
                         </form>
                     </div>
                 </div>
+                <?php
+                if (getValue('tagChoosen') == 'yes') {
+                    echo "<button type='button' id='image_removeTag' class='btn btn-danger' data-toggle='modal' data-target='#images_helpImageDialog'>
+                            <i class='fa fa-times'></i> Remove selection
+                          </button>";
+                    }
+                ?>
             </li>
         </ul>
     </div>
