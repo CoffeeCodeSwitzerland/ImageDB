@@ -21,7 +21,7 @@ setValue("cfg_menu_admin_list", array("adminUsers"=>"Users","adminGalleries"=>"G
 setValue("galleryRoot", "D:\\xampp\htdocs\ImageDB\src\storage\galleries");
 //setValue("galleryRoot", "D:\\Xampp\\htdocs\\ImageDbSrc");
 
-//PDO
+//PDO connection
 $dbh = new PDO('mysql:host=127.0.0.1;dbname=imagedb', "root", "gibbiX12345");
 setValue('dbh', $dbh);
 

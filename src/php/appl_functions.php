@@ -212,7 +212,6 @@ function images()
                     $thumbnailPath = getValue('galleryRoot') . "\\" . getSessionEmailaddress() . "\\" . $gallery['Title'] . "\\thumbnails\\" . $fileName . "." . $extentsion;
 
                     move_uploaded_file($_FILES['image_newImageFile']['tmp_name'], $imagePath);
-//                    appl_createThumbnail($imagePath, $thumbnailPath, 400, $extentsion);
                     appl_advancedThumbnail($imagePath, 400, 400, $thumbnailPath);
                     $imageId = db_createImage($gid, $_POST['images_newImageName'], $fileName . "." . $extentsion, $fileName . "." . $extentsion);
                     if (isset($_POST['image_tags'])) {
@@ -363,8 +362,7 @@ function appl_getGalleryPath($galleryId)
  */
 
 /**
- * Generates the image views with the following db attributes:
- * -Image.Name
+ * Check if the image selection should be sorted
  * @return string
  */
 function appl_getImagesByGallery()
@@ -383,6 +381,13 @@ function appl_getImagesByGallery()
     }
 }
 
+/**
+ * Generates the image views with the following db attributes:
+ * -Image.Name
+ * @param $images
+ * @param $gallery
+ * @return string
+ */
 function appl_generateImages($images, $gallery)
 {
     $html = "";
@@ -420,6 +425,14 @@ function appl_generateImages($images, $gallery)
     return "";
 }
 
+/**
+ * Additional tag löogic
+ */
+
+/**
+ * Get all tags as bootstrap badge
+ * @return string
+ */
 function appl_getTagOverview()
 {
     $tags = db_getAllTags();
@@ -431,6 +444,10 @@ function appl_getTagOverview()
     return $html;
 }
 
+/**
+ * Get all tags as buttons
+ * @return string
+ */
 function appl_getAllTagsAsButton()
 {
     $tags = db_getAllTags();
@@ -443,6 +460,11 @@ function appl_getAllTagsAsButton()
     return $html;
 }
 
+/**
+ * Get those tags which badge the image
+ * @param $imageId
+ * @return string
+ */
 function appl_getTagsByImageId($imageId)
 {
     $tags = db_getTagsByImageId($imageId);
