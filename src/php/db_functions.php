@@ -30,44 +30,69 @@ function db_hashPassword($password)
 
 function db_deleteUserByUserId($userId)
 {
-    $sql = "DELETE FROM `user` WHERE UserId =". $userId .";";
-    sqlQuery($sql);
+    $stmt = basic_prepareStatement("DELETE FROM `user` WHERE UserId=:userId");
+    $stmt->bindParam(':userId', $userId);
+    $stmt->execute();
 }
 
 function db_updateUserNicknameByUserId($userId, $nickname)
 {
-    $sql = "UPDATE `User` SET Nickname = '" . $nickname . "' WHERE UserId=" . $userId . ";";
-    sqlQuery($sql);
+    $stmt = basic_prepareStatement("UPDATE `User` SET Nickname=:nickname WHERE UserId=:userId");
+    $stmt->bindParam(':nickname', $nickname);
+    $stmt->bindParam(':userId', $userId);
+    $stmt->execute();
 }
 
 function db_updateUserPasswordByUserId($userId, $password)
 {
-    $sql = "UPDATE `User` SET Password = '" . db_hashPassword($password) . "' WHERE UserId =" . $userId . ";";
-    sqlQuery($sql);
+    $stmt = basic_prepareStatement("UPDATE `User` SET Password=:password WHERE UserId=:userId");
+    $newPw = db_hashPassword($password);
+    $stmt->bindParam(':password', $newPw);
+    $stmt->bindParam(':userId', $userId);
+    $stmt->execute();
 }
 
-function db_getAllUsers(){
-    $sql = "SELECT * FROM `User`;";
-    $answer = sqlSelect($sql);
+//TODO check db_getAllUsers
+function db_getAllUsers()
+{
+    $stmt = basic_prepareStatement("SELECT * FROM `User`");
     $toReturn = array();
-    foreach($answer as $row){
-        array_push($toReturn, $row);
+    if ($stmt->execute()) {
+        while ($row = $stmt->fetch()) {
+            array_push($toReturn, $row);
+        }
     }
     return $toReturn;
+//    $sql = "SELECT * FROM `User`;";
+//    $answer = sqlSelect($sql);
+//    $toReturn = array();
+//    foreach($answer as $row){
+//        array_push($toReturn, $row);
+//    }
+//    return $toReturn;
 }
 
 function db_createUser($email, $nickname, $password)
 {
-    $sql = "INSERT INTO `User` (Emailaddress, `Password`, Nickname, IsAdmin) VALUES ('" . $email . "','" . db_hashPassword($password) . "','" . $nickname . "',0)";
-    sqlQuery($sql);
+    $stmt = basic_prepareStatement("INSERT INTO `user` (Emailaddress, Password, Nickname, IsAdmin) VALUES (:emailAddress,:password,:nickname,0)");
+    $hashPw = db_hashPassword($password);
+    $stmt->bindParam(':emailAddress', $email);
+    $stmt->bindParam(':password', $hashPw);
+    $stmt->bindParam(':nickname', $nickname);
+    $stmt->execute();
 }
 
 function db_userWithEmailaddressExists($email)
 {
-    $sql = "SELECT COUNT(UserId) FROM `User` WHERE Emailaddress = '" . strtolower($email) . "';";
-    $answer = sqlSelect($sql);
-    if ($answer[0]["COUNT(UserId)"] >= 1) {
-        return true;
+    $stmt = basic_prepareStatement("SELECT COUNT(UserId) FROM `user` WHERE Emailaddress=:emailAddress");
+    $modifiedEmail = strtolower($email);
+    $stmt->bindParam(':emailAddress', $modifiedEmail);
+    if ($stmt->execute()) {
+        while ($row = $stmt->fetch()) {
+            if ($row['COUNT(UserId)'] >= 1) {
+                return true;
+            }
+        }
     }
     return false;
 }
@@ -75,92 +100,154 @@ function db_userWithEmailaddressExists($email)
 
 function db_areUserCredentialsValid($email, $password)
 {
-    $sql = "SELECT Password FROM `User` WHERE Emailaddress = '" . strtolower($email) . "';";
-    $answer = sqlSelect($sql);
-    if (!empty($answer[0]['Password'])) {
-        if (password_verify($password, $answer[0]['Password'])) {
-            return true;
-        }
+    $stmt = basic_prepareStatement("SELECT Password FROM `user` WHERE Emailaddress=:emailaddress");
+    $modifiedEmail = strtolower($email);
+    $stmt->bindParam(':emailaddress', $modifiedEmail);
 
+    if ($stmt->execute()) {
+        while ($row = $stmt->fetch()) {
+            if (!empty($row['Password'])) {
+                if (password_verify($password, $row['Password'])) {
+                    return true;
+                }
+            }
+        }
     }
     return false;
 }
 
 function db_isUserPasswordMatching($userId, $raw)
 {
-    $sql = "SELECT Password FROM `User` WHERE UserId = " . $userId . ";";
-    $answer = sqlSelect($sql);
-    if (!empty($answer[0]['Password'])) {
-        return password_verify($raw, $answer[0]['Password']);
+    $stmt = basic_prepareStatement("SELECT Password FROM `user` WHERE  UserId=:userId");
+    $stmt->bindParam(':userId', $userId);
+
+    if ($stmt->execute()) {
+        while ($row = $stmt->fetch()) {
+            if (!empty($row['Password'])) {
+                return password_verify($raw, $row['Password']);
+            }
+        }
     }
     return false;
 }
 
 function db_getUserByEmailaddress($emailaddress)
 {
-    $sql = "SELECT * FROM `User` WHERE Emailaddress ='" . $emailaddress . "';";
-    $answer = sqlSelect($sql);
-    return $answer;
+    $stmt = basic_prepareStatement("SELECT * FROM `user` WHERE Emailaddress=:emailAddress");
+    $stmt->bindParam(':emailAddress', $emailaddress);
+    if ($stmt->execute()) {
+        while ($row = $stmt->fetch()) {
+            return $row;
+        }
+    }
 }
 
+//TODO check db_getAdminUserIds
 function db_getAdminUserIds()
 {
-    $sql = "SELECT UserId FROM `User` WHERE IsAdmin = 1  ;";
-    $answer = sqlSelect($sql);
+    $stmt = basic_prepareStatement("SELECT UserId FROM `user` WHERE IsAdmin=1");
     $toReturn = array();
-    foreach($answer as $row){
-        array_push($toReturn, $row['UserId']);
+    if ($stmt->execute()) {
+        while ($row = $stmt->fetch()) {
+            array_push($toReturn, $row['UserId']);
+        }
     }
     return $toReturn;
+//    $sql = "SELECT UserId FROM `User` WHERE IsAdmin = 1  ;";
+//    $answer = sqlSelect($sql);
+//    $toReturn = array();
+//    foreach($answer as $row){
+//        array_push($toReturn, $row['UserId']);
+//    }
+//    return $toReturn;
 }
 
 /**
  * Image entity functions
  */
 
-function db_getImagesByGalleryId($galleryId) {
-    $sql = "SELECT * FROM `image` WHERE GalleryId=" . $galleryId .";";
-    $answer = sqlSelect($sql);
-    return $answer;
+function db_getImagesByGalleryId($galleryId)
+{
+    $stmt = basic_prepareStatement("SELECT * FROM `image` WHERE GalleryId=:galleryId");
+    $stmt->bindParam(':galleryId', $galleryId);
+    $toReturn = array();
+    if ($stmt->execute()) {
+        while ($row = $stmt->fetch()) {
+            array_push($toReturn, $row);
+        }
+    }
+    return $toReturn;
 }
 
-function db_createImage($galleryId, $name, $relativepath, $thubmnailPath){
-    $sql = "INSERT INTO `image`  (GalleryId, Name, RelativePath, ThumbnailPath) VALUES (" . $galleryId . ",'" . $name . "','" . $relativepath . "','" . $thubmnailPath . "')";
-    sqlQuery($sql);
-    $sql2 = "SELECT ImageId FROM `image` WHERE GalleryId=" . $galleryId . " AND `Name`='" . $name ."'";
-    $answer2 = sqlSelect($sql2);
-    return $answer2[0]['ImageId'];
+function db_createImage($galleryId, $name, $relativepath, $thubmnailPath)
+{
+    $stmt = basic_prepareStatement("INSERT INTO `image` (GalleryId, Name, RelativePath, ThumbnailPath) VALUES (:galleryId,:name,:relativePath,:thumbnailPath)");
+    $stmt->bindParam(':galleryId', $galleryId);
+    $stmt->bindParam(':name', $name);
+    $stmt->bindParam(':relativePath', $relativepath);
+    $stmt->bindParam(':thumbnailPath', $thubmnailPath);
+    $stmt->execute();
+
+    $stmt2 = basic_prepareStatement("SELECT ImageId FROM `image` WHERE GalleryId=:galleryId AND Name=:name");
+    $stmt2->bindParam(':galleryId', $galleryId);
+    $stmt2->bindParam(':name', $name);
+    if ($stmt2->execute()) {
+        while ($row = $stmt2->fetch()) {
+            return $row['ImageId'];
+        }
+    }
 }
 
-function db_deleteImage($imageId){
-    $sql = "DELETE FROM `image` WHERE ImageId=" . $imageId;
-    sqlQuery($sql);
+function db_deleteImage($imageId)
+{
+    $stmt = basic_prepareStatement("DELETE FROM `image` WHERE ImageId=:imageId");
+    $stmt->bindParam(':imageId', $imageId);
+    $stmt->execute();
 }
 
-function db_getImageById($imageId) {
-    $sql = "SELECT * FROM `image` WHERE ImageId =" . $imageId;
-    $answer = sqlSelect($sql);
-    return $answer[0];
+function db_getImageById($imageId)
+{
+    $stmt = basic_prepareStatement("SELECT * FROM `image` WHERE ImageId=:imageId");
+    $stmt->bindParam(':imageId', $imageId);
+
+    if($stmt->execute()){
+        while ($row = $stmt->fetch()){
+            return $row;
+        }
+    }
 }
 
-function db_updateImage($imageId, $imageName) {
-    $sql = "UPDATE `image` SET Name='" . $imageName . "' WHERE ImageId=" . $imageId . " ;";
-    sqlQuery($sql);
+function db_updateImage($imageId, $imageName)
+{
+    $stmt = basic_prepareStatement("UPDATE `image` SET Name=:imageName WHERE ImageId=:imageId");
+    $stmt->bindParam(':imageName', $imageName);
+    $stmt->bindParam(':imageId', $imageId);
+    $stmt->execute();
 }
 
 function db_getImageCountByEmailaddress($emailaddress)
 {
-    $sql = "SELECT COUNT(ImageId) FROM image WHERE GalleryId IN (SELECT GalleryId FROM gallery WHERE OwnerId = (SELECT UserId FROM `user` WHERE Emailaddress ='" . strtolower($emailaddress) . "'))";
-    $answer = sqlSelect($sql);
-    return $answer[0]["COUNT(ImageId)"];
+    $stmt = basic_prepareStatement("SELECT COUNT(ImageId) FROM image WHERE GalleryId IN (SELECT GalleryId FROM gallery WHERE OwnerId = (SELECT UserId FROM `user` WHERE Emailaddress =:emailAddress))");
+    $modifiedEmailaddres = strtolower($emailaddress);
+    $stmt->bindParam(':emailAddress', $modifiedEmailaddres);
+
+    if($stmt->execute()){
+        while ($row = $stmt->fetch()){
+            return $row['COUNT(ImageId)'];
+        }
+    }
 }
 
-function db_getImagePathsByGallery($galleryId){
-    $sql = "SELECT RelativePath FROM `image` WHERE GalleryId=" . $galleryId;
-    $answer = sqlSelect($sql);
-    $back = [];
-    foreach ($answer['RelativePath'] as $image){
-        $back.array_push($image);
+function db_getImagePathsByGallery($galleryId)
+{
+    $stmt = basic_prepareStatement("SELECT RelativePath FROM `image` WHERE GalleryId=:galleryId");
+    $stmt->bindParam(':galleryId', $galleryId);
+    $answer = array();
+
+    if($stmt->execute()){
+        while ($row = $stmt->fetch()){
+            array_push($answer, $row);
+        }
     }
 }
 
@@ -168,30 +255,59 @@ function db_getImagePathsByGallery($galleryId){
  * Tag entity functions
  */
 
-function db_addTagsToImage($imageId, $tagId){
-    $sql = "INSERT INTO `imagetag` (TagId, ImageId) VALUES (" . $tagId ."," . $imageId . ")";
-    sqlQuery($sql);
+function db_addTagsToImage($imageId, $tagId)
+{
+    $stmt = basic_prepareStatement("INSERT INTO `imagetag` (TagId, ImageId) VALUES (:tagId, :imageId)");
+    $stmt->bindParam(':tagId', $tagId);
+    $stmt->bindParam(':imageId', $imageId);
+    $stmt->execute();
 }
 
-function db_getAllTags(){
-    $sql = "SELECT * FROM `tag`";
-    $answer = sqlSelect($sql);
-    if(sizeof($answer) > 0){
-        return $answer;
+function db_getAllTags()
+{
+    $stmt = basic_prepareStatement("SELECT * FROM `tag`");
+
+    $toReturn = array();
+    if($stmt->execute()){
+        while($row = $stmt->fetch()){
+            array_push($toReturn, $row);
+        }
     }
-    return "";
+
+    return $toReturn;
 }
 
-function db_getTagsByImageId($imageId){
-    $sql = "SELECT t.TagId, t.Name FROM `imagetag` AS i JOIN `tag` AS t ON t.TagId = i.TagId AND i.ImageId=" . $imageId;
-    $answer = sqlSelect($sql);
-    return $answer;
+function db_getTagsByImageId($imageId)
+{
+    $stmt = basic_prepareStatement("SELECT t.TagId, t.Name FROM `imagetag` AS i JOIN `tag` AS t ON t.TagId = i.TagId AND i.ImageId=:imageId");
+    $stmt->bindParam(':imageId', $imageId);
+
+    $toReturn = array();
+    if($stmt->execute()){
+        while ($row = $stmt->fetch()){
+            array_push($toReturn, $row);
+        }
+    }
+
+    return $toReturn;
 }
 
-function db_getImagesByTagAndGallery($tagId, $galleryId){
-    $sql = "select i.ImageId, i.Name, i.GalleryId, i.ThumbnailPath, i.RelativePath from `image` as i join `imagetag` as im on i.ImageId = im.ImageId where i.GalleryId=" . $galleryId ." and im.TagId=" . $tagId .";";
-    $answer = sqlSelect($sql);
-    return $answer;
+function db_getImagesByTagAndGallery($tagId, $galleryId)
+{
+    $stmt = basic_prepareStatement("SELECT i.ImageId, i.Name, i.GalleryId, i.ThumbnailPath, i.RelativePath FROM `image` AS i JOIN `imagetag` AS im ON i.ImageId = im.ImageId WHERE i.GalleryId=:galleryId AND im.TagId=:tagId");
+    $stmt->bindParam(':galleryId', $galleryId);
+    $stmt->bindParam(':tagId', $tagId);
+
+    $toReturn = array();
+    if($stmt->execute()){
+        while ($row = $stmt->fetch()){
+            array_push($toReturn, $row);
+        }
+    }
+    return $toReturn;
+//    $sql = "SELECT i.ImageId, i.Name, i.GalleryId, i.ThumbnailPath, i.RelativePath FROM `image` AS i JOIN `imagetag` AS im ON i.ImageId = im.ImageId WHERE i.GalleryId=" . $galleryId . " AND im.TagId=" . $tagId . ";";
+//    $answer = sqlSelect($sql);
+//    return $answer;
 }
 
 /**
@@ -200,54 +316,100 @@ function db_getImagesByTagAndGallery($tagId, $galleryId){
 
 function db_getGalleryCountByEmailaddress($emailaddress)
 {
-    $sql = "SELECT COUNT(GalleryId) FROM gallery WHERE OwnerId = (SELECT UserId FROM `user` WHERE Emailaddress ='" . strtolower($emailaddress) . "')";
-    $answer = sqlSelect($sql);
-    return $answer[0]["COUNT(GalleryId)"];
+    $stmt = basic_prepareStatement("SELECT COUNT(GalleryId) FROM gallery WHERE OwnerId = (SELECT UserId FROM `user` WHERE Emailaddress =:emailAddress)");
+    $stmt->bindParam(':emailAddress', $emailaddress);
+
+    if($stmt->execute()){
+        while ($row = $stmt->fetch()){
+            return $row['COUNT(GalleryId)'];
+        }
+    }
 }
 
 function db_getGalleriesByUser($userId)
 {
-    $sql = "SELECT * FROM gallery WHERE OwnerId=" . $userId . ";";
-    $answer = sqlSelect($sql);
-    return $answer;
+    $stmt = basic_prepareStatement("SELECT * FROM gallery WHERE OwnerId=:ownerId");
+    $stmt->bindParam(':ownerId', $userId);
+
+    $toReturn = array();
+    if($stmt->execute()){
+        while ($row = $stmt->fetch()){
+            array_push($toReturn, $row);
+        }
+    }
+
+    return $toReturn;
 }
 
 function db_createGallery($userId, $galleryTitle, $galleryShowTitle, $galleryDescription, $galleryPath)
 {
-    $sql = "INSERT INTO `gallery` (Title, ShowTitle ,Description, OwnerId,  DirectoryPath) VALUES('" . $galleryTitle . "', '" . $galleryShowTitle . "', '" . $galleryDescription ."', '" . $userId . "' , '" . strtolower($galleryPath). "')";
-    sqlQuery($sql);
+    $stmt = basic_prepareStatement("INSERT INTO `gallery` (Title, ShowTitle ,Description, OwnerId,  DirectoryPath) VALUES(:galleryTitle,:galleryShowTitle,:galleryDescription,:userId,:galleryPath)");
+    $modifiedPath = strtolower($galleryPath);
+    $stmt->bindParam(':galleryTitle', $galleryTitle);
+    $stmt->bindParam(':galleryShowTitle', $galleryShowTitle);
+    $stmt->bindParam(':galleryDescription', $galleryDescription);
+    $stmt->bindParam(':userId', $userId);
+    $stmt->bindParam(':galleryPath', $modifiedPath);
+    $stmt->execute();
 }
 
-function db_deleteGallery($galleryId) {
-    $sql = "DELETE FROM `gallery` WHERE GalleryId=" . $galleryId .";";
-    sqlQuery($sql);
+function db_deleteGallery($galleryId)
+{
+    $stmt = basic_prepareStatement("DELETE FROM `gallery` WHERE GalleryId=:galleryId");
+    $stmt->bindParam(':galleryId', $galleryId);
+    $stmt->execute();
 }
 
 function db_isGalleryExisting($userId, $galleryTitle)
 {
-    $sql = "SELECT Count(GalleryId) FROM `gallery` WHERE Title='" . $galleryTitle . "' AND OwnerId =" . $userId . ";";
-    $answer = sqlSelect($sql);
-    if ($answer[0]['Count(GalleryId)'] == 0) {
-        return false;
+    consoleLog($galleryTitle);
+    $stmt = basic_prepareStatement("SELECT Count(GalleryId) FROM `gallery` WHERE Title=:title AND OwnerId =:ownerId");
+    $stmt->bindParam(':title', $galleryTitle);
+    $stmt->bindParam(':ownerId', $userId);
+
+    if($stmt->execute()){
+        while ($row = $stmt->fetch()){
+            if($row['Count(GalleryId)'] == 0){
+                return false;
+            }
+            return true;
+        }
     }
-    return true;
 }
 
-function db_getGalleryById($galleryId){
-    $sql = "SELECT * FROM `gallery` WHERE GalleryId=" . $galleryId . ";";
-    $answer = sqlSelect($sql);
-    return $answer[0];
+function db_getGalleryById($galleryId)
+{
+    $stmt = basic_prepareStatement("SELECT * FROM `gallery` WHERE GalleryId=:galleryId");
+    $stmt->bindParam(':galleryId', $galleryId);
+
+    if($stmt->execute()){
+        while ($row = $stmt->fetch()){
+            return $row;
+        }
+    }
 }
 
-function db_isGalleryIdBelongingToUser($galleryId, $userId){
-    $sql = "SELECT COUNT(GalleryId) FROM `gallery` WHERE OwnerId =" . $userId ." AND GalleryId=" . $galleryId .";";
-    $answer = sqlSelect($sql);
-    return $answer[0]['COUNT(GalleryId)'] != 0;
+function db_isGalleryIdBelongingToUser($galleryId, $userId)
+{
+    $stmt = basic_prepareStatement("SELECT COUNT(GalleryId) FROM `gallery` WHERE OwnerId=:userId AND GalleryId=:galleryId");
+    $stmt->bindParam(':userId', $userId);
+    $stmt->bindParam(':galleryId', $galleryId);
+
+    if($stmt->execute()){
+        while ($row = $stmt->fetch()){
+            return $row['COUNT(GalleryId)'] != 0;
+        }
+    }
 }
 
 
-function db_updateGallery($galleryId, $galleryShowTitle, $galleryDescription){
-    $sql = "UPDATE `gallery` SET ShowTitle='" . $galleryShowTitle ."', Description = '" . $galleryDescription ."' WHERE GalleryId=" . $galleryId . ";";
-    sqlQuery($sql);
+function db_updateGallery($galleryId, $galleryShowTitle, $galleryDescription)
+{
+    $stmt = basic_prepareStatement("UPDATE `gallery` SET ShowTitle=:showTitle, Description=:description WHERE GalleryId=:galleryId");
+    $stmt->bindParam(':showTitle', $galleryShowTitle);
+    $stmt->bindParam(':description', $galleryDescription);
+    $stmt->bindParam('galleryId', $galleryId);
+    $stmt->execute();
 }
+
 ?>

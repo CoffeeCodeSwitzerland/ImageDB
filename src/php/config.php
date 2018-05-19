@@ -21,6 +21,10 @@ setValue("cfg_menu_admin_list", array("adminUsers"=>"Users","adminGalleries"=>"G
 setValue("galleryRoot", "D:\\xampp\htdocs\ImageDB\src\storage\galleries");
 //setValue("galleryRoot", "D:\\Xampp\\htdocs\\ImageDbSrc");
 
+//PDO
+$dbh = new PDO('mysql:host=127.0.0.1;dbname=imagedb', "root", "gibbiX12345");
+setValue('dbh', $dbh);
+
 // Datenbankverbindung herstellen
 $db = mysqli_connect("127.0.0.1", "root", "gibbiX12345", "imagedb");
 if (!$db) die("Verbindungsfehler: ".mysqli_connect_error());

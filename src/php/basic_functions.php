@@ -116,6 +116,11 @@ function getHtmlValue($key)
     else return "";
 }
 
+function basic_prepareStatement($query){
+    $dbh = getValue("dbh");
+    return $dbh->prepare($query);
+}
+
 /**
  * Übergebene SQL-Anweisung auf der DB ausführen und Resultat zurückgeben.
  * @param   $sql Select-Befehl, welcher ausgeführt werden soll

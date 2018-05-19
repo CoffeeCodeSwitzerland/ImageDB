@@ -723,16 +723,17 @@ function appl_deleteUserPathByEmailaddress($emailaddress)
  * Additional general logic
  */
 
+//TODO check setSessionValues -> without [0]
 /**
  * Set all necessary variables in the $_SESSION array
  * @param $user
  */
 function setSessionValues($user)
 {
-    $_SESSION['userId'] = $user[0]['UserId'];
-    $_SESSION['userNickname'] = $user[0]['Nickname'];
-    $_SESSION['userEmailaddress'] = $user[0]['Emailaddress'];
-    $_SESSION['userIsAdmin'] = $user[0]['IsAdmin'];
+    $_SESSION['userId'] = $user['UserId'];
+    $_SESSION['userNickname'] = $user['Nickname'];
+    $_SESSION['userEmailaddress'] = $user['Emailaddress'];
+    $_SESSION['userIsAdmin'] = $user['IsAdmin'];
 }
 
 /**
