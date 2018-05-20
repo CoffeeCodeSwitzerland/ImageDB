@@ -256,8 +256,71 @@ function images()
 
 function tags()
 {
+    if (isset($_POST['tag_formAction'])) {
+        $action = $_POST['tag_formAction'];
+        if ($action == 'tag_add') {
+            $tagName = $_POST['tags_newTagName'];
+            if (!db_isTagExisting($tagName, getSessionUserId())) {
+                db_createTag($tagName, getSessionUserId());
+            } else {
+                appl_setMessage('A tag with this name already exists', 'alert-danger');
+            }
+        } elseif ($action == 'tag_edit') {
+            $tagName = $_POST['tags_editTagName'];
+            if (!db_isTagExisting($tagName, getSessionUserId())) {
+                db_updateTag($_POST['tag_tagId'], $tagName);
+            } else {
+                appl_setMessage('A tag with this name already exists', 'alert-danger');
+            }
+        } elseif ($action == 'tag_delete') {
+            $id = $_POST['tag_tagId'];
+            db_deleteTag($id);
+        }
+    }
+
     setValue("phpmodule", $_SERVER['PHP_SELF'] . "?id=" . getValue("func"));
     return runTemplate("../templates/" . getValue("func") . ".htm.php");
+}
+
+/**
+ * Additional tag logic
+ */
+
+function appl_getAllTagsAsTable()
+{
+    $tags = db_getAllTags(getSessionUserId());
+    $modified = false;
+    $html = "<table class='table'>
+    <thead class='thead-light'>
+    <tr>
+        <th scope='col'>#</th>
+        <th scope='col'>Name</th>
+        <th scope='col'><i class='fas fa-image'></i> Associated images</th>
+    </tr>
+    </thead>
+    <tbody>";
+    $counter = 1;
+
+    if (!empty($tags)) {
+        foreach ($tags as $tag) {
+            $modified = true;
+            $html .= "<tr tagId='" . $tag['TagId'] . "' class='tagItem'>
+                            <th scope='row'>" . $counter . "</th>
+                            <td id='tagName_" . $tag['TagId'] . "' >" . $tag['Name'] . "</td>
+                            <td>" . db_getImageCountAssociatedWithTagId($tag['TagId']) . "</td>
+                      </tr>";
+            $counter++;
+        }
+    }
+
+    $html .= "</tbody></table>";
+
+    if(!$modified){
+        $html = "";
+        $html .= "<div class='alert alert-info m-3' role = 'alert'>There are no tags yet</div >";
+    }
+
+    return $html;
 }
 
 /**
@@ -435,7 +498,8 @@ function appl_generateImages($images, $gallery)
  */
 function appl_getTagOverview()
 {
-    $tags = db_getAllTags();
+    $tags = db_getAllTags(getSessionUserId());
+    $html = "";
     $html = "<div class='row'>";
     foreach ($tags as $tag) {
         $html .= "<a href='#' name='" . $tag['TagId'] . "' class='badge badge-primary m-1 imageTag'>" . $tag["Name"] . "</a>";
@@ -450,7 +514,7 @@ function appl_getTagOverview()
  */
 function appl_getAllTagsAsButton()
 {
-    $tags = db_getAllTags();
+    $tags = db_getAllTags(getSessionUserId());
     $html = "";
     if (is_array($tags)) {
         foreach ($tags as $tag) {
@@ -473,7 +537,9 @@ function appl_getTagsByImageId($imageId)
         foreach ($tags as $item) {
             $html .= "<a href='#' name='" . $item['TagId'] . "' class='badge badge-primary m-1 imageTag'>" . $item['Name'] . "</a>";
         }
-    } else {
+    }
+
+    if ($html == "") {
         $html .= "<a href='#' class='badge badge-light m-1 imageTag'>No tags selected</a>";
     }
     return $html;

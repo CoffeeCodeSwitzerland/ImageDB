@@ -263,9 +263,10 @@ function db_addTagsToImage($imageId, $tagId)
     $stmt->execute();
 }
 
-function db_getAllTags()
+function db_getAllTags($userId)
 {
-    $stmt = basic_prepareStatement("SELECT * FROM `tag`");
+    $stmt = basic_prepareStatement("SELECT * FROM `tag` WHERE CreatorId=:creator");
+    $stmt->bindParam(':creator', $userId);
 
     $toReturn = array();
     if($stmt->execute()){
@@ -305,9 +306,54 @@ function db_getImagesByTagAndGallery($tagId, $galleryId)
         }
     }
     return $toReturn;
-//    $sql = "SELECT i.ImageId, i.Name, i.GalleryId, i.ThumbnailPath, i.RelativePath FROM `image` AS i JOIN `imagetag` AS im ON i.ImageId = im.ImageId WHERE i.GalleryId=" . $galleryId . " AND im.TagId=" . $tagId . ";";
-//    $answer = sqlSelect($sql);
-//    return $answer;
+}
+
+function db_getImageCountAssociatedWithTagId($tagId){
+    $stmt = basic_prepareStatement("SELECT Count(it.TagId), t.TagId, t.Name FROM `imagetag` AS it JOIN `tag` AS t ON it.TagId=t.TagId WHERE it.TagId=:tagId");
+    $stmt->bindParam(':tagId', $tagId);
+
+    if($stmt->execute()){
+        while($row = $stmt->fetch()){
+            return $row['Count(it.TagId)'];
+        }
+    }
+}
+
+function db_isTagExisting($tagName, $userId){
+    $stmt = basic_prepareStatement("SELECT Count(TagId) FROM `tag` WHERE LOWER(Name)=:name AND CreatorId=:userId");
+    $modifiedName = strtolower($tagName);
+    $stmt->bindParam(':name', $modifiedName);
+    $stmt->bindParam('userId', $userId);
+
+    if($stmt->execute()){
+        while ($row = $stmt->fetch()){
+            if($row['Count(TagId)'] >= 1){
+                return true;
+            }else{
+                return false;
+            }
+        }
+    }
+}
+
+function db_createTag($tagName, $userId){
+    $stmt = basic_prepareStatement("INSERT INTO `tag` (Name, CreatorId) VALUES (:name,:creator)");
+    $stmt->bindParam(':name', $tagName);
+    $stmt->bindParam(':creator', $userId);
+    $stmt->execute();
+}
+
+function db_updateTag($tagId, $tagName){
+    $stmt = basic_prepareStatement("UPDATE `tag` SET Name=:name WHERE TagId=:tagId");
+    $stmt->bindParam(':tagId', $tagId);
+    $stmt->bindParam(':name', $tagName);
+    $stmt->execute();
+}
+
+function db_deleteTag($tagId){
+    $stmt = basic_prepareStatement("DELETE FROM `tag` WHERE TagId=:tagId");
+    $stmt->bindParam(':tagId', $tagId);
+    $stmt->execute();
 }
 
 /**
