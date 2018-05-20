@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Host: 127.0.0.1
--- Erstellungszeit: 28. Apr 2018 um 09:47
+-- Erstellungszeit: 20. Mai 2018 um 22:29
 -- Server-Version: 10.1.26-MariaDB
 -- PHP-Version: 7.1.9
 
@@ -30,7 +30,6 @@ USE `imagedb`;
 -- Tabellenstruktur für Tabelle `authority`
 --
 
-DROP TABLE IF EXISTS `authority`;
 CREATE TABLE `authority` (
   `AuthorityId` int(11) NOT NULL,
   `UserId` int(11) NOT NULL,
@@ -44,7 +43,6 @@ CREATE TABLE `authority` (
 -- Tabellenstruktur für Tabelle `gallery`
 --
 
-DROP TABLE IF EXISTS `gallery`;
 CREATE TABLE `gallery` (
   `GalleryId` int(11) NOT NULL,
   `OwnerId` int(11) NOT NULL,
@@ -60,7 +58,6 @@ CREATE TABLE `gallery` (
 -- Tabellenstruktur für Tabelle `image`
 --
 
-DROP TABLE IF EXISTS `image`;
 CREATE TABLE `image` (
   `ImageId` int(11) NOT NULL,
   `GalleryId` int(11) NOT NULL,
@@ -75,7 +72,6 @@ CREATE TABLE `image` (
 -- Tabellenstruktur für Tabelle `imagetag`
 --
 
-DROP TABLE IF EXISTS `imagetag`;
 CREATE TABLE `imagetag` (
   `ImageTagId` int(11) NOT NULL,
   `TagId` int(11) NOT NULL,
@@ -88,7 +84,6 @@ CREATE TABLE `imagetag` (
 -- Tabellenstruktur für Tabelle `right`
 --
 
-DROP TABLE IF EXISTS `right`;
 CREATE TABLE `right` (
   `RightId` int(11) NOT NULL,
   `Role` text NOT NULL,
@@ -101,10 +96,10 @@ CREATE TABLE `right` (
 -- Tabellenstruktur für Tabelle `tag`
 --
 
-DROP TABLE IF EXISTS `tag`;
 CREATE TABLE `tag` (
   `TagId` int(11) NOT NULL,
-  `Name` text NOT NULL
+  `Name` text NOT NULL,
+  `CreatorId` int(11) DEFAULT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1;
 
 -- --------------------------------------------------------
@@ -113,7 +108,6 @@ CREATE TABLE `tag` (
 -- Tabellenstruktur für Tabelle `user`
 --
 
-DROP TABLE IF EXISTS `user`;
 CREATE TABLE `user` (
   `UserId` int(11) NOT NULL,
   `Emailaddress` text NOT NULL,
@@ -167,7 +161,8 @@ ALTER TABLE `right`
 -- Indizes für die Tabelle `tag`
 --
 ALTER TABLE `tag`
-  ADD PRIMARY KEY (`TagId`);
+  ADD PRIMARY KEY (`TagId`),
+  ADD KEY `FK_Tag_CreatorId` (`CreatorId`);
 
 --
 -- Indizes für die Tabelle `user`
@@ -189,13 +184,13 @@ ALTER TABLE `authority`
 -- AUTO_INCREMENT für Tabelle `gallery`
 --
 ALTER TABLE `gallery`
-  MODIFY `GalleryId` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=41;
+  MODIFY `GalleryId` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=18;
 
 --
 -- AUTO_INCREMENT für Tabelle `image`
 --
 ALTER TABLE `image`
-  MODIFY `ImageId` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=16;
+  MODIFY `ImageId` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=91;
 
 --
 -- AUTO_INCREMENT für Tabelle `imagetag`
@@ -213,13 +208,13 @@ ALTER TABLE `right`
 -- AUTO_INCREMENT für Tabelle `tag`
 --
 ALTER TABLE `tag`
-  MODIFY `TagId` int(11) NOT NULL AUTO_INCREMENT;
+  MODIFY `TagId` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=8;
 
 --
 -- AUTO_INCREMENT für Tabelle `user`
 --
 ALTER TABLE `user`
-  MODIFY `UserId` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=23;
+  MODIFY `UserId` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=10;
 
 --
 -- Constraints der exportierten Tabellen
@@ -251,6 +246,12 @@ ALTER TABLE `image`
 ALTER TABLE `imagetag`
   ADD CONSTRAINT `imagetag_ibfk_1` FOREIGN KEY (`ImageId`) REFERENCES `image` (`ImageId`) ON DELETE CASCADE ON UPDATE CASCADE,
   ADD CONSTRAINT `imagetag_ibfk_2` FOREIGN KEY (`TagId`) REFERENCES `tag` (`TagId`) ON DELETE CASCADE ON UPDATE CASCADE;
+
+--
+-- Constraints der Tabelle `tag`
+--
+ALTER TABLE `tag`
+  ADD CONSTRAINT `FK_Tag_CreatorId` FOREIGN KEY (`CreatorId`) REFERENCES `user` (`UserId`);
 COMMIT;
 
 /*!40101 SET CHARACTER_SET_CLIENT=@OLD_CHARACTER_SET_CLIENT */;
