@@ -199,6 +199,7 @@ function images()
     $gid = 0;
     if (isset($_GET['gid'])) {
         $gid = $_GET['gid'];
+        setValue('gid', $gid);
         if (db_isGalleryIdBelongingToUser($gid, getSessionUserId())) {
             setValue('currentGalleryId', $gid);
             if (isset($_POST['image_formAction'])) {
@@ -489,7 +490,7 @@ function appl_generateImages($images, $gallery)
 }
 
 /**
- * Additional tag löogic
+ * Additional tag logic
  */
 
 /**
@@ -514,13 +515,36 @@ function appl_getTagOverview()
  */
 function appl_getAllTagsAsButton()
 {
-    $tags = db_getAllTags(getSessionUserId());
     $html = "";
+    $tags = db_getAllTagsByGallery(getValue('gid'));
+    $changed = false;
+
+    $html .= "<div class='btn-group'>
+    <button type='button' class='btn btn-secondary dropdown-toggle' data-toggle='dropdown' aria-haspopup='true' aria-expanded='false'>
+                        <i class='fa fa-tag'></i>
+						
+						
+ </button>
+    <div class='dropdown-menu dropdown-menu-right'>
+        <form id='image_tagSort' method='post' action='" . getValue('phpmodule') ."'>";
+
     if (is_array($tags)) {
         foreach ($tags as $tag) {
+            $changed = true;
             $html .= "<button name='" . $tag['TagId'] . "' class='dropdown-item tagSortItem' type='button'>" . $tag['Name'] . "</button>";
         }
     }
+
+    $html .= "<input type='hidden' id='image_sortTag' name='image_sortTag'>
+                            <input type='hidden' name='image_formAction' value='image_sort'>		
+	                        </form>
+                    </div>
+                </div>";
+
+    if(!$changed){
+        $html = "";
+    }
+
     return $html;
 }
 
@@ -544,6 +568,11 @@ function appl_getTagsByImageId($imageId)
     }
     return $html;
 }
+
+
+/**
+ * Additional image logic
+ */
 
 /**
  * Gets a name for a new image considering that the same image may exists

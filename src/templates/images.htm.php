@@ -23,31 +23,10 @@
                         data-target="#images_helpImageDialog">
                     <i class="fas fa-question-circle"></i> Help
                 </button>
-                <div class="btn-group">
-                    <button type="button" class="btn btn-secondary dropdown-toggle" data-toggle="dropdown"
-                            aria-haspopup="true" aria-expanded="false">
-                        <i class="fa fa-tag"></i>
-
-                        <?php
-                        if (getValue('tagChoosen') != 'yes') {
-                            echo "No tag selected";
-                        }else{
-                            echo "Selcted";
-                        }
-                        ?>
-
-                    </button>
-                    <div class="dropdown-menu dropdown-menu-right">
-                        <form id="image_tagSort" method="post" action="<?php echo getValue("phpmodule") ?>">
-                            <?php echo appl_getAllTagsAsButton(); ?>
-                            <input type="hidden" id="image_sortTag" name="image_sortTag">
-                            <input type="hidden" name="image_formAction" value="image_sort">
-                        </form>
-                    </div>
-                </div>
+                <?php echo appl_getAllTagsAsButton(); ?>
                 <?php
                 if (getValue('tagChoosen') == 'yes') {
-                    echo "<button type='button' id='image_removeTag' class='btn btn-danger' data-toggle='modal' data-target='#images_helpImageDialog'>
+                    echo "<button type='button' id='image_removeTag' class='btn btn-danger'>
                             <i class='fa fa-times'></i> Remove selection
                           </button>";
                     }

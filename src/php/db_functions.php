@@ -278,6 +278,19 @@ function db_getAllTags($userId)
     return $toReturn;
 }
 
+function db_getAllTagsByGallery($galleryId){
+    $stmt = basic_prepareStatement("SELECT t.TagId, t.Name FROM `tag` AS t JOIN imagetag AS it ON t.TagId = it.TagId JOIN `image` AS i ON it.ImageId = i.ImageId WHERE i.GalleryId=:galleryId");
+    $stmt->bindParam(':galleryId', $galleryId);
+    $toReturn = array();
+
+    if($stmt->execute()){
+        while ($row = $stmt->fetch()){
+            array_push($toReturn, $row);
+        }
+    }
+    return $toReturn;
+}
+
 function db_getTagsByImageId($imageId)
 {
     $stmt = basic_prepareStatement("SELECT t.TagId, t.Name FROM `imagetag` AS i JOIN `tag` AS t ON t.TagId = i.TagId AND i.ImageId=:imageId");
