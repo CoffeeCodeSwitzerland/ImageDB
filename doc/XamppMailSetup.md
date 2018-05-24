@@ -10,7 +10,7 @@ sendmail_paht="D:\Xampp\sendmail\sendmail.exe -t -i"
 ```
 
 ## sendmail.ini
-Apply the followin changes in the sendmail.ini file
+Afterwards apply the following modifications in the sendmail.ini file
 ```
 [sendmail]
 smtp_server=smtp.gmail.com
