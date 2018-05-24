@@ -767,7 +767,7 @@ function adminUsers()
             $emailaddress = $_POST['adminUsers_emailaddress'];
             $user = db_getUserByEmailaddress($emailaddress);
             if ($user != null) {
-                $userId = $user[0]['UserId'];
+                $userId = $user['UserId'];
                 db_updateUserNicknameByUserId($userId, $_POST['adminUsers_nickname']);
                 if (isset($_POST['adminUsers_password'])) {
                     if ($_POST['adminUsers_password'] == $_POST['adminUsers_passwordConfirmation']) {
@@ -781,7 +781,7 @@ function adminUsers()
             }
         } elseif ($action === 'adminUsers_delete') {
             $emailaddress = $_POST['adminUsers_emailaddress'];
-            $user = db_getUserByEmailaddress($emailaddress)[0];
+            $user = db_getUserByEmailaddress($emailaddress);
             appl_deleteUserPathByEmailaddress($emailaddress);
             db_deleteUserByUserId($user['UserId']);
         }
@@ -804,7 +804,7 @@ function adminGalleries()
             db_updateUserPasswordByUserId($id, $_POST['adminGalleries_editUserPassword']);
         } elseif ($action === 'adminGalleries_delete') {
             $emailaddress = $_POST['adminGalleries_emailaddress'];
-            $user = db_getUserByEmailaddress($emailaddress)[0];
+            $user = db_getUserByEmailaddress($emailaddress);
             appl_deleteUserPathByEmailaddress($emailaddress);
             db_deleteUserByUserId($user['UserId']);
         }
