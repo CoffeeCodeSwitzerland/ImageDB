@@ -12,6 +12,7 @@ sendmail_paht="D:\Xampp\sendmail\sendmail.exe -t -i"
 ## sendmail.ini
 Apply the followin changes in the sendmail.ini file
 ```
+[sendmail]
 smtp_server=smtp.gmail.com
 smtp_port=465
 smtp_ssl=auto
