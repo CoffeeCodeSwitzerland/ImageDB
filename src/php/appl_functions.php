@@ -779,7 +779,7 @@ function adminUsers()
             $emailaddress = $_POST['adminUsers_emailaddress'];
             $user = db_getUserByEmailaddress($emailaddress);
             if ($user != null) {
-                $userId = $user[0]['UserId'];
+                $userId = $user['UserId'];
                 db_updateUserNicknameByUserId($userId, $_POST['adminUsers_nickname']);
                 if (isset($_POST['adminUsers_password'])) {
                     if ($_POST['adminUsers_password'] == $_POST['adminUsers_passwordConfirmation']) {
@@ -793,7 +793,7 @@ function adminUsers()
             }
         } elseif ($action === 'adminUsers_delete') {
             $emailaddress = $_POST['adminUsers_emailaddress'];
-            $user = db_getUserByEmailaddress($emailaddress)[0];
+            $user = db_getUserByEmailaddress($emailaddress);
             appl_deleteUserPathByEmailaddress($emailaddress);
             db_deleteUserByUserId($user['UserId']);
         }
@@ -811,14 +811,15 @@ function adminGalleries()
     if (isset($_POST['adminGalleries_formAction'])) {
         $action = $_POST['adminGalleries_formAction'];
         if ($action === 'adminGalleries_edit') {
-            $id = $_POST['adminGalleries_userId'];
-            db_updateUserNicknameByUserId($id, $_POST['adminGalleries_editUserName']);
-            db_updateUserPasswordByUserId($id, $_POST['adminGalleries_editUserPassword']);
+            $id = $_POST['adminGalleries_editForm_galleryId'];
+            $title = $_POST['adminGalleries_editForm_galleryName'];
+            $description = $_POST['adminGalleries_editForm_galleryDescription'];
+            db_updateGallery($id, $title, $description);
         } elseif ($action === 'adminGalleries_delete') {
-            $emailaddress = $_POST['adminGalleries_emailaddress'];
-            $user = db_getUserByEmailaddress($emailaddress)[0];
-            appl_deleteUserPathByEmailaddress($emailaddress);
-            db_deleteUserByUserId($user['UserId']);
+            $id = $_POST['adminGalleries_deleteForm_galleryId'];
+            $gallery = db_getGalleryById($id);
+            appl_deleteGalleryPath($gallery['Title']);
+            db_deleteGallery($id);
         }
     }
 

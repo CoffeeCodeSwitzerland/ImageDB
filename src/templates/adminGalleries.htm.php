@@ -18,12 +18,13 @@
               </div>
               <ul class='list-group list-group-flush'>";
               foreach(db_getGalleriesByUser($userId) as $gallery){
-                echo "<li class='list-group-item' style='border-left: 1px solid black;border-right: 1px solid black;border-top: 1px solid black;'>Title: ".$gallery['Title']."</li>
+                echo "<li class='list-group-item' style='border-left: 1px solid black;border-right: 1px solid black;border-top: 1px solid black;'>Title: ".$gallery['ShowTitle']."</li>
                 <li class='list-group-item' style='color:gray;border-left: 1px solid black;border-right: 1px solid black;'>Description: ".$gallery['Description']."</li>
-                <li class='list-group-item' style='border-left: 1px solid black;border-right: 1px solid black;border-bottom: 1px solid black;'><div class='btn btn-secondary' data-toggle='modal' data-target='#adminGalleries_editGallery'
-                   id='adminGalleries_editGallery' style='margin-right: 10px;'>Edit
-              </div><div class='btn btn-danger' data-toggle='modal' data-target='#adminGalleries_modalDeleteGallery'
-                   id='adminGalleries_modalDeleteGallery'>Delete
+                <li class='list-group-item' style='border-left: 1px solid black;border-right: 1px solid black;border-bottom: 1px solid black;'>
+                <div class='btn btn-secondary adminGalleries-EditButton' data-toggle='modal' data-target='#adminGalleries_modalEditGallery'
+                   id='adminGalleries_editGallery' name='".$gallery['GalleryId']."' data-galleryName='".$gallery['ShowTitle']."' data-galleryDescription='".$gallery['Description']."' style='margin-right: 10px;'>Edit
+              </div><div class='btn btn-danger adminGalleries-DeleteButton' data-toggle='modal' data-target='#adminGalleries_modalDeleteGallery'
+                   id='adminGalleries_deleteGallery' name='".$gallery['GalleryId']."'>Delete
               </div></li>";
               }
               echo "</ul>
@@ -37,70 +38,70 @@
             echo "<div style='margin-top: 2em;'>" . $message . "</div>";
         }
         ?>
-        <div class="modal fade" id="adminUsers_modalDeleteUser" tabindex="-1" role="dialog"
-             aria-labelledby="adminUsers_deleteUser" aria-hidden="true">
+        <div class="modal fade" id="adminGalleries_modalDeleteGallery" tabindex="-1" role="dialog"
+             aria-labelledby="adminGalleries_deleteGallery" aria-hidden="true">
             <div class="modal-dialog modal-dialog-centered" role="document">
                 <div class="modal-content">
                     <div class="modal-header">
-                        <h5 class="modal-title" id="exampleModalLongTitle">Delete user</h5>
+                        <h5 class="modal-title" id="exampleModalLongTitle">Delete gallery</h5>
                         <button type="button" class="close" data-dismiss="modal" aria-label="Close">
                             <span aria-hidden="true">&times;</span>
                         </button>
                     </div>
                     <div class="modal-body">
-                        Are you sure you want to delete this user?<br>
+                        Are you sure you want to delete this gallery?<br>
                         After proceeding it's not possible to recover your data.
                     </div>
                     <div class="modal-footer">
                         <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
-                        <form method="post" id="adminGallery_deleteForm" action="<?php echo getValue("phpmodule") ?>">
+                        <form method="post" id="adminGalleries_deleteForm" action="<?php echo getValue("phpmodule") ?>">
                             <input type="text" value="delete" id="adminUsers_deleteContent" name="adminUsers_deleteContent"
                                    hidden>
-                            <button type="submit" class="btn btn-danger" name="adminUsers_delete" id="adminUsers_delete"
-                                    value="Delete user">Delete user
+                            <input type="hidden" name="adminGalleries_formAction" value="adminGalleries_delete">
+                            <input type="hidden" name="adminGalleries_deleteForm_galleryId" id="adminGalleries_deleteForm_galleryId">
+                            <button type="submit" class="btn btn-danger" name="adminGalleries_deleteBtn" id="adminGalleries_deleteBtn"
+                                    value="Delete gallery">Delete gallery
                             </button>
                         </form>
                     </div>
                 </div>
             </div>
         </div>
-        <div class="modal fade" id="adminUsers_modalEditUser" tabindex="-1" role="dialog"
-             aria-labelledby="adminUsers_editUser" aria-hidden="true">
+
+
+        <div class="modal fade" id="adminGalleries_modalEditGallery" tabindex="-1" role="dialog"
+             aria-labelledby="aadminGalleries_editGallery" aria-hidden="true">
             <div class="modal-dialog modal-dialog-centered" role="document">
                 <div class="modal-content">
                     <div class="modal-header">
-                        <h5 class="modal-title" id="exampleModalLongTitle">Edit user</h5>
+                        <h5 class="modal-title" id="exampleModalLongTitle">Edit gallery</h5>
                         <button type="button" class="close" data-dismiss="modal" aria-label="Close">
                             <span aria-hidden="true">&times;</span>
                         </button>
                     </div>
                     <div class="modal-body">
-                      <form id="adminUsers_formEditUser">
+                      <form id="adminGalleries_editForm">
                           <div class="form-group">
-                              <label for="adminUsers_nickname">Nickname</label>
-                              <input name="adminUsers_nickname" type="text" class="form-control" id="adminUsers_nickname"
-                                     value="<?php echo db_getAllUsers()[0]['Nickname']; ?>">
+                              <label for="adminGalleries_galleryName">Name</label>
+                              <input name="adminGalleries_galleryName" type="text" class="form-control" id="adminGalleries_galleryName">
                           </div>
                           <div class="form-group">
-                              <label for="adminUsers_newPassword">New Password</label>
-                              <input name="adminUsers_newPassword" type="password" class="form-control contentCheck"
-                                     id="adminUsers_newPassword"
-                                     placeholder="New password">
-                          </div>
-                          <div class="form-group">
-                              <label for="adminUsers_newPasswordRepeat">Confirm new Password</label>
-                              <input name="adminUsers_newPasswordRepeat" type="password" class="form-control contentCheck"
-                                     id="adminUsers_newPasswordRepeat" placeholder="Repeat new password">
+                              <label for="adminGalleries_galleryDescription">Description</label>
+                              <input name="adminGalleries_galleryDescription" type="text" class="form-control" id="adminGalleries_galleryDescription">
                           </div>
                       </form>
                     </div>
                     <div class="modal-footer">
                         <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
                         <form action="<?php echo getValue("phpmodule") ?>" method="post">
-                            <input type="text" value="delete" id="adminUsers_editContent" name="adminUsers_editContent"
+                            <input type="text" value="delete" id="adminGalleries_editContent" name="adminGalleries_editContent"
                                    hidden>
-                            <button type="submit" class="btn btn-success" name="adminUsers_edit" id="adminUsers_edit"
-                                    value="Edit user">Save changes
+                            <input type="hidden" name="adminGalleries_formAction" value="adminGalleries_edit">
+                            <input type="hidden" name="adminGalleries_editForm_galleryId" id="adminGalleries_editForm_galleryId">
+                            <input type="hidden" name="adminGalleries_editForm_galleryName" id="adminGalleries_editForm_galleryName">
+                            <input type="hidden" name="adminGalleries_editForm_galleryDescription" id="adminGalleries_editForm_galleryDescription">
+                            <button type="submit" class="btn btn-success" name="adminGalleries_edit" id="adminGalleries_edit"
+                                    value="Edit gallery">Save changes
                             </button>
                         </form>
                     </div>
@@ -110,4 +111,4 @@
     </div>
 
 </div>
-<script src="../js/overview.js"></script>
+<script src="../js/adminGalleries.js"></script>
