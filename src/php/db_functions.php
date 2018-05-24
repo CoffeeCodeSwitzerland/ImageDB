@@ -279,7 +279,7 @@ function db_getAllTags($userId)
 }
 
 function db_getAllTagsByGallery($galleryId){
-    $stmt = basic_prepareStatement("SELECT t.TagId, t.Name FROM `tag` AS t JOIN imagetag AS it ON t.TagId = it.TagId JOIN `image` AS i ON it.ImageId = i.ImageId WHERE i.GalleryId=:galleryId");
+    $stmt = basic_prepareStatement("SELECT DISTINCT t.TagId, t.Name FROM `tag` AS t JOIN imagetag AS it ON t.TagId = it.TagId JOIN `image` AS i ON it.ImageId = i.ImageId WHERE i.GalleryId=:galleryId");
     $stmt->bindParam(':galleryId', $galleryId);
     $toReturn = array();
 

@@ -509,6 +509,18 @@ function appl_getTagOverview()
     return $html;
 }
 
+function appl_getEditTagOverview()
+{
+    $tags = db_getAllTags(getSessionUserId());
+    $html = "";
+    $html = "<div class='row'>";
+    foreach ($tags as $tag) {
+        $html .= "<a href='#' name='" . $tag['TagId'] . "' class='badge badge-primary m-1 imageEditTag'>" . $tag["Name"] . "</a>";
+    }
+    $html .= "</div>";
+    return $html;
+}
+
 /**
  * Get all tags as buttons
  * @return string

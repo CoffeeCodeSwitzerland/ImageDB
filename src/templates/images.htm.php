@@ -29,7 +29,7 @@
                     echo "<button type='button' id='image_removeTag' class='btn btn-danger'>
                             <i class='fa fa-times'></i> Remove selection
                           </button>";
-                    }
+                }
                 ?>
             </li>
         </ul>
@@ -156,17 +156,27 @@ if (!empty($message)) {
             </div>
             <div class="modal-body">
                 <form id="image_modifyForm" method="post" action="<?php echo getValue("phpmodule") ?>">
-                    <div class="form-group">
-                        <label for="image_editImageName">Image name</label>
-                        <input type="text" class="form-control" id="image_editImageName"
-                               name="image_editImageName" aria-describedby="emailHelp"
-                               placeholder="Enter name of the image">
-                        <input type="hidden" name="images_imageId" id="images_imageEditId">
-                        <input type="hidden" name="image_formAction" value="image_edit">
-                    </div>
-                    <button type="button" id="images_editImageButton" class="btn btn-secondary">
-                        <i class="fas fa-edit"></i> Edit
-                    </button>
+                    <ul class="list-group list-group-flush">
+                        <li class="list-group-item">
+                            <div class="form-group">
+                                <label for="image_editImageName">Image name</label>
+                                <input type="text" class="form-control" id="image_editImageName"
+                                       name="image_editImageName" aria-describedby="emailHelp"
+                                       placeholder="Enter name of the image">
+                                <input type="hidden" name="images_imageId" id="images_imageEditId">
+                                <input type="hidden" name="image_formAction" value="image_edit">
+                            </div>
+                            <button type="button" id="images_editImageButton" class="btn btn-secondary">
+                                <i class="fas fa-edit"></i> Edit
+                            </button>
+                        </li>
+                        <li class="list-group-item">
+                            <div class="form-group">
+                                <label for="image_editImageName">Tags</label>
+                                <?php echo appl_getEditTagOverview(); ?>
+                            </div>
+                        </li>
+                    </ul>
                 </form>
             </div>
         </div>

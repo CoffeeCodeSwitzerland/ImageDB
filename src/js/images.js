@@ -4,6 +4,8 @@ $(document).ready(function () {
     var image_nameCorrect = false;
     var image_preEditName = null;
     var currentImage = null;
+    var currentTags = [];
+    var currentTagIds = "";
     var deleteButton = $('#images_deleteImage');
     var editButton = $('#images_editImage');
 
@@ -32,13 +34,37 @@ $(document).ready(function () {
     });
 
     editButton.on('click', function () {
+        resetTags();
         if (currentImage != null) {
             var currentName = $('#title_' + currentImage.attr('name')).text();
+            var counter = 0;
             image_preEditName = currentName;
             $('#image_editImageName').val(currentName);
             $('#images_editImageButton').prop('disabled', true);
+            currentTags = [];
+            currentTags = $(currentImage).find('.imageTag');
+            selectTags();
         }
     });
+
+    function selectTags(){
+        $('.imageEditTag').each(function () {
+            var current = $(this);
+           $(currentTags).each(function () {
+             if(current.text() === $(this).text()){
+                 $(current).removeClass('badge-primary');
+                 $(current).addClass('badge-secondary');
+             }
+           })
+        });
+    }
+
+    function resetTags(){
+        $('.imageEditTag').each(function () {
+           $(this).removeClass('badge-secondary');
+           $(this).addClass('badge-primary');
+        });
+    }
 
     $('#image_editImageName').on('keyup', function () {
         if ($(this).val() === image_preEditName) {
@@ -155,9 +181,9 @@ $(document).ready(function () {
         $('#image_tagSort').submit();
     });
 
-    $('#image_removeTag').on('click', function(){
+    $('#image_removeTag').on('click', function () {
         // location.reload(true);
-        window.location.href=window.location.href;
+        window.location.href = window.location.href;
     });
 
     function imageSubmit() {
