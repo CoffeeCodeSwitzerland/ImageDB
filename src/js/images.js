@@ -52,22 +52,22 @@ $(document).ready(function () {
         }
     });
 
-    function selectTags(){
+    function selectTags() {
         $('.imageEditTag').each(function () {
             var current = $(this);
-           $(currentTags).each(function () {
-             if(current.text() === $(this).text()){
-                 $(current).removeClass('badge-primary');
-                 $(current).addClass('badge-secondary');
-             }
-           })
+            $(currentTags).each(function () {
+                if (current.text() === $(this).text()) {
+                    $(current).removeClass('badge-primary');
+                    $(current).addClass('badge-secondary');
+                }
+            })
         });
     }
 
-    function resetTags(){
+    function resetTags() {
         $('.imageEditTag').each(function () {
-           $(this).removeClass('badge-secondary');
-           $(this).addClass('badge-primary');
+            $(this).removeClass('badge-secondary');
+            $(this).addClass('badge-primary');
         });
     }
 
@@ -96,13 +96,13 @@ $(document).ready(function () {
         // $('#image_modifyForm').submit();
     }
 
-    function checkTagChanges(){
+    function checkTagChanges() {
         $('.imageEditTag').each(function () {
-           var current = $(this);
-           var hasClass = false;
-           $(currentTags).each(function () {
-              // if($(this).hasClass('badge-primary') && !current.)
-           })
+            var current = $(this);
+            var hasClass = false;
+            $(currentTags).each(function () {
+                // if($(this).hasClass('badge-primary') && !current.)
+            })
         });
     }
 
@@ -178,7 +178,7 @@ $(document).ready(function () {
         }
     });
 
-    function changeTagClass(tag){
+    function changeTagClass(tag) {
         if (tag.hasClass('badge-primary')) {
             tag.addClass('badge-secondary');
             tag.removeClass('badge-primary');

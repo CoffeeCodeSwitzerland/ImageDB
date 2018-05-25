@@ -15,4 +15,16 @@ $(document).ready(function() {
         }
 
     });
+
+    $('#login_resetPasswordButton').on('click', function () {
+        $(this).text('Send..');
+        $(this).prop('disabled', true);
+        $('#login_resetForm').submit();
+    });
+
+    $('#login_forgot').on('click', function () {
+        console.log('hello');
+        $('#login_resetMail').val('');
+        $('#login_resetPasswordButton').text('Reset password');
+    });
 });

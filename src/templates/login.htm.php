@@ -37,7 +37,7 @@
                                 <button type="submit" id="login_login" class="btn btn-primary">
                                     <i class="fas fa-sign-in-alt"></i> Login
                                 </button>
-                                <button type="button" id="login_login" data-target="#resetPwDialog" data-toggle="modal"
+                                <button type="button" id="login_forgot" data-target="#resetPwDialog" data-toggle="modal"
                                         class="btn btn-secondary">
                                     <i class="fas fa-question"></i> Forgot password
                                 </button>
@@ -62,7 +62,7 @@
 
 <div class="modal fade" id="resetPwDialog" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel"
      aria-hidden="true">
-    <form method="post" action="<?php echo getValue("phpmodule"); ?>">
+    <form method="post" action="<?php echo getValue("phpmodule"); ?>" id="login_resetForm">
         <div class="modal-dialog" role="document">
             <div class="modal-content">
                 <div class="modal-header">
@@ -77,14 +77,14 @@
                         <div class="input-group-prepend">
                             <span class="input-group-text" id="basic-addon1">@</span>
                         </div>
-                        <input type="text" class="form-control" name="resetEmail" placeholder="Username" aria-label="Username"
+                        <input type="text" class="form-control" name="resetEmail" id="login_resetMail" placeholder="Username" aria-label="Username"
                                aria-describedby="basic-addon1">
                         <input type="hidden" name="resetPassword" value="set">
                     </div>
                 </div>
                 <div class="modal-footer">
                     <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
-                    <button type="submit" class="btn btn-primary">Reset password</button>
+                    <button type="button" id="login_resetPasswordButton" class="btn btn-primary">Reset password</button>
                 </div>
             </div>
         </div>
