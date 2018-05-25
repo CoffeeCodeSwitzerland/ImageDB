@@ -5,6 +5,7 @@ $(document).ready(function () {
     var image_preEditName = null;
     var currentImage = null;
     var currentTags = [];
+    var tagsToChange = [];
     var currentTagIds = "";
     var deleteButton = $('#images_deleteImage');
     var editButton = $('#images_editImage');
@@ -31,6 +32,10 @@ $(document).ready(function () {
     $('#images_deleteImageButton').on('click', function () {
         $('#images_imageId').val(currentImage.attr('name'));
         $('#image_deleteForm').submit();
+    });
+
+    $('.imageEditTag').on('click', function () {
+        changeTagClass($(this));
     });
 
     editButton.on('click', function () {
@@ -87,7 +92,18 @@ $(document).ready(function () {
 
     function editImage() {
         $('#images_imageEditId').val(currentImage.attr('name'))
-        $('#image_modifyForm').submit();
+        checkTagChanges();
+        // $('#image_modifyForm').submit();
+    }
+
+    function checkTagChanges(){
+        $('.imageEditTag').each(function () {
+           var current = $(this);
+           var hasClass = false;
+           $(currentTags).each(function () {
+              // if($(this).hasClass('badge-primary') && !current.)
+           })
+        });
     }
 
     $('#image_newImageFile').change(function () {
@@ -162,14 +178,18 @@ $(document).ready(function () {
         }
     });
 
-    $('.imageTag').on('click', function (e) {
-        if ($(this).hasClass('badge-primary')) {
-            $(this).addClass('badge-secondary');
-            $(this).removeClass('badge-primary');
+    function changeTagClass(tag){
+        if (tag.hasClass('badge-primary')) {
+            tag.addClass('badge-secondary');
+            tag.removeClass('badge-primary');
         } else {
-            $(this).removeClass('badge-secondary');
-            $(this).addClass('badge-primary');
+            tag.removeClass('badge-secondary');
+            tag.addClass('badge-primary');
         }
+    }
+
+    $('.imageTag').on('click', function (e) {
+        changeTagClass($(this));
     });
 
     $('#images_newImageButton').on('click', function () {

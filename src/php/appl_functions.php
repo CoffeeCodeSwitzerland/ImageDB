@@ -13,10 +13,18 @@
  * Login page logic
  * @return null|string
  */
+
 function login()
 {
     $canLogin = false;
     $userId = 0;
+
+    if(isset($_POST['resetPassword'])){
+        appl_resetPassword($_POST['resetEmail']);
+        setValue("phpmodule", $_SERVER['PHP_SELF'] . "?id=" . getValue("func"));
+        return runTemplate("../templates/" . getValue("func") . ".htm.php");
+    }
+
     if (isset($_POST['login_emailaddress']) && isset($_POST['login_password'])) {
         $email = $_POST['login_emailaddress'];
         $password = $_POST['login_password'];
@@ -912,6 +920,33 @@ function appl_escapeString($toEscape)
 function appl_setMessage($content, $bootstrapClass)
 {
     setValue('message', "<div class='alert " . $bootstrapClass . " m-3' role = 'alert'>" . $content . "</div >");
+}
+
+function appl_resetPassword($email){
+    $emailExistst = db_userWithEmailaddressExists($email);
+    if($emailExistst){
+        $rndPassword = appl_generateRandomPassword();
+        $user = db_getUserByEmailaddress($email);
+        db_updateUserPasswordByUserId($user['UserId'], $rndPassword);
+        appl_sendResetMail($email, $rndPassword);
+        appl_setMessage('An email has been sent containing a new password', 'alert-info');
+    }else{
+        appl_setMessage('Invalid emailaddress','alert-warning');
+    }
+}
+
+function appl_generateRandomPassword(){
+
+    $scope = 'abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ123456789,.-$¨?';
+    $password = substr( str_shuffle( $scope ), 0, 8 );
+    return $password;
+}
+
+function appl_sendResetMail($email, $password){
+    $user = db_getUserByEmailaddress($email);
+    $subject = 'New password';
+    $content = "Hey " . $user['Nickname'] . " here is you new password " . $password;
+    mail($email, $subject, $content);
 }
 
 ?>

@@ -28,7 +28,16 @@
     </button>
     <div class="collapse navbar-collapse" id="navbarNav">
         <ul class="navbar-nav">
-            <?php echo getMenu(getValue("cfg_menu_list")); ?>
+            <?php
+
+            foreach (glob("classes/*.php") as $filename)
+            {
+                include $filename;
+            }
+
+            echo getMenu(getValue("cfg_menu_list"));
+
+            ?>
         </ul>
     </div>
 </nav>
