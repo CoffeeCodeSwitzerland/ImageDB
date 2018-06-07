@@ -8,29 +8,11 @@
     <div class="col-md-5">
         <h4>Users</h4>
         <?php
-        foreach(db_getAllUsers() as $user){
-          echo "
-          <div class='card' style='width: 18rem; margin-bottom: 20px;'>
-            <div class='card-header'>".
-              $user['Emailaddress']."
-            </div>
-            <ul class='list-group list-group-flush'>
-              <li class='list-group-item'>Nickname: ".
-                $user['Nickname']."</li>
-              <li class='list-group-item'><div class='btn btn-secondary adminUsers-EditButton' data-toggle='modal' data-target='#adminUsers_modalEditUser'
-                   id='adminUsers_editUser' name='".$user['Emailaddress']."' data-nickname='".$user['Nickname']."' style='margin-right: 10px;'>Edit user
-              </div><div class='btn btn-danger adminUsers-DeleteButton' data-toggle='modal' data-target='#adminUsers_modalDeleteUser'
-                   id='adminUsers_deleteUser' name='".$user['Emailaddress']."' onclick=''>Delete user
-              </div></li>
-            </ul>
-          </div>";
-        }
-        ?>
-        <?php
-        $message = getValue('message');
-        if (!empty($message)) {
-            echo "<div style='margin-top: 2em;'>" . $message . "</div>";
-        }
+            $message = getValue('message');
+            if (!empty($message)) {
+                echo $message;
+            }
+            showUsersForAdmin();
         ?>
         <div class="modal fade" id="adminUsers_modalDeleteUser" tabindex="-1" role="dialog"
              aria-labelledby="adminUsers_deleteUser" aria-hidden="true">
