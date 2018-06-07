@@ -392,6 +392,8 @@ function appl_createGalleryPath($galleryTitle)
     $temp = "";
     $counter = 0;
 
+    createHTAccessIfNotExists();
+
     while (!$pathNotTaken) {
         $counter++;
         $temp = $path . "_" . $counter;
@@ -404,6 +406,18 @@ function appl_createGalleryPath($galleryTitle)
     }
 
     return $temp;
+}
+
+function createHTAccessIfNotExists()
+{
+    if(!file_exists(getValue('galleryRoot')."\\.htaccess"))
+    {
+        exec("touch " . getValue('galleryRoot')."\\.htaccess");
+        $htaccess = fopen(getValue('galleryRoot')."\\.htaccess", "w") or die("Unable to open file!");
+        $txt = "#Order allow,deny \n #Deny from all";
+        fwrite($htaccess, $txt);
+        fclose($htaccess);
+    }
 }
 
 /**
@@ -475,7 +489,7 @@ function appl_generateImages($images, $gallery)
                                 <img data-toggle='toolip' data-placement='top' class='img-thumbnail rounded mx-auto d-block w-100' src='../storage/galleries/" . getSessionEmailaddress() . "/" . $gallery['Title'] . "/thumbnails/" . $image['ThumbnailPath'] . "' alt='Card image cap'>
                                 <div class='card-body'>
                                     <h5 class='card-title' id='title_" . $image['ImageId'] . "' >" . $image['Name'] . "</h5>
-                                    <a data-lightbox='images' id='lightbox_" . $image['ImageId'] . "'  data-title='" . $image['Name'] . "' class='a' href='../storage/galleries/" . getSessionEmailaddress() . "/" . $gallery['Title'] . "/" . $image['RelativePath'] . "''>
+                                    <a data-lightbox='images' id='lightbox_" . $image['ImageId'] . "'  data-title='" . $image['Name'] . "' class='a' href='show_picture.php?imageId=".$image['ImageId']."'>
                                   </a>
                                  </div>
                                  <div class='card-footer text-muted'>
