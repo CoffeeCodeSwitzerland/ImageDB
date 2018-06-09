@@ -114,21 +114,6 @@ if (!empty($message)) {
     </div>
 </div>
 
-
-
-<!--<table class="table">-->
-<!--    <thead class="thead-light">-->
-<!--    <tr>-->
-<!--        <th scope="col">#</th>-->
-<!--        <th scope="col">Name</th>-->
-<!--        <th scope="col"><i class="fas fa-image"></i> Associated images</th>-->
-<!--    </tr>-->
-<!--    </thead>-->
-<!--    <tbody>-->
-<!--    -->
-<!--    </tbody>-->
-<!--</table>-->
-
 <?php echo appl_getAllTagsAsTable() ?>
 
 <script src="../js/tags.js"></script>
