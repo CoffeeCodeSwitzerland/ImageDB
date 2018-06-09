@@ -65,8 +65,9 @@ $(document).ready(function () {
 
     $('#galleries_editGallery').on('click', function () {
         if (currentGallery != null) {
+            var text =$('#description_' + currentGallery.attr('name')).text();
             var currentTitle = $('#title_' + currentGallery.attr('name')).text();
-            var currentDescription = $('#description_' + currentGallery.attr('name')).text();
+            var currentDescription = text ? "No description available" : text;
             gallery_preEditDescription = currentDescription;
             gallery_preEditTitle = currentTitle;
             $('#galleries_editGalleryName').val(currentTitle);
@@ -111,10 +112,11 @@ $(document).ready(function () {
     }
 
     function evaluateEdit() {
-        if ($('#galleries_editGalleryName').val() !== gallery_preEditTitle ||
-            $('#galleries_editGalleryDescription').val() !== gallery_preEditDescription) {
-            return true;
-        }
-        return false;
+        var isEdited = false;
+        if ($('#galleries_editGalleryName').val() !== gallery_preEditTitle) isEdited = true;
+        console.log('f ' + isEdited);
+        if($('#galleries_editGalleryDescription').val() !== gallery_preEditDescription) isEdited = true;
+        console.log('s ' + isEdited);
+        return isEdited;
     }
 });

@@ -937,7 +937,7 @@ function appl_resetPassword($email){
 
 function appl_generateRandomPassword(){
 
-    $scope = 'abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ123456789,.-$¨?';
+    $scope = 'abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ123456789,.-$?';
     $password = substr( str_shuffle( $scope ), 0, 8 );
     return $password;
 }
@@ -945,7 +945,7 @@ function appl_generateRandomPassword(){
 function appl_sendResetMail($email, $password){
     $user = db_getUserByEmailaddress($email);
     $subject = 'New password';
-    $content = "Hey " . $user['Nickname'] . " here is you new password " . $password;
+    $content = "Hey " . $user['Nickname'] . " here is you new password '" . $password ."'";
     mail($email, $subject, $content);
 }
 
